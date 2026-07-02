@@ -3,449 +3,573 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-  <title>AI视频变现学徒 · 入学摸底表</title>
+  <title>张大业的AI视频变现课程</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
+
     body {
-      background: #f5f7fb;
+      background: #000;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-      padding: 20px 15px 40px;
-      color: #2c3e50;
-      line-height: 1.6;
+      min-height: 100vh;
+      overflow-x: hidden;
+      color: #fff;
     }
+
+    .stars {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+
     .container {
       max-width: 680px;
       margin: 0 auto;
-      background: white;
-      border-radius: 24px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.06);
-      overflow: hidden;
-      padding: 30px 22px 40px;
+      padding: 20px 15px 60px;
+      position: relative;
+      z-index: 1;
     }
-    .header {
+
+    .hero {
       text-align: center;
-      margin-bottom: 32px;
+      padding: 40px 10px 20px;
+      position: relative;
     }
-    .header h1 {
-      font-size: 28px;
-      font-weight: 700;
-      background: linear-gradient(135deg, #4f46e5, #7c3aed);
+
+    .glitch-wrapper {
+      position: relative;
+      display: inline-block;
+    }
+
+    .hero .logo-text {
+      font-size: 42px;
+      font-weight: 900;
+      letter-spacing: 4px;
+      background: linear-gradient(135deg, #00f0ff, #7c3aed, #f0f, #00f0ff);
+      background-size: 300% 300%;
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
-      margin-bottom: 6px;
+      animation: gradientShift 3s ease infinite;
     }
-    .header .sub {
-      color: #64748b;
-      font-size: 15px;
-      font-weight: 400;
+
+    @keyframes gradientShift {
+      0%,100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+
+    .hero .sub-brand {
+      font-size: 18px;
+      font-weight: 700;
+      color: #00f0ff;
+      text-shadow: 0 0 20px rgba(0,240,255,0.6), 0 0 40px rgba(0,240,255,0.3);
       margin-top: 4px;
+      letter-spacing: 3px;
     }
-    .section {
-      margin-bottom: 28px;
-      border-bottom: 1px solid #f0f0f0;
-      padding-bottom: 8px;
+
+    .hero .tagline {
+      color: #94a3b8;
+      font-size: 14px;
+      margin-top: 10px;
+      letter-spacing: 1px;
     }
-    .section-title {
-      font-size: 16px;
-      font-weight: 600;
-      color: #1e293b;
-      margin-bottom: 16px;
+
+    .neon-line {
+      width: 60%;
+      height: 2px;
+      margin: 20px auto 24px;
+      background: linear-gradient(90deg, transparent, #00f0ff, #7c3aed, #00f0ff, transparent);
+      border-radius: 2px;
+    }
+
+    .cta-banner {
+      display: block;
+      background: linear-gradient(135deg, rgba(124,58,237,0.3), rgba(0,240,255,0.15));
+      border: 1.5px solid rgba(0,240,255,0.4);
+      border-radius: 20px;
+      padding: 18px 20px;
+      margin-bottom: 32px;
+      text-decoration: none;
+      color: #fff;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s;
+      box-shadow: 0 0 20px rgba(0,240,255,0.15), inset 0 0 20px rgba(0,240,255,0.05);
+    }
+
+    .cta-banner::before {
+      content: '';
+      position: absolute;
+      top: -50%; left: -50%;
+      width: 200%; height: 200%;
+      background: conic-gradient(from 0deg, transparent, rgba(0,240,255,0.1), transparent, rgba(124,58,237,0.1), transparent);
+      animation: rotateGlow 4s linear infinite;
+    }
+
+    @keyframes rotateGlow {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .cta-banner:active { transform: scale(0.97); }
+
+    .cta-banner .cta-inner {
+      position: relative;
+      z-index: 1;
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 14px;
     }
-    .section-title span.icon { font-size: 20px; }
-    .field { margin-bottom: 22px; }
-    label.q-title {
-      display: block;
-      font-weight: 600;
-      font-size: 15px;
-      margin-bottom: 10px;
-      color: #0f172a;
-    }
-    input[type="text"], textarea {
-      width: 100%;
-      padding: 14px 16px;
-      border: 1.5px solid #e2e8f0;
-      border-radius: 14px;
-      font-size: 15px;
-      background: #fafbfc;
-      transition: all 0.2s;
-      outline: none;
-      resize: vertical;
-    }
-    input[type="text"]:focus, textarea:focus {
-      border-color: #818cf8;
-      background: white;
-      box-shadow: 0 0 0 3px rgba(129,140,248,0.15);
-    }
-    .options {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-    .option-item {
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-      background: #f8fafc;
-      border-radius: 14px;
-      padding: 12px 14px;
-      border: 1.5px solid transparent;
-      transition: 0.2s;
-      cursor: pointer;
-      font-size: 15px;
-    }
-    .option-item:hover { background: #f1f5f9; }
-    .option-item input {
-      margin-top: 2px;
-      accent-color: #4f46e5;
-      width: 18px;
-      height: 18px;
+
+    .cta-banner .cta-icon {
+      font-size: 40px;
       flex-shrink: 0;
-      cursor: pointer;
+      filter: drop-shadow(0 0 10px rgba(0,240,255,0.6));
     }
-    .option-item label { cursor: pointer; flex: 1; color: #334155; }
-    .btn-submit {
-      width: 100%;
-      padding: 16px;
-      background: linear-gradient(135deg, #4f46e5, #7c3aed);
-      color: white;
+
+    .cta-banner .cta-text h3 {
       font-size: 17px;
       font-weight: 700;
-      border: none;
-      border-radius: 16px;
-      margin-top: 20px;
-      cursor: pointer;
-      transition: all 0.2s;
-      letter-spacing: 0.5px;
-      box-shadow: 0 8px 20px rgba(79,70,229,0.25);
+      margin-bottom: 4px;
     }
-    .btn-submit:active { transform: scale(0.97); }
-    .btn-submit:disabled { opacity: 0.6; pointer-events: none; background: #94a3b8; }
-    .btn-copy {
-      width: 100%;
-      padding: 14px;
-      background: #10b981;
-      color: white;
-      font-size: 16px;
-      font-weight: 700;
-      border: none;
-      border-radius: 14px;
-      margin-top: 12px;
-      cursor: pointer;
-      display: none;
+
+    .cta-banner .cta-text p {
+      font-size: 13px;
+      color: #94a3b8;
     }
-    .btn-copy:active { transform: scale(0.97); }
-    .result-box {
-      margin-top: 20px;
-      background: #f0fdf4;
-      border-radius: 16px;
-      padding: 18px;
-      border: 1px solid #bbf7d0;
-      font-size: 14px;
-      color: #166534;
-      display: none;
-      white-space: pre-wrap;
-      word-break: break-word;
+
+    .cta-banner .cta-arrow {
+      margin-left: auto;
+      font-size: 28px;
+      color: #00f0ff;
+      flex-shrink: 0;
+      animation: pulse 1.5s ease infinite;
     }
-    .status-message {
-      display: none;
-      margin-top: 12px;
-      padding: 10px 14px;
-      border-radius: 10px;
-      font-size: 14px;
+
+    @keyframes pulse {
+      0%,100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .section-header .icon {
+      font-size: 22px;
+    }
+
+    .section-header h2 {
+      font-size: 19px;
+      font-weight: 800;
+      background: linear-gradient(135deg, #00f0ff, #a78bfa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: 1px;
+    }
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 30px;
+    }
+
+    .card {
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid rgba(0,240,255,0.2);
+      border-radius: 18px;
+      padding: 18px 14px;
+      text-decoration: none;
+      color: #e2e8f0;
+      transition: all 0.3s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
       text-align: center;
-      font-weight: 500;
+      position: relative;
+      backdrop-filter: blur(10px);
     }
-    .status-success { background: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; }
-    .status-error { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
-    .required-star { color: #ef4444; font-weight: bold; margin-left: 2px; }
-    .guide-box {
-      background: #eff6ff;
-      border: 1px solid #bfdbfe;
-      border-radius: 14px;
-      padding: 16px;
-      margin-bottom: 24px;
+
+    .card:hover {
+      border-color: rgba(0,240,255,0.6);
+      box-shadow: 0 0 25px rgba(0,240,255,0.2), inset 0 0 15px rgba(0,240,255,0.05);
+      transform: translateY(-3px);
+    }
+
+    .card:active {
+      transform: scale(0.95);
+    }
+
+    .card .card-glow {
+      position: absolute;
+      top: 0; left: 20%;
+      width: 60%; height: 2px;
+      background: linear-gradient(90deg, transparent, #00f0ff, transparent);
+      border-radius: 2px;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .card:hover .card-glow { opacity: 1; }
+
+    .card .card-icon {
+      font-size: 34px;
+      margin-bottom: 10px;
+      filter: drop-shadow(0 0 8px rgba(0,240,255,0.4));
+    }
+
+    .card .card-num {
+      font-size: 10px;
+      color: #00f0ff;
+      letter-spacing: 2px;
+      margin-bottom: 4px;
+    }
+
+    .card .card-title {
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .card .card-desc {
+      font-size: 11px;
+      color: #94a3b8;
+      line-height: 1.5;
+    }
+
+    .card.locked {
+      opacity: 0.4;
+      pointer-events: none;
+    }
+
+    .card.locked::after {
+      content: "🔒";
+      position: absolute;
+      top: 10px;
+      right: 12px;
       font-size: 14px;
-      color: #1e40af;
-      line-height: 1.8;
+      opacity: 0.8;
     }
-    .guide-box span { font-weight: 700; }
-    @media (max-width: 480px) {
-      .container { padding: 20px 16px 30px; }
-      .header h1 { font-size: 24px; }
+
+    .contact-bar {
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(0,240,255,0.3);
+      border-radius: 18px;
+      padding: 18px 20px;
+      text-align: center;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 0 20px rgba(0,240,255,0.08);
+    }
+
+    .contact-bar .contact-label {
+      color: #94a3b8;
+      font-size: 13px;
+      margin-bottom: 6px;
+      letter-spacing: 1px;
+    }
+
+    .contact-bar .contact-wx {
+      font-size: 22px;
+      font-weight: 900;
+      background: linear-gradient(135deg, #00f0ff, #fbbf24);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: 2px;
+    }
+
+    .contact-bar .contact-hint {
+      color: #64748b;
+      font-size: 11px;
+      margin-top: 6px;
+    }
+
+    .stats-bar {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      margin-top: 28px;
+      padding: 14px;
+      background: rgba(15, 23, 42, 0.6);
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .stat-item {
+      text-align: center;
+    }
+
+    .stat-item .stat-num {
+      font-size: 18px;
+      font-weight: 800;
+      color: #00f0ff;
+      text-shadow: 0 0 10px rgba(0,240,255,0.4);
+    }
+
+    .stat-item .stat-label {
+      font-size: 10px;
+      color: #64748b;
+      margin-top: 2px;
+      letter-spacing: 1px;
+    }
+
+    .footer {
+      text-align: center;
+      color: #334155;
+      font-size: 11px;
+      margin-top: 20px;
+      letter-spacing: 1px;
+    }
+
+    /* ========== 手机适配 ========== */
+    @media (max-width: 400px) {
+      .hero .logo-text { font-size: 32px; }
+      .hero .sub-brand { font-size: 15px; }
+      .card-grid { gap: 8px; }
+      .card { padding: 14px 10px; }
+      .card .card-icon { font-size: 28px; }
+      .card .card-title { font-size: 13px; }
+      .contact-bar .contact-wx { font-size: 18px; }
+    }
+
+    /* ========== 平板适配 ========== */
+    @media (min-width: 401px) and (max-width: 768px) {
+      .hero .logo-text { font-size: 38px; }
+      .card { padding: 20px 16px; }
+    }
+
+    /* ========== 电脑适配 ========== */
+    @media (min-width: 769px) {
+      .card-grid { gap: 14px; }
+      .card { padding: 24px 18px; transition: all 0.4s; }
+      .card:hover { transform: translateY(-6px); box-shadow: 0 0 35px rgba(0,240,255,0.25); }
     }
   </style>
 </head>
 <body>
-<div class="container">
-  <div class="header">
-    <h1>🎬 AI视频变现学徒</h1>
-    <div class="sub">入学摸底表 · 认真填写，定制你的学习方案</div>
+
+  <canvas class="stars" id="starsCanvas"></canvas>
+
+  <div class="container">
+
+    <!-- 顶部Logo -->
+    <div class="hero">
+      <div class="glitch-wrapper">
+        <span class="logo-text">张 大 业</span>
+      </div>
+      <p class="sub-brand">AI 视 频 变 现 课 程</p>
+      <p class="tagline">▸ 用AI批量生产爆款视频 · 构建自动赚钱系统 ◂</p>
+    </div>
+
+    <div class="neon-line"></div>
+
+    <!-- 摸底表入口 -->
+    <a href="form.html" class="cta-banner">
+      <div class="cta-inner">
+        <span class="cta-icon">📋</span>
+        <span class="cta-text">
+          <h3>🎯 新学员入学摸底</h3>
+          <p>填写你的情况，获取专属学习方案</p>
+        </span>
+        <span class="cta-arrow">▶</span>
+      </div>
+    </a>
+
+    <!-- 学习模块 -->
+    <div class="section-header">
+      <span class="icon">📡</span>
+      <h2>学习模块 · 八大体系</h2>
+    </div>
+
+    <div class="card-grid">
+
+      <a href="business-thinking.html" class="card">
+        <div class="card-glow"></div>
+        <span class="card-num">MODULE 01</span>
+        <span class="card-icon">💰</span>
+        <span class="card-title">商业思维</span>
+        <span class="card-desc">变现底层逻辑<br>建立赚钱认知体系</span>
+      </a>
+
+      <a href="human-nature.html" class="card">
+        <div class="card-glow"></div>
+        <span class="card-num">MODULE 02</span>
+        <span class="card-icon">🧠</span>
+        <span class="card-title">人性弱点</span>
+        <span class="card-desc">洞察用户心理<br>让内容自带钩子</span>
+      </a>
+
+      <a href="algorithm.html" class="card">
+        <div class="card-glow"></div>
+        <span class="card-num">MODULE 03</span>
+        <span class="card-icon">📐</span>
+        <span class="card-title">规则算法</span>
+        <span class="card-desc">平台推流机制<br>破解流量密码</span>
+      </a>
+
+      <a href="product-selection.html" class="card">
+        <div class="card-glow"></div>
+        <span class="card-num">MODULE 04</span>
+        <span class="card-icon">🛒</span>
+        <span class="card-title">带货选品</span>
+        <span class="card-desc">爆款选品技巧<br>提升带货转化率</span>
+      </a>
+
+      <a href="ai-video.html" class="card">
+        <div class="card-glow"></div>
+        <span class="card-num">MODULE 05</span>
+        <span class="card-icon">🤖</span>
+        <span class="card-title">AI视频</span>
+        <span class="card-desc">AI全流程制作<br>日产100条视频</span>
+      </a>
+
+      <a href="video-analysis.html" class="card">
+        <div class="card-glow"></div>
+        <span class="card-num">MODULE 06</span>
+        <span class="card-icon">📊</span>
+        <span class="card-title">视频分析</span>
+        <span class="card-desc">拆解爆款视频<br>找到可复制模板</span>
+      </a>
+
+      <a href="trend.html" class="card">
+        <div class="card-glow"></div>
+        <span class="card-num">MODULE 07</span>
+        <span class="card-icon">📈</span>
+        <span class="card-title">发展趋势</span>
+        <span class="card-desc">AI视频前沿<br>抢占红利窗口期</span>
+      </a>
+
+      <a href="creative.html" class="card">
+        <div class="card-glow"></div>
+        <span class="card-num">MODULE 08</span>
+        <span class="card-icon">💡</span>
+        <span class="card-title">商业创意</span>
+        <span class="card-desc">创新变现模式<br>打造差异化壁垒</span>
+      </a>
+
+    </div>
+
+    <!-- 联系微信 -->
+    <div class="contact-bar">
+      <p class="contact-label">📩 深度带教 · 一对一指导</p>
+      <p class="contact-wx">微信：16500234000</p>
+      <p class="contact-hint">添加备注"AI学习"，优先通过</p>
+    </div>
+
+    <!-- 数据条 -->
+    <div class="stats-bar">
+      <div class="stat-item">
+        <div class="stat-num">8</div>
+        <div class="stat-label">大模块</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">50+</div>
+        <div class="stat-label">实操案例</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">1000+</div>
+        <div class="stat-label">学员见证</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">∞</div>
+        <div class="stat-label">持续更新</div>
+      </div>
+    </div>
+
+    <div class="footer">
+      © 2024 张大业 · AI视频变现 · 微信 16500234000
+    </div>
+
   </div>
 
-  <div class="guide-box">
-    <span>📌 填写说明：</span><br>
-    1. 请认真填写以下所有问题<br>
-    2. 填写完成后点击 <span>"生成档案"</span><br>
-    3. 再点击 <span>"一键复制结果"</span><br>
-    4. <span>粘贴发送给老师</span> 即可完成
-  </div>
+  <script>
+    const canvas = document.getElementById('starsCanvas');
+    const ctx = canvas.getContext('2d');
+    let width, height;
+    let particles = [];
 
-  <!-- 基础画像 -->
-  <div class="section">
-    <div class="section-title"><span class="icon">📋</span> 基础画像</div>
-
-    <div class="field">
-      <label class="q-title">1. 你的昵称/微信号<span class="required-star">*</span></label>
-      <input type="text" id="q1" placeholder="例如：小明 / wxid_abc" required>
-    </div>
-
-    <div class="field">
-      <label class="q-title">2. 你的年龄是？<span class="required-star">*</span></label>
-      <input type="text" id="q_age" placeholder="例如：28" required>
-    </div>
-
-    <div class="field">
-      <label class="q-title">3. 你所在的城市是？<span class="required-star">*</span></label>
-      <input type="text" id="q_city" placeholder="例如：成都" required>
-    </div>
-
-    <div class="field">
-      <label class="q-title">4. 目前的主业状态是？<span class="required-star">*</span></label>
-      <div class="options">
-        <div class="option-item"><input type="radio" name="q2" value="A. 在校学生"><label>A. 在校学生</label></div>
-        <div class="option-item"><input type="radio" name="q2" value="B. 全职上班族（想搞副业）"><label>B. 全职上班族（想搞副业）</label></div>
-        <div class="option-item"><input type="radio" name="q2" value="C. 自由职业/创业者"><label>C. 自由职业/创业者</label></div>
-        <div class="option-item"><input type="radio" name="q2" value="D. 待业中，急需赚钱"><label>D. 待业中，急需赚钱</label></div>
-      </div>
-    </div>
-
-    <div class="field">
-      <label class="q-title">5. 你目前的月均收入大概在？<span class="required-star">*</span></label>
-      <div class="options">
-        <div class="option-item"><input type="radio" name="q3" value="A. 暂无稳定收入"><label>A. 暂无稳定收入</label></div>
-        <div class="option-item"><input type="radio" name="q3" value="B. 3000元以下"><label>B. 3000元以下</label></div>
-        <div class="option-item"><input type="radio" name="q3" value="C. 3000-8000元"><label>C. 3000-8000元</label></div>
-        <div class="option-item"><input type="radio" name="q3" value="D. 8000-15000元"><label>D. 8000-15000元</label></div>
-        <div class="option-item"><input type="radio" name="q3" value="E. 15000元以上"><label>E. 15000元以上</label></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- 技能与设备 -->
-  <div class="section">
-    <div class="section-title"><span class="icon">🛠️</span> 技能与设备</div>
-
-    <div class="field">
-      <label class="q-title">6. 你对AI工具的熟悉程度是？<span class="required-star">*</span></label>
-      <div class="options">
-        <div class="option-item"><input type="radio" name="q4" value="A. 完全小白，听说过但没用过"><label>A. 完全小白，听说过但没用过</label></div>
-        <div class="option-item"><input type="radio" name="q4" value="B. 用过ChatGPT等文字工具，没做过视频"><label>B. 用过ChatGPT等文字工具，没做过视频</label></div>
-        <div class="option-item"><input type="radio" name="q4" value="C. 用过AI绘画/生视频（如Midjourney、Sora类）"><label>C. 用过AI绘画/生视频（如Midjourney、Sora类）</label></div>
-        <div class="option-item"><input type="radio" name="q4" value="D. 已经能熟练用AI产出完整视频"><label>D. 已经能熟练用AI产出完整视频</label></div>
-      </div>
-    </div>
-
-    <div class="field">
-      <label class="q-title">7. 你现在手头有什么设备？（多选）<span class="required-star">*</span></label>
-      <div class="options">
-        <div class="option-item"><input type="checkbox" name="q5" value="一台普通手机"><label>一台普通手机</label></div>
-        <div class="option-item"><input type="checkbox" name="q5" value="旗舰手机或平板"><label>旗舰手机或平板</label></div>
-        <div class="option-item"><input type="checkbox" name="q5" value="配置还可以的电脑"><label>配置还可以的电脑</label></div>
-        <div class="option-item"><input type="checkbox" name="q5" value="高性能电脑（显卡不错）"><label>高性能电脑（显卡不错）</label></div>
-      </div>
-    </div>
-
-    <div class="field">
-      <label class="q-title">8. 你做过最接近"视频变现"的一件事是？<span class="required-star">*</span></label>
-      <div class="options">
-        <div class="option-item"><input type="radio" name="q6" value="A. 完全没做过，零基础"><label>A. 完全没做过，零基础</label></div>
-        <div class="option-item"><input type="radio" name="q6" value="B. 发过短视频，没收入"><label>B. 发过短视频，没收入</label></div>
-        <div class="option-item"><input type="radio" name="q6" value="C. 尝试过剪映/PR，偶尔接点小单"><label>C. 尝试过剪映/PR，偶尔接点小单</label></div>
-        <div class="option-item"><input type="radio" name="q6" value="D. 靠视频赚到过钱，想用AI放大"><label>D. 靠视频赚到过钱，想用AI放大</label></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- 学习动机与执行 -->
-  <div class="section">
-    <div class="section-title"><span class="icon">🎯</span> 学习动机与执行</div>
-
-    <div class="field">
-      <label class="q-title">9. 你为什么会想学"AI视频变现"？（多选）<span class="required-star">*</span></label>
-      <div class="options">
-        <div class="option-item"><input type="checkbox" name="q7" value="看好AI趋势，想提前占个坑"><label>看好AI趋势，想提前占个坑</label></div>
-        <div class="option-item"><input type="checkbox" name="q7" value="想快速搞钱，最好这个月就见收益"><label>想快速搞钱，最好这个月就见收益</label></div>
-        <div class="option-item"><input type="checkbox" name="q7" value="有一份空闲时间，想做个副业"><label>有一份空闲时间，想做个副业</label></div>
-        <div class="option-item"><input type="checkbox" name="q7" value="想系统学会一个技能，长期吃这碗饭"><label>想系统学会一个技能，长期吃这碗饭</label></div>
-        <div class="option-item"><input type="checkbox" name="q7" value="看别人赚到了，我来试试水"><label>看别人赚到了，我来试试水</label></div>
-      </div>
-    </div>
-
-    <div class="field">
-      <label class="q-title">10. 你打算每天有多少时间投入到学习和实操上？<span class="required-star">*</span></label>
-      <div class="options">
-        <div class="option-item"><input type="radio" name="q8" value="A. 不确定，有空就弄"><label>A. 不确定，有空就弄</label></div>
-        <div class="option-item"><input type="radio" name="q8" value="B. 半小时以内"><label>B. 半小时以内</label></div>
-        <div class="option-item"><input type="radio" name="q8" value="C. 1-2小时"><label>C. 1-2小时</label></div>
-        <div class="option-item"><input type="radio" name="q8" value="D. 2小时以上，能坚持高强度"><label>D. 2小时以上，能坚持高强度</label></div>
-      </div>
-    </div>
-
-    <div class="field">
-      <label class="q-title">11. 如果让你独立完成一个视频，你当下最怕什么？<span class="required-star">*</span></label>
-      <div class="options">
-        <div class="option-item"><input type="radio" name="q9" value="A. 找不到选题，脑子空白"><label>A. 找不到选题，脑子空白</label></div>
-        <div class="option-item"><input type="radio" name="q9" value="B. 操作太复杂，没人一步步带就会卡住"><label>B. 操作太复杂，没人一步步带就会卡住</label></div>
-        <div class="option-item"><input type="radio" name="q9" value="C. 做出来没流量，不知道怎么变现"><label>C. 做出来没流量，不知道怎么变现</label></div>
-        <div class="option-item"><input type="radio" name="q9" value="D. 不怕，愿意磨，缺的是变现闭环"><label>D. 不怕，愿意磨，缺的是变现闭环</label></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- 价值认知与付费意愿 -->
-  <div class="section">
-    <div class="section-title"><span class="icon">💡</span> 价值认知与学习偏好</div>
-
-    <div class="field">
-      <label class="q-title">12. 以前为了学一个能赚钱的技能，你做过最大的一笔投入是？<span class="required-star">*</span></label>
-      <div class="options">
-        <div class="option-item"><input type="radio" name="q10" value="A. 基本没花过钱，习惯全网找免费资源"><label>A. 基本没花过钱，习惯全网找免费资源</label></div>
-        <div class="option-item"><input type="radio" name="q10" value="B. 花过几十上百块买过课，但没学完"><label>B. 花过几十上百块买过课，但没学完</label></div>
-        <div class="option-item"><input type="radio" name="q10" value="C. 花过几百到上千参加过训练营/社群"><label>C. 花过几百到上千参加过训练营/社群</label></div>
-        <div class="option-item"><input type="radio" name="q10" value="D. 投入过数千元以上，而且觉得值"><label>D. 投入过数千元以上，而且觉得值</label></div>
-      </div>
-    </div>
-
-    <div class="field">
-      <label class="q-title">13. 你觉得"AI视频变现"这个技能，哪点最吸引你？<span class="required-star">*</span></label>
-      <div class="options">
-        <div class="option-item"><input type="radio" name="q11" value="A. 不用露脸、不用拍摄，门槛极低"><label>A. 不用露脸、不用拍摄，门槛极低</label></div>
-        <div class="option-item"><input type="radio" name="q11" value="B. 可以用AI批量化生产，放大收益"><label>B. 可以用AI批量化生产，放大收益</label></div>
-        <div class="option-item"><input type="radio" name="q11" value="C. 技术新，竞争小，正好有红利"><label>C. 技术新，竞争小，正好有红利</label></div>
-        <div class="option-item"><input type="radio" name="q11" value="D. 能帮我解决现在项目里卡脖子的技术问题"><label>D. 能帮我解决现在项目里卡脖子的技术问题</label></div>
-      </div>
-    </div>
-
-    <div class="field">
-      <label class="q-title">14. 假设有一个深度带教能带你拿到结果，你更倾向哪种模式？<span class="required-star">*</span></label>
-      <div class="options">
-        <div class="option-item"><input type="radio" name="q12" value="A. 有免费群或公开课，靠自己去问去悟"><label>A. 有免费群或公开课，靠自己去问去悟</label></div>
-        <div class="option-item"><input type="radio" name="q12" value="B. 付一个自己能承受的小钱，买断靠谱的录播课"><label>B. 付一个自己能承受的小钱，买断靠谱的录播课</label></div>
-        <div class="option-item"><input type="radio" name="q12" value="C. 愿意付费进入有老师1对1答疑的社群，少走弯路"><label>C. 愿意付费进入有老师1对1答疑的社群，少走弯路</label></div>
-        <div class="option-item"><input type="radio" name="q12" value="D. 只要真能出结果，哪怕分期也愿意投入，时间成本更贵"><label>D. 只要真能出结果，哪怕分期也愿意投入，时间成本更贵</label></div>
-      </div>
-    </div>
-
-    <div class="field">
-      <label class="q-title">15. 如果一个你比较信任的人，给你推一个靠谱的AI视频变现付费服务，你第一反应是？<span class="required-star">*</span></label>
-      <div class="options">
-        <div class="option-item"><input type="radio" name="q13" value="A. 先看看多少钱，太贵就找找有没有免费渠道"><label>A. 先看看多少钱，太贵就找找有没有免费渠道</label></div>
-        <div class="option-item"><input type="radio" name="q13" value="B. 想办法找找拼课、盗版或者几个人凑一份"><label>B. 想办法找找拼课、盗版或者几个人凑一份</label></div>
-        <div class="option-item"><input type="radio" name="q13" value="C. 先观望，等看到别人真有结果再跟"><label>C. 先观望，等看到别人真有结果再跟</label></div>
-        <div class="option-item"><input type="radio" name="q13" value="D. 了解价值后，觉得对自己有用就会考虑付费"><label>D. 了解价值后，觉得对自己有用就会考虑付费</label></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- 开放问题 -->
-  <div class="section">
-    <div class="section-title"><span class="icon">✍️</span> 最后一步</div>
-    <div class="field">
-      <label class="q-title">16. 用一句话告诉我，你的困境或最想达到的目标是什么？<span class="required-star">*</span></label>
-      <textarea id="q14" rows="3" placeholder="例如：想每月多赚3000块，摆脱死工资..."></textarea>
-    </div>
-  </div>
-
-  <button id="submitBtn" class="btn-submit" onclick="generateResult()">📋 生成档案</button>
-  <button id="copyBtn" class="btn-copy" onclick="copyResult()">📋 一键复制结果，发送给老师</button>
-  
-  <div id="statusMessage" class="status-message"></div>
-  <div id="resultBox" class="result-box"></div>
-</div>
-
-<script>
-  let resultText = '';
-
-  function getRadio(name) {
-    const r = document.querySelector(`input[name="${name}"]:checked`);
-    return r ? r.value : '';
-  }
-
-  function getCheckbox(name) {
-    const c = document.querySelectorAll(`input[name="${name}"]:checked`);
-    return Array.from(c).map(x => x.value).join('、') || '';
-  }
-
-  function generateResult() {
-    const q1 = document.getElementById('q1').value.trim();
-    const qAge = document.getElementById('q_age').value.trim();
-    const qCity = document.getElementById('q_city').value.trim();
-    const q14 = document.getElementById('q14').value.trim();
-
-    if (!q1) return show('请填写昵称/微信号', 'error');
-    if (!qAge) return show('请填写年龄', 'error');
-    if (!qCity) return show('请填写城市', 'error');
-
-    const radios = ['q2','q3','q4','q6','q8','q9','q10','q11','q12','q13'];
-    for (let n of radios) {
-      if (!getRadio(n)) return show('请完成所有单选题', 'error');
+    function resize() {
+      width = window.innerWidth;
+      height = window.innerHeight;
+      canvas.width = width;
+      canvas.height = height;
     }
-    if (!getCheckbox('q5')) return show('请至少选一项设备', 'error');
-    if (!getCheckbox('q7')) return show('请至少选一项学习动机', 'error');
-    if (!q14) return show('请填写最后一题', 'error');
 
-    resultText = `--- AI视频学徒摸底档案 ---
-昵称/微信号：${q1}
-年龄：${qAge}
-城市：${qCity}
-主业状态：${getRadio('q2')}
-月均收入：${getRadio('q3')}
-AI熟悉度：${getRadio('q4')}
-现有设备：${getCheckbox('q5')}
-视频变现经历：${getRadio('q6')}
-学习动机：${getCheckbox('q7')}
-每日投入时间：${getRadio('q8')}
-最大障碍：${getRadio('q9')}
-过往技能投入：${getRadio('q10')}
-最吸引点：${getRadio('q11')}
-带教偏好：${getRadio('q12')}
-付费推荐反应：${getRadio('q13')}
-一句话目标：${q14}`;
+    resize();
+    window.addEventListener('resize', resize);
 
-    document.getElementById('resultBox').textContent = resultText;
-    document.getElementById('resultBox').style.display = 'block';
-    document.getElementById('copyBtn').style.display = 'block';
-    document.getElementById('submitBtn').textContent = '✅ 已生成';
-
-    show('档案已生成，点击下方按钮复制发送给老师', 'success');
-    document.getElementById('resultBox').scrollIntoView({ behavior: 'smooth', block: 'center' });
-  }
-
-  async function copyResult() {
-    try {
-      await navigator.clipboard.writeText(resultText);
-      show('✅ 已复制！请粘贴发送给老师', 'success');
-    } catch(e) {
-      const box = document.getElementById('resultBox');
-      const range = document.createRange();
-      range.selectNode(box);
-      window.getSelection().removeAllRanges();
-      window.getSelection().addRange(range);
-      show('请手动复制上方文本框内容', 'error');
+    class Particle {
+      constructor() {
+        this.reset();
+      }
+      reset() {
+        this.x = Math.random() * width;
+        this.y = Math.random() * height;
+        this.size = Math.random() * 1.5 + 0.5;
+        this.speedX = (Math.random() - 0.5) * 0.3;
+        this.speedY = (Math.random() - 0.5) * 0.3;
+        this.opacity = Math.random() * 0.6 + 0.2;
+        this.fadeSpeed = Math.random() * 0.005 + 0.002;
+        this.fading = Math.random() > 0.5;
+      }
+      update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+        if (this.fading) {
+          this.opacity -= this.fadeSpeed;
+          if (this.opacity <= 0.1) this.fading = false;
+        } else {
+          this.opacity += this.fadeSpeed;
+          if (this.opacity >= 0.7) this.fading = true;
+        }
+        if (this.x < -10 || this.x > width + 10 || this.y < -10 || this.y > height + 10) {
+          this.reset();
+          this.opacity = Math.random() * 0.5;
+        }
+      }
+      draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(0, 240, 255, ${this.opacity})`;
+        ctx.fill();
+      }
     }
-  }
 
-  function show(msg, type) {
-    const el = document.getElementById('statusMessage');
-    el.textContent = msg;
-    el.className = 'status-message ' + (type === 'error' ? 'status-error' : 'status-success');
-    el.style.display = 'block';
-    if (type === 'success') setTimeout(() => el.style.display = 'none', 4000);
-  }
-</script>
+    for (let i = 0; i < 150; i++) {
+      particles.push(new Particle());
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, width, height);
+      particles.forEach(p => {
+        p.update();
+        p.draw();
+      });
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x;
+          const dy = particles[i].y - particles[j].y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 80) {
+            ctx.beginPath();
+            ctx.moveTo(particles[i].x, particles[i].y);
+            ctx.lineTo(particles[j].x, particles[j].y);
+            ctx.strokeStyle = `rgba(0, 240, 255, ${0.06 * (1 - dist / 80)})`;
+            ctx.lineWidth = 0.5;
+            ctx.stroke();
+          }
+        }
+      }
+      requestAnimationFrame(animate);
+    }
+    animate();
+  </script>
+
 </body>
 </html>
