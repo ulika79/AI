@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>入学摸底表 · 张大业AI视频变现</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #000;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+      color: #e2e8f0;
+    }
+
+    /* ========== 星空背景 ========== */
+    .stars {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ========== 顶部导航栏 ========== */
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(0,0,0,0.85);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(0,240,255,0.2);
+      padding: 0 10px;
+    }
+    .navbar-inner {
+      max-width: 680px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      height: 50px;
+      gap: 6px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .navbar-inner::-webkit-scrollbar { display: none; }
+
+    .nav-home {
+      flex-shrink: 0;
+      text-decoration: none;
+      color: #00f0ff;
+      font-weight: 700;
+      font-size: 15px;
+      padding: 6px 12px;
+      border: 1px solid rgba(0,240,255,0.3);
+      border-radius: 20px;
+      white-space: nowrap;
+      transition: all 0.2s;
+      margin-right: 4px;
+    }
+    .nav-home:active { background: rgba(0,240,255,0.15); }
+
+    .nav-link {
+      flex-shrink: 0;
+      text-decoration: none;
+      color: #94a3b8;
+      font-size: 12px;
+      padding: 6px 10px;
+      border-radius: 14px;
+      white-space: nowrap;
+      transition: all 0.2s;
+      border: 1px solid transparent;
+    }
+    .nav-link:hover { color: #00f0ff; }
+    .nav-link.active {
+      color: #00f0ff;
+      border-color: rgba(0,240,255,0.3);
+      background: rgba(0,240,255,0.08);
+    }
+    .nav-link:active { background: rgba(0,240,255,0.1); }
+
+    .nav-divider {
+      width: 1px;
+      height: 16px;
+      background: rgba(255,255,255,0.1);
+      flex-shrink: 0;
+      margin: 0 2px;
+    }
+
+    /* ========== 主容器 ========== */
+    .container {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 20px 15px 60px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ========== 页面标题 ========== */
+    .page-header {
+      text-align: center;
+      padding: 20px 10px 10px;
+    }
+    .page-header h1 {
+      font-size: 26px;
+      font-weight: 800;
+      background: linear-gradient(135deg, #00f0ff, #a78bfa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: 2px;
+    }
+    .page-header .sub {
+      color: #94a3b8;
+      font-size: 13px;
+      margin-top: 6px;
+    }
+    .neon-line {
+      width: 50%;
+      height: 2px;
+      margin: 16px auto 24px;
+      background: linear-gradient(90deg, transparent, #00f0ff, #7c3aed, #00f0ff, transparent);
+    }
+
+    /* ========== 表单样式 ========== */
+    .section {
+      margin-bottom: 28px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      padding-bottom: 8px;
+    }
+    .section-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #00f0ff;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-shadow: 0 0 10px rgba(0,240,255,0.3);
+    }
+    .section-title span.icon { font-size: 20px; }
+    .field { margin-bottom: 22px; }
+    label.q-title {
+      display: block;
+      font-weight: 600;
+      font-size: 15px;
+      margin-bottom: 10px;
+      color: #e2e8f0;
+    }
+    input[type="text"], textarea {
+      width: 100%;
+      padding: 14px 16px;
+      border: 1.5px solid rgba(0,240,255,0.2);
+      border-radius: 14px;
+      font-size: 15px;
+      background: rgba(15,23,42,0.8);
+      color: #e2e8f0;
+      transition: all 0.2s;
+      outline: none;
+      resize: vertical;
+    }
+    input[type="text"]:focus, textarea:focus {
+      border-color: #00f0ff;
+      box-shadow: 0 0 15px rgba(0,240,255,0.15);
+    }
+    input[type="text"]::placeholder, textarea::placeholder {
+      color: #475569;
+    }
+    .options {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .option-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      background: rgba(15,23,42,0.6);
+      border-radius: 14px;
+      padding: 12px 14px;
+      border: 1px solid rgba(255,255,255,0.06);
+      transition: 0.2s;
+      cursor: pointer;
+      font-size: 15px;
+    }
+    .option-item:hover { background: rgba(0,240,255,0.08); border-color: rgba(0,240,255,0.2); }
+    .option-item input {
+      margin-top: 2px;
+      accent-color: #00f0ff;
+      width: 18px; height: 18px;
+      flex-shrink: 0;
+      cursor: pointer;
+    }
+    .option-item label { cursor: pointer; flex: 1; color: #cbd5e1; }
+
+    .required-star { color: #f87171; font-weight: bold; margin-left: 2px; }
+
+    /* ========== 按钮 ========== */
+    .btn-submit {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, #4f46e5, #7c3aed);
+      color: white;
+      font-size: 17px;
+      font-weight: 700;
+      border: none;
+      border-radius: 16px;
+      margin-top: 20px;
+      cursor: pointer;
+      transition: all 0.2s;
+      letter-spacing: 0.5px;
+      box-shadow: 0 8px 25px rgba(124,58,237,0.3);
+    }
+    .btn-submit:active { transform: scale(0.97); }
+    .btn-submit:disabled { opacity: 0.5; pointer-events: none; background: #475569; }
+
+    .btn-copy {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, #059669, #10b981);
+      color: white;
+      font-size: 16px;
+      font-weight: 700;
+      border: none;
+      border-radius: 14px;
+      margin-top: 12px;
+      cursor: pointer;
+      display: none;
+    }
+    .btn-copy:active { transform: scale(0.97); }
+
+    .result-box {
+      margin-top: 20px;
+      background: rgba(0,240,255,0.08);
+      border-radius: 16px;
+      padding: 18px;
+      border: 1px solid rgba(0,240,255,0.2);
+      font-size: 14px;
+      color: #cbd5e1;
+      display: none;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .status-message {
+      display: none;
+      margin-top: 12px;
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-size: 14px;
+      text-align: center;
+      font-weight: 500;
+    }
+    .status-success { background: rgba(16,185,129,0.2); color: #6ee7b7; border: 1px solid rgba(16,185,129,0.3); }
+    .status-error { background: rgba(239,68,68,0.2); color: #fca5a5; border: 1px solid rgba(239,68,68,0.3); }
+
+    .wechat-tip {
+      background: rgba(251,191,36,0.12);
+      border: 1px solid rgba(251,191,36,0.3);
+      border-radius: 10px;
+      padding: 12px 16px;
+      margin-top: 16px;
+      text-align: center;
+      font-size: 15px;
+      font-weight: 700;
+      color: #fbbf24;
+      display: none;
+    }
+
+    /* ========== 底部微信 ========== */
+    .contact-bar {
+      margin-top: 32px;
+      background: rgba(15,23,42,0.9);
+      border: 1px solid rgba(0,240,255,0.2);
+      border-radius: 18px;
+      padding: 18px 20px;
+      text-align: center;
+      backdrop-filter: blur(10px);
+    }
+    .contact-bar .contact-label {
+      color: #94a3b8;
+      font-size: 13px;
+      margin-bottom: 6px;
+      letter-spacing: 1px;
+    }
+    .contact-bar .contact-wx {
+      font-size: 20px;
+      font-weight: 900;
+      background: linear-gradient(135deg, #00f0ff, #fbbf24);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: 2px;
+    }
+    .contact-bar .contact-hint {
+      color: #64748b;
+      font-size: 11px;
+      margin-top: 6px;
+    }
+    .footer {
+      text-align: center;
+      color: #334155;
+      font-size: 11px;
+      margin-top: 20px;
+      letter-spacing: 1px;
+    }
+
+    /* ========== 适配 ========== */
+    @media (max-width: 400px) {
+      .page-header h1 { font-size: 22px; }
+      .nav-link { font-size: 11px; padding: 5px 8px; }
+      .nav-home { font-size: 13px; padding: 5px 10px; }
+      .navbar-inner { height: 44px; }
+    }
+    @media (min-width: 769px) {
+      .option-item { padding: 14px 18px; }
+    }
+  </style>
+</head>
+<body>
+
+  <canvas class="stars" id="starsCanvas"></canvas>
+
+  <!-- ==================== 导航栏 ==================== -->
+  <nav class="navbar">
+    <div class="navbar-inner">
+      <a href="index.html" class="nav-home">🏠 主页</a>
+      <span class="nav-divider"></span>
+      <a href="business-thinking.html" class="nav-link">💰商业思维</a>
+      <a href="human-nature.html" class="nav-link">🧠人性弱点</a>
+      <a href="algorithm.html" class="nav-link">📐规则算法</a>
+      <a href="product-selection.html" class="nav-link">🛒带货选品</a>
+      <a href="ai-video.html" class="nav-link">🤖AI视频</a>
+      <a href="video-analysis.html" class="nav-link">📊视频分析</a>
+      <a href="trend.html" class="nav-link">📈发展趋势</a>
+      <a href="creative.html" class="nav-link">💡商业创意</a>
+    </div>
+  </nav>
+
+  <div class="container">
+
+    <!-- 页面标题 -->
+    <div class="page-header">
+      <h1>📋 入学摸底表</h1>
+      <p class="sub">认真填写，为你定制专属学习方案</p>
+    </div>
+    <div class="neon-line"></div>
+
+    <!-- 基础画像 -->
+    <div class="section">
+      <div class="section-title"><span class="icon">📋</span> 基础画像</div>
+
+      <div class="field">
+        <label class="q-title">1. 你的昵称/微信号<span class="required-star">*</span></label>
+        <input type="text" id="q1" placeholder="例如：小明 / wxid_abc" required>
+      </div>
+
+      <div class="field">
+        <label class="q-title">2. 你的年龄是？<span class="required-star">*</span></label>
+        <input type="text" id="q_age" placeholder="例如：28" required>
+      </div>
+
+      <div class="field">
+        <label class="q-title">3. 你所在的城市是？<span class="required-star">*</span></label>
+        <input type="text" id="q_city" placeholder="例如：成都" required>
+      </div>
+
+      <div class="field">
+        <label class="q-title">4. 目前的主业状态是？<span class="required-star">*</span></label>
+        <div class="options">
+          <div class="option-item"><input type="radio" name="q2" value="A. 在校学生"><label>A. 在校学生</label></div>
+          <div class="option-item"><input type="radio" name="q2" value="B. 全职上班族（想搞副业）"><label>B. 全职上班族（想搞副业）</label></div>
+          <div class="option-item"><input type="radio" name="q2" value="C. 自由职业/创业者"><label>C. 自由职业/创业者</label></div>
+          <div class="option-item"><input type="radio" name="q2" value="D. 待业中，急需赚钱"><label>D. 待业中，急需赚钱</label></div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="q-title">5. 你目前的月均收入大概在？<span class="required-star">*</span></label>
+        <div class="options">
+          <div class="option-item"><input type="radio" name="q3" value="A. 暂无稳定收入"><label>A. 暂无稳定收入</label></div>
+          <div class="option-item"><input type="radio" name="q3" value="B. 3000元以下"><label>B. 3000元以下</label></div>
+          <div class="option-item"><input type="radio" name="q3" value="C. 3000-8000元"><label>C. 3000-8000元</label></div>
+          <div class="option-item"><input type="radio" name="q3" value="D. 8000-15000元"><label>D. 8000-15000元</label></div>
+          <div class="option-item"><input type="radio" name="q3" value="E. 15000元以上"><label>E. 15000元以上</label></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 技能与设备 -->
+    <div class="section">
+      <div class="section-title"><span class="icon">🛠️</span> 技能与设备</div>
+
+      <div class="field">
+        <label class="q-title">6. 你对AI工具的熟悉程度是？<span class="required-star">*</span></label>
+        <div class="options">
+          <div class="option-item"><input type="radio" name="q4" value="A. 完全小白，听说过但没用过"><label>A. 完全小白，听说过但没用过</label></div>
+          <div class="option-item"><input type="radio" name="q4" value="B. 用过ChatGPT等文字工具，没做过视频"><label>B. 用过ChatGPT等文字工具，没做过视频</label></div>
+          <div class="option-item"><input type="radio" name="q4" value="C. 用过AI绘画/生视频"><label>C. 用过AI绘画/生视频（如Midjourney、Sora类）</label></div>
+          <div class="option-item"><input type="radio" name="q4" value="D. 已经能熟练用AI产出完整视频"><label>D. 已经能熟练用AI产出完整视频</label></div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="q-title">7. 你现在手头有什么设备？（多选）<span class="required-star">*</span></label>
+        <div class="options">
+          <div class="option-item"><input type="checkbox" name="q5" value="一台普通手机"><label>一台普通手机</label></div>
+          <div class="option-item"><input type="checkbox" name="q5" value="旗舰手机或平板"><label>旗舰手机或平板</label></div>
+          <div class="option-item"><input type="checkbox" name="q5" value="配置还可以的电脑"><label>配置还可以的电脑</label></div>
+          <div class="option-item"><input type="checkbox" name="q5" value="高性能电脑（显卡不错）"><label>高性能电脑（显卡不错）</label></div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="q-title">8. 你做过最接近"视频变现"的一件事是？<span class="required-star">*</span></label>
+        <div class="options">
+          <div class="option-item"><input type="radio" name="q6" value="A. 完全没做过，零基础"><label>A. 完全没做过，零基础</label></div>
+          <div class="option-item"><input type="radio" name="q6" value="B. 发过短视频，没收入"><label>B. 发过短视频，没收入</label></div>
+          <div class="option-item"><input type="radio" name="q6" value="C. 尝试过剪映/PR，偶尔接点小单"><label>C. 尝试过剪映/PR，偶尔接点小单</label></div>
+          <div class="option-item"><input type="radio" name="q6" value="D. 靠视频赚到过钱，想用AI放大"><label>D. 靠视频赚到过钱，想用AI放大</label></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 学习动机与执行 -->
+    <div class="section">
+      <div class="section-title"><span class="icon">🎯</span> 学习动机与执行</div>
+
+      <div class="field">
+        <label class="q-title">9. 你为什么会想学"AI视频变现"？（多选）<span class="required-star">*</span></label>
+        <div class="options">
+          <div class="option-item"><input type="checkbox" name="q7" value="看好AI趋势，想提前占个坑"><label>看好AI趋势，想提前占个坑</label></div>
+          <div class="option-item"><input type="checkbox" name="q7" value="想快速搞钱，最好这个月就见收益"><label>想快速搞钱，最好这个月就见收益</label></div>
+          <div class="option-item"><input type="checkbox" name="q7" value="有一份空闲时间，想做个副业"><label>有一份空闲时间，想做个副业</label></div>
+          <div class="option-item"><input type="checkbox" name="q7" value="想系统学会一个技能，长期吃这碗饭"><label>想系统学会一个技能，长期吃这碗饭</label></div>
+          <div class="option-item"><input type="checkbox" name="q7" value="看别人赚到了，我来试试水"><label>看别人赚到了，我来试试水</label></div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="q-title">10. 你打算每天有多少时间投入？<span class="required-star">*</span></label>
+        <div class="options">
+          <div class="option-item"><input type="radio" name="q8" value="A. 不确定，有空就弄"><label>A. 不确定，有空就弄</label></div>
+          <div class="option-item"><input type="radio" name="q8" value="B. 半小时以内"><label>B. 半小时以内</label></div>
+          <div class="option-item"><input type="radio" name="q8" value="C. 1-2小时"><label>C. 1-2小时</label></div>
+          <div class="option-item"><input type="radio" name="q8" value="D. 2小时以上，能坚持高强度"><label>D. 2小时以上，能坚持高强度</label></div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="q-title">11. 独立完成一个视频，你最怕什么？<span class="required-star">*</span></label>
+        <div class="options">
+          <div class="option-item"><input type="radio" name="q9" value="A. 找不到选题，脑子空白"><label>A. 找不到选题，脑子空白</label></div>
+          <div class="option-item"><input type="radio" name="q9" value="B. 操作太复杂，没人一步步带就会卡住"><label>B. 操作太复杂，没人带就卡住</label></div>
+          <div class="option-item"><input type="radio" name="q9" value="C. 做出来没流量，不知道怎么变现"><label>C. 做出来没流量，不知道怎么变现</label></div>
+          <div class="option-item"><input type="radio" name="q9" value="D. 不怕，愿意磨，缺的是变现闭环"><label>D. 不怕，愿意磨，缺的是变现闭环</label></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 价值认知 -->
+    <div class="section">
+      <div class="section-title"><span class="icon">💡</span> 价值认知与学习偏好</div>
+
+      <div class="field">
+        <label class="q-title">12. 为学一个赚钱技能，你最大一笔投入是？<span class="required-star">*</span></label>
+        <div class="options">
+          <div class="option-item"><input type="radio" name="q10" value="A. 基本没花过钱，习惯全网找免费资源"><label>A. 基本没花过钱，习惯找免费资源</label></div>
+          <div class="option-item"><input type="radio" name="q10" value="B. 花过几十上百块买过课，但没学完"><label>B. 花过几十上百块，没学完</label></div>
+          <div class="option-item"><input type="radio" name="q10" value="C. 花过几百到上千参加过训练营/社群"><label>C. 花过几百到上千参加训练营</label></div>
+          <div class="option-item"><input type="radio" name="q10" value="D. 投入过数千元以上，而且觉得值"><label>D. 投入过数千元，而且觉得值</label></div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="q-title">13. "AI视频变现"最吸引你的是？<span class="required-star">*</span></label>
+        <div class="options">
+          <div class="option-item"><input type="radio" name="q11" value="A. 不用露脸、不用拍摄，门槛极低"><label>A. 不用露脸、不用拍摄，门槛极低</label></div>
+          <div class="option-item"><input type="radio" name="q11" value="B. 可以用AI批量化生产，放大收益"><label>B. AI批量化生产，放大收益</label></div>
+          <div class="option-item"><input type="radio" name="q11" value="C. 技术新，竞争小，正好有红利"><label>C. 技术新，竞争小，正好有红利</label></div>
+          <div class="option-item"><input type="radio" name="q11" value="D. 能帮我解决项目里卡脖子的技术问题"><label>D. 解决项目里卡脖子的技术问题</label></div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="q-title">14. 深度带教，你倾向哪种模式？<span class="required-star">*</span></label>
+        <div class="options">
+          <div class="option-item"><input type="radio" name="q12" value="A. 免费群或公开课，自己悟"><label>A. 免费群或公开课，自己悟</label></div>
+          <div class="option-item"><input type="radio" name="q12" value="B. 付小钱买断录播课"><label>B. 付小钱买断录播课</label></div>
+          <div class="option-item"><input type="radio" name="q12" value="C. 付费进1对1答疑社群"><label>C. 付费进1对1答疑社群，少走弯路</label></div>
+          <div class="option-item"><input type="radio" name="q12" value="D. 只要出结果，分期也愿意"><label>D. 只要出结果，分期也愿意投入</label></div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="q-title">15. 有人推荐靠谱AI视频付费服务，你第一反应？<span class="required-star">*</span></label>
+        <div class="options">
+          <div class="option-item"><input type="radio" name="q13" value="A. 先看价格，太贵找免费渠道"><label>A. 先看价格，太贵找免费渠道</label></div>
+          <div class="option-item"><input type="radio" name="q13" value="B. 找拼课、盗版或凑份子"><label>B. 找拼课、盗版或凑份子</label></div>
+          <div class="option-item"><input type="radio" name="q13" value="C. 先观望，别人有结果再跟"><label>C. 先观望，别人有结果再跟</label></div>
+          <div class="option-item"><input type="radio" name="q13" value="D. 了解价值后，有用就付费"><label>D. 了解价值后，有用就付费</label></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 开放问题 -->
+    <div class="section">
+      <div class="section-title"><span class="icon">✍️</span> 最后一步</div>
+      <div class="field">
+        <label class="q-title">16. 你的困境或最想达到的目标？<span class="required-star">*</span></label>
+        <textarea id="q14" rows="3" placeholder="例如：想每月多赚3000块，摆脱死工资..."></textarea>
+      </div>
+    </div>
+
+    <button id="submitBtn" class="btn-submit" onclick="generateResult()">📋 生成档案</button>
+    <button id="copyBtn" class="btn-copy" onclick="copyResult()">📋 一键复制结果，发送给老师</button>
+
+    <div class="wechat-tip" id="wechatTip">
+      💬 请将复制的内容发送至微信：<strong>16500234000</strong>
+    </div>
+
+    <div id="statusMessage" class="status-message"></div>
+    <div id="resultBox" class="result-box"></div>
+
+    <!-- 底部微信 -->
+    <div class="contact-bar">
+      <p class="contact-label">📩 深度带教 · 一对一指导</p>
+      <p class="contact-wx">微信：16500234000</p>
+      <p class="contact-hint">添加备注"AI学习"，优先通过</p>
+    </div>
+    <div class="footer">
+      © 2024 张大业 · AI视频变现 · 微信 16500234000
+    </div>
+
+  </div>
+
+  <!-- ==================== 脚本 ==================== -->
+  <script>
+    // 星空背景
+    const canvas = document.getElementById('starsCanvas');
+    const ctx = canvas.getContext('2d');
+    let width, height, particles = [];
+    function resize() {
+      width = window.innerWidth;
+      height = window.innerHeight;
+      canvas.width = width;
+      canvas.height = height;
+    }
+    resize();
+    window.addEventListener('resize', resize);
+    class Particle {
+      constructor() { this.reset(); }
+      reset() {
+        this.x = Math.random() * width;
+        this.y = Math.random() * height;
+        this.size = Math.random() * 1.5 + 0.5;
+        this.speedX = (Math.random() - 0.5) * 0.3;
+        this.speedY = (Math.random() - 0.5) * 0.3;
+        this.opacity = Math.random() * 0.6 + 0.2;
+        this.fadeSpeed = Math.random() * 0.005 + 0.002;
+        this.fading = Math.random() > 0.5;
+      }
+      update() {
+        this.x += this.speedX; this.y += this.speedY;
+        if (this.fading) { this.opacity -= this.fadeSpeed; if (this.opacity <= 0.1) this.fading = false; }
+        else { this.opacity += this.fadeSpeed; if (this.opacity >= 0.7) this.fading = true; }
+        if (this.x < -10 || this.x > width + 10 || this.y < -10 || this.y > height + 10) {
+          this.reset(); this.opacity = Math.random() * 0.5;
+        }
+      }
+      draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(0, 240, 255, ${this.opacity})`;
+        ctx.fill();
+      }
+    }
+    for (let i = 0; i < 150; i++) particles.push(new Particle());
+    function animate() {
+      ctx.clearRect(0, 0, width, height);
+      particles.forEach(p => { p.update(); p.draw(); });
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x;
+          const dy = particles[i].y - particles[j].y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 80) {
+            ctx.beginPath();
+            ctx.moveTo(particles[i].x, particles[i].y);
+            ctx.lineTo(particles[j].x, particles[j].y);
+            ctx.strokeStyle = `rgba(0, 240, 255, ${0.06 * (1 - dist / 80)})`;
+            ctx.lineWidth = 0.5;
+            ctx.stroke();
+          }
+        }
+      }
+      requestAnimationFrame(animate);
+    }
+    animate();
+
+    // 表单逻辑
+    let resultText = '';
+    function getRadio(name) {
+      const r = document.querySelector(`input[name="${name}"]:checked`);
+      return r ? r.value : '';
+    }
+    function getCheckbox(name) {
+      const c = document.querySelectorAll(`input[name="${name}"]:checked`);
+      return Array.from(c).map(x => x.value).join('、') || '';
+    }
+    function generateResult() {
+      const q1 = document.getElementById('q1').value.trim();
+      const qAge = document.getElementById('q_age').value.trim();
+      const qCity = document.getElementById('q_city').value.trim();
+      const q14 = document.getElementById('q14').value.trim();
+      if (!q1) return show('请填写昵称/微信号', 'error');
+      if (!qAge) return show('请填写年龄', 'error');
+      if (!qCity) return show('请填写城市', 'error');
+      const radios = ['q2','q3','q4','q6','q8','q9','q10','q11','q12','q13'];
+      for (let n of radios) { if (!getRadio(n)) return show('请完成所有单选题', 'error'); }
+      if (!getCheckbox('q5')) return show('请至少选一项设备', 'error');
+      if (!getCheckbox('q7')) return show('请至少选一项学习动机', 'error');
+      if (!q14) return show('请填写最后一题', 'error');
+
+      resultText = `--- AI视频学徒摸底档案 ---
+昵称/微信号：${q1}
+年龄：${qAge}
+城市：${qCity}
+主业状态：${getRadio('q2')}
+月均收入：${getRadio('q3')}
+AI熟悉度：${getRadio('q4')}
+现有设备：${getCheckbox('q5')}
+视频变现经历：${getRadio('q6')}
+学习动机：${getCheckbox('q7')}
+每日投入时间：${getRadio('q8')}
+最大障碍：${getRadio('q9')}
+过往技能投入：${getRadio('q10')}
+最吸引点：${getRadio('q11')}
+带教偏好：${getRadio('q12')}
+付费反应：${getRadio('q13')}
+一句话目标：${q14}
+
+💬 请发送以上内容至微信：16500234000`;
+
+      document.getElementById('resultBox').textContent = resultText;
+      document.getElementById('resultBox').style.display = 'block';
+      document.getElementById('copyBtn').style.display = 'block';
+      document.getElementById('wechatTip').style.display = 'block';
+      document.getElementById('submitBtn').textContent = '✅ 已生成';
+      show('档案已生成，点击下方按钮复制发送给老师', 'success');
+      document.getElementById('resultBox').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+    async function copyResult() {
+      try {
+        await navigator.clipboard.writeText(resultText);
+        show('✅ 已复制！请粘贴发送至微信 16500234000', 'success');
+      } catch(e) {
+        const box = document.getElementById('resultBox');
+        const range = document.createRange();
+        range.selectNode(box);
+        window.getSelection().removeAllRanges();
+        window.getSelection().addRange(range);
+        show('请手动复制上方内容', 'error');
+      }
+    }
+    function show(msg, type) {
+      const el = document.getElementById('statusMessage');
+      el.textContent = msg;
+      el.className = 'status-message ' + (type === 'error' ? 'status-error' : 'status-success');
+      el.style.display = 'block';
+      if (type === 'success') setTimeout(() => el.style.display = 'none', 4000);
+    }
+  </script>
+</body>
+</html>
