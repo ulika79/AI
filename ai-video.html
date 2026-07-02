@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>AI视频制作 · 张大业AI视频变现</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #000;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+      color: #e2e8f0;
+      line-height: 1.8;
+    }
+
+    .stars {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ========== 导航栏 ========== */
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(0,0,0,0.85);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(168,85,247,0.2);
+      padding: 0 10px;
+    }
+    .navbar-inner {
+      max-width: 680px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      height: 50px;
+      gap: 6px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .navbar-inner::-webkit-scrollbar { display: none; }
+    .nav-home {
+      flex-shrink: 0;
+      text-decoration: none;
+      color: #a78bfa;
+      font-weight: 700;
+      font-size: 15px;
+      padding: 6px 12px;
+      border: 1px solid rgba(168,85,247,0.3);
+      border-radius: 20px;
+      white-space: nowrap;
+      transition: all 0.2s;
+      margin-right: 4px;
+    }
+    .nav-home:active { background: rgba(168,85,247,0.15); }
+    .nav-link {
+      flex-shrink: 0;
+      text-decoration: none;
+      color: #94a3b8;
+      font-size: 12px;
+      padding: 6px 10px;
+      border-radius: 14px;
+      white-space: nowrap;
+      transition: all 0.2s;
+      border: 1px solid transparent;
+    }
+    .nav-link:hover { color: #a78bfa; }
+    .nav-link.active {
+      color: #a78bfa;
+      border-color: rgba(168,85,247,0.3);
+      background: rgba(168,85,247,0.08);
+    }
+    .nav-link:active { background: rgba(168,85,247,0.1); }
+    .nav-divider {
+      width: 1px; height: 16px;
+      background: rgba(255,255,255,0.1);
+      flex-shrink: 0; margin: 0 2px;
+    }
+
+    /* ========== 主容器 ========== */
+    .container {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 20px 15px 60px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ========== 页面标题 ========== */
+    .page-header {
+      text-align: center;
+      padding: 20px 10px 10px;
+    }
+    .page-header .module-icon {
+      font-size: 56px;
+      display: block;
+      margin-bottom: 12px;
+      filter: drop-shadow(0 0 20px rgba(168,85,247,0.5));
+      animation: float 3s ease-in-out infinite;
+    }
+    @keyframes float {
+      0%,100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+    .page-header h1 {
+      font-size: 28px;
+      font-weight: 900;
+      background: linear-gradient(135deg, #a78bfa, #c084fc, #818cf8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: 2px;
+    }
+    .page-header .module-num {
+      color: #a78bfa;
+      font-size: 13px;
+      letter-spacing: 3px;
+      margin-top: 4px;
+      text-shadow: 0 0 10px rgba(168,85,247,0.4);
+    }
+    .page-header .sub {
+      color: #94a3b8;
+      font-size: 14px;
+      margin-top: 8px;
+    }
+    .neon-line {
+      width: 50%;
+      height: 2px;
+      margin: 16px auto 24px;
+      background: linear-gradient(90deg, transparent, #a78bfa, #818cf8, #a78bfa, transparent);
+    }
+
+    /* ========== 内容卡片 ========== */
+    .content-card {
+      background: rgba(15,23,42,0.7);
+      border: 1px solid rgba(168,85,247,0.15);
+      border-radius: 20px;
+      padding: 24px 20px;
+      margin-bottom: 16px;
+      backdrop-filter: blur(10px);
+      transition: all 0.3s;
+    }
+    .content-card:hover {
+      border-color: rgba(168,85,247,0.4);
+      box-shadow: 0 0 20px rgba(168,85,247,0.1);
+    }
+    .content-card h3 {
+      font-size: 18px;
+      font-weight: 700;
+      color: #a78bfa;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .content-card h3 .icon { font-size: 22px; }
+    .content-card p {
+      color: #cbd5e1;
+      font-size: 14px;
+      margin-bottom: 8px;
+    }
+    .content-card ul {
+      list-style: none;
+      padding: 0;
+    }
+    .content-card ul li {
+      padding: 6px 0 6px 20px;
+      position: relative;
+      color: #94a3b8;
+      font-size: 14px;
+    }
+    .content-card ul li::before {
+      content: "▸";
+      position: absolute;
+      left: 0;
+      color: #a78bfa;
+    }
+
+    /* ========== 工具卡片网格 ========== */
+    .tool-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin: 16px 0;
+    }
+    .tool-card {
+      background: rgba(15,23,42,0.6);
+      border: 1px solid rgba(168,85,247,0.2);
+      border-radius: 16px;
+      padding: 16px 12px;
+      text-align: center;
+      transition: all 0.3s;
+    }
+    .tool-card:hover {
+      border-color: rgba(168,85,247,0.5);
+      box-shadow: 0 0 15px rgba(168,85,247,0.1);
+      transform: translateY(-2px);
+    }
+    .tool-card .t-icon {
+      font-size: 32px;
+      margin-bottom: 8px;
+    }
+    .tool-card .t-name {
+      font-size: 13px;
+      font-weight: 700;
+      color: #c084fc;
+      margin-bottom: 4px;
+      line-height: 1.4;
+    }
+    .tool-card .t-use {
+      font-size: 11px;
+      color: #94a3b8;
+      line-height: 1.5;
+    }
+    .tool-card .t-tags {
+      margin-top: 8px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 4px;
+    }
+    .t-tag {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      white-space: nowrap;
+    }
+    .tag-free { background: rgba(16,185,129,0.2); color: #34d399; }
+    .tag-pay { background: rgba(251,191,36,0.2); color: #fbbf24; }
+    .tag-china { background: rgba(59,130,246,0.2); color: #60a5fa; }
+
+    /* ========== 流程步骤 ========== */
+    .step-card {
+      background: rgba(15,23,42,0.6);
+      border: 1px solid rgba(168,85,247,0.2);
+      border-radius: 16px;
+      padding: 18px 14px;
+      margin-bottom: 10px;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      transition: all 0.3s;
+    }
+    .step-card:hover {
+      border-color: rgba(168,85,247,0.5);
+      box-shadow: 0 0 15px rgba(168,85,247,0.1);
+    }
+    .step-num {
+      width: 40px; height: 40px;
+      background: linear-gradient(135deg, #7c3aed, #a78bfa);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 18px;
+      color: #fff;
+      flex-shrink: 0;
+    }
+    .step-content h4 {
+      font-size: 15px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+    .step-content p {
+      font-size: 13px;
+      color: #94a3b8;
+      margin: 0;
+    }
+
+    /* ========== 速度对比 ========== */
+    .speed-compare {
+      display: flex;
+      gap: 10px;
+      margin: 12px 0;
+    }
+    .speed-box {
+      flex: 1;
+      background: rgba(15,23,42,0.6);
+      border-radius: 16px;
+      padding: 16px 10px;
+      text-align: center;
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+    .speed-box.old { border-color: rgba(239,68,68,0.3); }
+    .speed-box.new { border-color: rgba(16,185,129,0.3); }
+    .speed-box .s-label {
+      font-size: 12px;
+      color: #94a3b8;
+      margin-bottom: 4px;
+    }
+    .speed-box .s-value {
+      font-size: 28px;
+      font-weight: 900;
+    }
+    .speed-box.old .s-value { color: #ef4444; }
+    .speed-box.new .s-value { color: #10b981; }
+    .speed-box .s-unit {
+      font-size: 12px;
+      color: #64748b;
+    }
+
+    /* ========== 金句 ========== */
+    .quote-card {
+      background: linear-gradient(135deg, rgba(168,85,247,0.1), rgba(129,140,248,0.08));
+      border: 1px solid rgba(168,85,247,0.3);
+      border-radius: 18px;
+      padding: 20px;
+      margin: 24px 0;
+      text-align: center;
+      position: relative;
+    }
+    .quote-card .quote-mark {
+      font-size: 48px;
+      color: #a78bfa;
+      line-height: 1;
+      opacity: 0.5;
+      position: absolute;
+      top: 6px;
+      left: 16px;
+    }
+    .quote-card .quote-text {
+      font-size: 18px;
+      font-weight: 700;
+      color: #a78bfa;
+      margin: 10px 0 6px;
+      letter-spacing: 1px;
+    }
+    .quote-card .quote-author {
+      color: #94a3b8;
+      font-size: 13px;
+    }
+
+    /* ========== 底部CTA ========== */
+    .cta-box {
+      background: linear-gradient(135deg, rgba(124,58,237,0.3), rgba(168,85,247,0.15));
+      border: 2px solid rgba(168,85,247,0.4);
+      border-radius: 20px;
+      padding: 20px;
+      text-align: center;
+      margin-top: 24px;
+      box-shadow: 0 0 25px rgba(168,85,247,0.1);
+    }
+    .cta-box h3 {
+      font-size: 19px;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 6px;
+    }
+    .cta-box p {
+      color: #94a3b8;
+      font-size: 13px;
+      margin-bottom: 16px;
+    }
+    .cta-box .cta-btn {
+      display: inline-block;
+      background: linear-gradient(135deg, #7c3aed, #a78bfa);
+      color: #fff;
+      padding: 12px 28px;
+      border-radius: 30px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 16px;
+      letter-spacing: 1px;
+      transition: all 0.2s;
+      box-shadow: 0 6px 20px rgba(124,58,237,0.3);
+    }
+    .cta-box .cta-btn:active { transform: scale(0.95); }
+
+    /* ========== 底部微信 ========== */
+    .contact-bar {
+      margin-top: 32px;
+      background: rgba(15,23,42,0.9);
+      border: 1px solid rgba(0,240,255,0.2);
+      border-radius: 18px;
+      padding: 18px 20px;
+      text-align: center;
+      backdrop-filter: blur(10px);
+    }
+    .contact-bar .contact-label {
+      color: #94a3b8;
+      font-size: 13px;
+      margin-bottom: 6px;
+      letter-spacing: 1px;
+    }
+    .contact-bar .contact-wx {
+      font-size: 20px;
+      font-weight: 900;
+      background: linear-gradient(135deg, #00f0ff, #fbbf24);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: 2px;
+    }
+    .contact-bar .contact-hint {
+      color: #64748b;
+      font-size: 11px;
+      margin-top: 6px;
+    }
+    .footer {
+      text-align: center;
+      color: #334155;
+      font-size: 11px;
+      margin-top: 20px;
+      letter-spacing: 1px;
+    }
+
+    /* ========== 导航按钮 ========== */
+    .nav-buttons {
+      display: flex;
+      gap: 10px;
+      margin-top: 24px;
+    }
+    .nav-btn {
+      flex: 1;
+      text-align: center;
+      padding: 12px;
+      border-radius: 14px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 14px;
+      transition: all 0.2s;
+      border: 1px solid rgba(168,85,247,0.3);
+      color: #a78bfa;
+      background: rgba(168,85,247,0.05);
+    }
+    .nav-btn:active { background: rgba(168,85,247,0.15); }
+    .nav-btn.next {
+      background: linear-gradient(135deg, rgba(124,58,237,0.5), rgba(168,85,247,0.2));
+      border-color: rgba(168,85,247,0.5);
+      color: #fff;
+    }
+
+    /* ========== 适配 ========== */
+    @media (max-width: 400px) {
+      .page-header h1 { font-size: 24px; }
+      .page-header .module-icon { font-size: 44px; }
+      .nav-link { font-size: 11px; padding: 5px 8px; }
+      .nav-home { font-size: 13px; padding: 5px 10px; }
+      .navbar-inner { height: 44px; }
+      .content-card { padding: 18px 14px; }
+      .tool-grid { gap: 8px; }
+      .tool-card { padding: 12px 8px; }
+      .tool-card .t-icon { font-size: 26px; }
+      .tool-card .t-name { font-size: 11px; }
+      .step-card { padding: 14px 10px; }
+      .speed-box .s-value { font-size: 24px; }
+    }
+    @media (min-width: 769px) {
+      .content-card { padding: 28px 24px; }
+      .tool-card { padding: 20px 16px; }
+      .step-card { padding: 22px 18px; }
+    }
+  </style>
+</head>
+<body>
+
+  <canvas class="stars" id="starsCanvas"></canvas>
+
+  <!-- ==================== 导航栏 ==================== -->
+  <nav class="navbar">
+    <div class="navbar-inner">
+      <a href="index.html" class="nav-home">🏠 主页</a>
+      <span class="nav-divider"></span>
+      <a href="business-thinking.html" class="nav-link">💰商业思维</a>
+      <a href="human-nature.html" class="nav-link">🧠人性弱点</a>
+      <a href="algorithm.html" class="nav-link">📐规则算法</a>
+      <a href="product-selection.html" class="nav-link">🛒带货选品</a>
+      <a href="ai-video.html" class="nav-link active">🤖AI视频</a>
+      <a href="video-analysis.html" class="nav-link">📊视频分析</a>
+      <a href="trend.html" class="nav-link">📈发展趋势</a>
+      <a href="creative.html" class="nav-link">💡商业创意</a>
+    </div>
+  </nav>
+
+  <div class="container">
+
+    <!-- 页面标题 -->
+    <div class="page-header">
+      <span class="module-icon">🤖</span>
+      <p class="module-num">MODULE 05</p>
+      <h1>AI视频制作</h1>
+      <p class="sub">从脚本到成片全流程AI化，一个人干一个团队的活</p>
+    </div>
+    <div class="neon-line"></div>
+
+    <!-- 效率对比 -->
+    <div class="content-card">
+      <h3><span class="icon">⚡</span> AI制作 vs 传统制作</h3>
+      <div class="speed-compare">
+        <div class="speed-box old">
+          <div class="s-label">❌ 传统方式</div>
+          <div class="s-value">2-3</div>
+          <div class="s-unit">条视频/天</div>
+        </div>
+        <div class="speed-box new">
+          <div class="s-label">✅ AI方式</div>
+          <div class="s-value">100+</div>
+          <div class="s-unit">条视频/天</div>
+        </div>
+      </div>
+      <p>效率提升<strong style="color:#10b981;">50倍以上</strong>，而且不需要写脚本、拍摄、剪辑、配音。全部交给AI。</p>
+    </div>
+
+    <!-- AI视频全流程 -->
+    <div class="content-card">
+      <h3><span class="icon">🔄</span> AI视频制作全流程（5步）</h3>
+    </div>
+
+    <div class="step-card">
+      <div class="step-num">1</div>
+      <div class="step-content">
+        <h4>📝 AI写脚本</h4>
+        <p>用ChatGPT/Claude/豆包/DeepSeek等AI工具，输入选题和风格，30秒生成10条脚本。告诉AI你要什么风格、多少字、什么钩子，它就给你批量出。</p>
+      </div>
+    </div>
+
+    <div class="step-card">
+      <div class="step-num">2</div>
+      <div class="step-content">
+        <h4>🎨 AI生成画面</h4>
+        <p>用Midjourney/Stable Diffusion/Seedream/可灵生成视频素材图片，用Runway/Pika/ComfyUI生成动态视频片段。不需要拍摄，不需要模特，不需要场地。</p>
+      </div>
+    </div>
+
+    <div class="step-card">
+      <div class="step-num">3</div>
+      <div class="step-content">
+        <h4>🗣️ AI配音</h4>
+        <p>用ElevenLabs/剪映AI配音/魔音工坊，选一个适合的人声，把脚本转成语音。可以模仿各种音色，比真人配音还稳定。</p>
+      </div>
+    </div>
+
+    <div class="step-card">
+      <div class="step-num">4</div>
+      <div class="step-content">
+        <h4>✂️ AI剪辑合成</h4>
+        <p>用剪映/CapCut自动剪辑功能，把画面+配音+字幕+背景音乐自动合成。AI自动卡点、自动生成字幕、自动匹配BGM。</p>
+      </div>
+    </div>
+
+    <div class="step-card">
+      <div class="step-num">5</div>
+      <div class="step-content">
+        <h4>🚀 批量发布</h4>
+        <p>用AI批量生成标题、话题标签、封面图，一键发布到抖音/视频号/小红书/快手。甚至可以定时发布、矩阵发布。</p>
+      </div>
+    </div>
+
+    <!-- AI工具大全 -->
+    <div class="content-card">
+      <h3><span class="icon">🧰</span> AI视频工具大全</h3>
+      <p>以下是你需要掌握的<strong style="color:#a78bfa;">核心AI工具</strong>，覆盖视频制作的每一个环节：</p>
+
+      <div class="tool-grid">
+
+        <div class="tool-card">
+          <div class="t-icon">💬</div>
+          <div class="t-name">ChatGPT / Claude / 豆包 / DeepSeek</div>
+          <div class="t-use">写脚本、写文案、写标题</div>
+          <div class="t-tags">
+            <span class="t-tag tag-free">免费</span>
+          </div>
+        </div>
+
+        <div class="tool-card">
+          <div class="t-icon">🎨</div>
+          <div class="t-name">Midjourney / SD / Seedream</div>
+          <div class="t-use">AI绘画，生成视频素材图</div>
+          <div class="t-tags">
+            <span class="t-tag tag-pay">Midjourney付费</span>
+            <span class="t-tag tag-free">SD/Seedream免费</span>
+          </div>
+        </div>
+
+        <div class="tool-card">
+          <div class="t-icon">🎬</div>
+          <div class="t-name">可灵 / 即梦 / ComfyUI</div>
+          <div class="t-use">国产AI视频生成工具</div>
+          <div class="t-tags">
+            <span class="t-tag tag-china">国产</span>
+            <span class="t-tag tag-free">免费</span>
+          </div>
+        </div>
+
+        <div class="tool-card">
+          <div class="t-icon">🎥</div>
+          <div class="t-name">Runway / Pika</div>
+          <div class="t-use">AI视频生成，图转视频</div>
+          <div class="t-tags">
+            <span class="t-tag tag-pay">付费</span>
+          </div>
+        </div>
+
+        <div class="tool-card">
+          <div class="t-icon">🗣️</div>
+          <div class="t-name">剪映AI / ElevenLabs</div>
+          <div class="t-use">AI配音，文字转语音</div>
+          <div class="t-tags">
+            <span class="t-tag tag-free">免费</span>
+          </div>
+        </div>
+
+        <div class="tool-card">
+          <div class="t-icon">✂️</div>
+          <div class="t-name">剪映 / CapCut</div>
+          <div class="t-use">AI自动剪辑、字幕、BGM</div>
+          <div class="t-tags">
+            <span class="t-tag tag-free">免费</span>
+          </div>
+        </div>
+
+        <div class="tool-card">
+          <div class="t-icon">📸</div>
+          <div class="t-name">HeyGen / 数字人 / ComfyUI</div>
+          <div class="t-use">AI数字人出镜，不用真人</div>
+          <div class="t-tags">
+            <span class="t-tag tag-pay">付费</span>
+            <span class="t-tag tag-free">ComfyUI免费</span>
+          </div>
+        </div>
+
+        <div class="tool-card">
+          <div class="t-icon">🎵</div>
+          <div class="t-name">Suno / Udio</div>
+          <div class="t-use">AI生成背景音乐和音效</div>
+          <div class="t-tags">
+            <span class="t-tag tag-free">免费</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- 视频类型 -->
+    <div class="content-card">
+      <h3><span class="icon">🎬</span> AI能做的视频类型</h3>
+      <p>以下视频类型全部可以用AI制作，不需要出镜、不需要实拍：</p>
+      <ul>
+        <li><strong style="color:#a78bfa;">AI数字人解说：</strong>数字人出镜+AI配音，适合知识科普、新闻解说</li>
+        <li><strong style="color:#c084fc;">AI动画短片：</strong>AI生成动画画面+配音，适合故事类、教育类</li>
+        <li><strong style="color:#818cf8;">AI产品展示：</strong>AI生成产品图+动态展示，适合带货视频</li>
+        <li><strong style="color:#f472b6;">AI风景/治愈：</strong>AI生成美景+舒缓音乐，适合治愈系账号</li>
+        <li><strong style="color:#fbbf24;">AI名人语录：</strong>AI生成名人形象+经典语录配音，流量极高</li>
+        <li><strong style="color:#34d399;">AI影视解说：</strong>AI抓取影视素材+自动配音+字幕，批量产出</li>
+      </ul>
+    </div>
+
+    <!-- 实操建议 -->
+    <div class="content-card">
+      <h3><span class="icon">💪</span> 新手快速上手指南</h3>
+      <ul>
+        <li><strong style="color:#a78bfa;">第一周：</strong>学会用ChatGPT/豆包/DeepSeek写脚本，用剪映AI做基础配音和剪辑</li>
+        <li><strong style="color:#c084fc;">第二周：</strong>学会用Midjourney/Seedream/可灵生成素材图，做图文视频</li>
+        <li><strong style="color:#818cf8;">第三周：</strong>学会用Runway/可灵/ComfyUI做动态AI视频，加入特效</li>
+        <li><strong style="color:#f472b6;">第四周：</strong>打通全流程，日产10条，开始矩阵化运营</li>
+      </ul>
+      <p style="margin-top:12px;text-align:center;color:#a78bfa;font-weight:700;">
+        🎯 目标：一个月内，从0到日产100条AI视频
+      </p>
+    </div>
+
+    <!-- 金句 -->
+    <div class="quote-card">
+      <span class="quote-mark">"</span>
+      <p class="quote-text">AI不是替代你，而是替代那些不会用AI的人。</p>
+      <p class="quote-author">—— 现在学AI视频，就是抢占未来三年的红利期</p>
+    </div>
+
+    <!-- CTA -->
+    <div class="cta-box">
+      <h3>🤖 想学会全流程AI视频制作？</h3>
+      <p>先填摸底表，我根据你的基础定制学习路径</p>
+      <a href="form.html" class="cta-btn">📋 填写摸底表</a>
+    </div>
+
+    <!-- 上下导航 -->
+    <div class="nav-buttons">
+      <a href="product-selection.html" class="nav-btn">◀ 上一模块：带货选品</a>
+      <a href="video-analysis.html" class="nav-btn next">下一模块：视频分析 ▶</a>
+    </div>
+
+    <!-- 底部微信 -->
+    <div class="contact-bar">
+      <p class="contact-label">📩 深度带教 · 一对一指导</p>
+      <p class="contact-wx">微信：16500234000</p>
+      <p class="contact-hint">添加备注"AI学习"，优先通过</p>
+    </div>
+    <div class="footer">
+      © 2024 张大业 · AI视频变现 · 微信 16500234000
+    </div>
+
+  </div>
+
+  <script>
+    const canvas = document.getElementById('starsCanvas');
+    const ctx = canvas.getContext('2d');
+    let width, height, particles = [];
+    function resize() {
+      width = window.innerWidth;
+      height = window.innerHeight;
+      canvas.width = width;
+      canvas.height = height;
+    }
+    resize();
+    window.addEventListener('resize', resize);
+    class Particle {
+      constructor() { this.reset(); }
+      reset() {
+        this.x = Math.random() * width;
+        this.y = Math.random() * height;
+        this.size = Math.random() * 1.5 + 0.5;
+        this.speedX = (Math.random() - 0.5) * 0.3;
+        this.speedY = (Math.random() - 0.5) * 0.3;
+        this.opacity = Math.random() * 0.6 + 0.2;
+        this.fadeSpeed = Math.random() * 0.005 + 0.002;
+        this.fading = Math.random() > 0.5;
+      }
+      update() {
+        this.x += this.speedX; this.y += this.speedY;
+        if (this.fading) { this.opacity -= this.fadeSpeed; if (this.opacity <= 0.1) this.fading = false; }
+        else { this.opacity += this.fadeSpeed; if (this.opacity >= 0.7) this.fading = true; }
+        if (this.x < -10 || this.x > width + 10 || this.y < -10 || this.y > height + 10) {
+          this.reset(); this.opacity = Math.random() * 0.5;
+        }
+      }
+      draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(168, 85, 247, ${this.opacity})`;
+        ctx.fill();
+      }
+    }
+    for (let i = 0; i < 150; i++) particles.push(new Particle());
+    function animate() {
+      ctx.clearRect(0, 0, width, height);
+      particles.forEach(p => { p.update(); p.draw(); });
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x;
+          const dy = particles[i].y - particles[j].y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 80) {
+            ctx.beginPath();
+            ctx.moveTo(particles[i].x, particles[i].y);
+            ctx.lineTo(particles[j].x, particles[j].y);
+            ctx.strokeStyle = `rgba(168, 85, 247, ${0.06 * (1 - dist / 80)})`;
+            ctx.lineWidth = 0.5;
+            ctx.stroke();
+          }
+        }
+      }
+      requestAnimationFrame(animate);
+    }
+    animate();
+  </script>
+
+</body>
+</html>

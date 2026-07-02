@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>发展趋势 · 张大业AI视频变现</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #000;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+      color: #e2e8f0;
+      line-height: 1.8;
+    }
+
+    .stars {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ========== 导航栏 ========== */
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(0,0,0,0.85);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(251,191,36,0.2);
+      padding: 0 10px;
+    }
+    .navbar-inner {
+      max-width: 680px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      height: 50px;
+      gap: 6px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .navbar-inner::-webkit-scrollbar { display: none; }
+    .nav-home {
+      flex-shrink: 0;
+      text-decoration: none;
+      color: #fbbf24;
+      font-weight: 700;
+      font-size: 15px;
+      padding: 6px 12px;
+      border: 1px solid rgba(251,191,36,0.3);
+      border-radius: 20px;
+      white-space: nowrap;
+      transition: all 0.2s;
+      margin-right: 4px;
+    }
+    .nav-home:active { background: rgba(251,191,36,0.15); }
+    .nav-link {
+      flex-shrink: 0;
+      text-decoration: none;
+      color: #94a3b8;
+      font-size: 12px;
+      padding: 6px 10px;
+      border-radius: 14px;
+      white-space: nowrap;
+      transition: all 0.2s;
+      border: 1px solid transparent;
+    }
+    .nav-link:hover { color: #fbbf24; }
+    .nav-link.active {
+      color: #fbbf24;
+      border-color: rgba(251,191,36,0.3);
+      background: rgba(251,191,36,0.08);
+    }
+    .nav-link:active { background: rgba(251,191,36,0.1); }
+    .nav-divider {
+      width: 1px; height: 16px;
+      background: rgba(255,255,255,0.1);
+      flex-shrink: 0; margin: 0 2px;
+    }
+
+    /* ========== 主容器 ========== */
+    .container {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 20px 15px 60px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ========== 页面标题 ========== */
+    .page-header {
+      text-align: center;
+      padding: 20px 10px 10px;
+    }
+    .page-header .module-icon {
+      font-size: 56px;
+      display: block;
+      margin-bottom: 12px;
+      filter: drop-shadow(0 0 20px rgba(251,191,36,0.5));
+      animation: float 3s ease-in-out infinite;
+    }
+    @keyframes float {
+      0%,100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+    .page-header h1 {
+      font-size: 28px;
+      font-weight: 900;
+      background: linear-gradient(135deg, #fbbf24, #f59e0b, #d97706);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: 2px;
+    }
+    .page-header .module-num {
+      color: #fbbf24;
+      font-size: 13px;
+      letter-spacing: 3px;
+      margin-top: 4px;
+      text-shadow: 0 0 10px rgba(251,191,36,0.4);
+    }
+    .page-header .sub {
+      color: #94a3b8;
+      font-size: 14px;
+      margin-top: 8px;
+    }
+    .neon-line {
+      width: 50%;
+      height: 2px;
+      margin: 16px auto 24px;
+      background: linear-gradient(90deg, transparent, #fbbf24, #f59e0b, #fbbf24, transparent);
+    }
+
+    /* ========== 内容卡片 ========== */
+    .content-card {
+      background: rgba(15,23,42,0.7);
+      border: 1px solid rgba(251,191,36,0.15);
+      border-radius: 20px;
+      padding: 24px 20px;
+      margin-bottom: 16px;
+      backdrop-filter: blur(10px);
+      transition: all 0.3s;
+    }
+    .content-card:hover {
+      border-color: rgba(251,191,36,0.4);
+      box-shadow: 0 0 20px rgba(251,191,36,0.1);
+    }
+    .content-card h3 {
+      font-size: 18px;
+      font-weight: 700;
+      color: #fbbf24;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .content-card h3 .icon { font-size: 22px; }
+    .content-card p {
+      color: #cbd5e1;
+      font-size: 14px;
+      margin-bottom: 8px;
+    }
+    .content-card ul {
+      list-style: none;
+      padding: 0;
+    }
+    .content-card ul li {
+      padding: 6px 0 6px 20px;
+      position: relative;
+      color: #94a3b8;
+      font-size: 14px;
+    }
+    .content-card ul li::before {
+      content: "▸";
+      position: absolute;
+      left: 0;
+      color: #fbbf24;
+    }
+
+    /* ========== 趋势时间线 ========== */
+    .timeline-item {
+      display: flex;
+      gap: 14px;
+      margin-bottom: 16px;
+      position: relative;
+    }
+    .timeline-dot {
+      width: 48px; height: 48px;
+      background: linear-gradient(135deg, #fbbf24, #d97706);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      flex-shrink: 0;
+      box-shadow: 0 0 20px rgba(251,191,36,0.3);
+    }
+    .timeline-content h4 {
+      font-size: 16px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+    .timeline-content .tl-period {
+      font-size: 11px;
+      color: #fbbf24;
+      letter-spacing: 2px;
+      margin-bottom: 4px;
+    }
+    .timeline-content p {
+      font-size: 13px;
+      color: #94a3b8;
+      margin: 0;
+    }
+
+    /* ========== 趋势卡片 ========== */
+    .trend-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin: 16px 0;
+    }
+    .trend-card {
+      background: rgba(15,23,42,0.6);
+      border: 1px solid rgba(251,191,36,0.2);
+      border-radius: 16px;
+      padding: 18px 14px;
+      text-align: center;
+      transition: all 0.3s;
+    }
+    .trend-card:hover {
+      border-color: rgba(251,191,36,0.5);
+      box-shadow: 0 0 15px rgba(251,191,36,0.1);
+      transform: translateY(-2px);
+    }
+    .trend-card .tr-icon { font-size: 34px; margin-bottom: 8px; }
+    .trend-card .tr-name {
+      font-size: 15px;
+      font-weight: 700;
+      color: #fbbf24;
+      margin-bottom: 4px;
+    }
+    .trend-card .tr-desc {
+      font-size: 11px;
+      color: #94a3b8;
+      line-height: 1.5;
+    }
+    .trend-card .tr-tag {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 10px;
+      font-size: 10px;
+      font-weight: 700;
+      margin-top: 8px;
+      letter-spacing: 1px;
+    }
+    .tag-hot { background: rgba(239,68,68,0.2); color: #fca5a5; }
+    .tag-rising { background: rgba(16,185,129,0.2); color: #34d399; }
+    .tag-future { background: rgba(59,130,246,0.2); color: #60a5fa; }
+
+    /* ========== 金句 ========== */
+    .quote-card {
+      background: linear-gradient(135deg, rgba(251,191,36,0.1), rgba(217,119,6,0.08));
+      border: 1px solid rgba(251,191,36,0.3);
+      border-radius: 18px;
+      padding: 20px;
+      margin: 24px 0;
+      text-align: center;
+      position: relative;
+    }
+    .quote-card .quote-mark {
+      font-size: 48px;
+      color: #fbbf24;
+      line-height: 1;
+      opacity: 0.5;
+      position: absolute;
+      top: 6px;
+      left: 16px;
+    }
+    .quote-card .quote-text {
+      font-size: 18px;
+      font-weight: 700;
+      color: #fbbf24;
+      margin: 10px 0 6px;
+      letter-spacing: 1px;
+    }
+    .quote-card .quote-author {
+      color: #94a3b8;
+      font-size: 13px;
+    }
+
+    /* ========== 底部CTA ========== */
+    .cta-box {
+      background: linear-gradient(135deg, rgba(251,191,36,0.3), rgba(217,119,6,0.15));
+      border: 2px solid rgba(251,191,36,0.4);
+      border-radius: 20px;
+      padding: 20px;
+      text-align: center;
+      margin-top: 24px;
+      box-shadow: 0 0 25px rgba(251,191,36,0.1);
+    }
+    .cta-box h3 {
+      font-size: 19px;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 6px;
+    }
+    .cta-box p {
+      color: #94a3b8;
+      font-size: 13px;
+      margin-bottom: 16px;
+    }
+    .cta-box .cta-btn {
+      display: inline-block;
+      background: linear-gradient(135deg, #fbbf24, #d97706);
+      color: #000;
+      padding: 12px 28px;
+      border-radius: 30px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 16px;
+      letter-spacing: 1px;
+      transition: all 0.2s;
+      box-shadow: 0 6px 20px rgba(251,191,36,0.3);
+    }
+    .cta-box .cta-btn:active { transform: scale(0.95); }
+
+    /* ========== 底部微信 ========== */
+    .contact-bar {
+      margin-top: 32px;
+      background: rgba(15,23,42,0.9);
+      border: 1px solid rgba(0,240,255,0.2);
+      border-radius: 18px;
+      padding: 18px 20px;
+      text-align: center;
+      backdrop-filter: blur(10px);
+    }
+    .contact-bar .contact-label {
+      color: #94a3b8;
+      font-size: 13px;
+      margin-bottom: 6px;
+      letter-spacing: 1px;
+    }
+    .contact-bar .contact-wx {
+      font-size: 20px;
+      font-weight: 900;
+      background: linear-gradient(135deg, #00f0ff, #fbbf24);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: 2px;
+    }
+    .contact-bar .contact-hint {
+      color: #64748b;
+      font-size: 11px;
+      margin-top: 6px;
+    }
+    .footer {
+      text-align: center;
+      color: #334155;
+      font-size: 11px;
+      margin-top: 20px;
+      letter-spacing: 1px;
+    }
+
+    /* ========== 导航按钮 ========== */
+    .nav-buttons {
+      display: flex;
+      gap: 10px;
+      margin-top: 24px;
+    }
+    .nav-btn {
+      flex: 1;
+      text-align: center;
+      padding: 12px;
+      border-radius: 14px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 14px;
+      transition: all 0.2s;
+      border: 1px solid rgba(251,191,36,0.3);
+      color: #fbbf24;
+      background: rgba(251,191,36,0.05);
+    }
+    .nav-btn:active { background: rgba(251,191,36,0.15); }
+    .nav-btn.next {
+      background: linear-gradient(135deg, rgba(251,191,36,0.5), rgba(217,119,6,0.2));
+      border-color: rgba(251,191,36,0.5);
+      color: #000;
+    }
+
+    /* ========== 适配 ========== */
+    @media (max-width: 400px) {
+      .page-header h1 { font-size: 24px; }
+      .page-header .module-icon { font-size: 44px; }
+      .nav-link { font-size: 11px; padding: 5px 8px; }
+      .nav-home { font-size: 13px; padding: 5px 10px; }
+      .navbar-inner { height: 44px; }
+      .content-card { padding: 18px 14px; }
+      .trend-grid { gap: 8px; }
+      .trend-card { padding: 14px 10px; }
+      .trend-card .tr-icon { font-size: 28px; }
+      .trend-card .tr-name { font-size: 13px; }
+      .timeline-dot { width: 40px; height: 40px; font-size: 18px; }
+    }
+    @media (min-width: 769px) {
+      .content-card { padding: 28px 24px; }
+      .trend-card { padding: 24px 18px; }
+    }
+  </style>
+</head>
+<body>
+
+  <canvas class="stars" id="starsCanvas"></canvas>
+
+  <!-- ==================== 导航栏 ==================== -->
+  <nav class="navbar">
+    <div class="navbar-inner">
+      <a href="index.html" class="nav-home">🏠 主页</a>
+      <span class="nav-divider"></span>
+      <a href="business-thinking.html" class="nav-link">💰商业思维</a>
+      <a href="human-nature.html" class="nav-link">🧠人性弱点</a>
+      <a href="algorithm.html" class="nav-link">📐规则算法</a>
+      <a href="product-selection.html" class="nav-link">🛒带货选品</a>
+      <a href="ai-video.html" class="nav-link">🤖AI视频</a>
+      <a href="video-analysis.html" class="nav-link">📊视频分析</a>
+      <a href="trend.html" class="nav-link active">📈发展趋势</a>
+      <a href="creative.html" class="nav-link">💡商业创意</a>
+    </div>
+  </nav>
+
+  <div class="container">
+
+    <!-- 页面标题 -->
+    <div class="page-header">
+      <span class="module-icon">📈</span>
+      <p class="module-num">MODULE 07</p>
+      <h1>发展趋势</h1>
+      <p class="sub">预判行业方向，在风口到来之前提前站位</p>
+    </div>
+    <div class="neon-line"></div>
+
+    <!-- 核心认知 -->
+    <div class="content-card">
+      <h3><span class="icon">🔮</span> 为什么必须关注趋势？</h3>
+      <p>AI视频是<strong style="color:#fbbf24;">未来3-5年最大的风口之一</strong>。就像2016年的短视频、2019年的直播带货——早期入局者吃肉，后期跟风者喝汤。</p>
+      <ul>
+        <li>2023年是AI视频元年（Sora发布，可灵诞生）</li>
+        <li>2024年是AI视频爆发年（工具成熟、平台开放）</li>
+        <li><strong style="color:#fbbf24;">2025-2026年是AI视频红利期（普通人还能分到一杯羹）</strong></li>
+        <li>2027年以后，AI视频变成标配，红利消失</li>
+      </ul>
+      <p style="margin-top:12px;color:#fbbf24;font-weight:700;text-align:center;">⏰ 现在就是入局的最佳窗口期！</p>
+    </div>
+
+    <!-- 时间线 -->
+    <div class="content-card">
+      <h3><span class="icon">🕐</span> AI视频发展时间线</h3>
+
+      <div class="timeline-item">
+        <div class="timeline-dot">📅</div>
+        <div class="timeline-content">
+          <div class="tl-period">2022下半年</div>
+          <h4>AI绘画元年</h4>
+          <p>Midjourney、Stable Diffusion爆发，AI生成图片质量超越人类画师。第一批用AI做图的人开始变现。</p>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-dot">🔥</div>
+        <div class="timeline-content">
+          <div class="tl-period">2023全年</div>
+          <h4>AI视频萌芽期</h4>
+          <p>Runway Gen-2、Pika 1.0陆续发布，AI视频从"概念"变成"可用"。早期入局者单条视频播放量过百万。</p>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-dot">🚀</div>
+        <div class="timeline-content">
+          <div class="tl-period">2024年2月</div>
+          <h4>Sora发布，行业地震</h4>
+          <p>OpenAI发布Sora，AI视频生成质量达到电影级。全球震动，AI视频赛道确认成立。</p>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-dot">🇨🇳</div>
+        <div class="timeline-content">
+          <div class="tl-period">2024年6月</div>
+          <h4>国产工具崛起</h4>
+          <p>可灵、即梦、vidu等国产AI视频工具爆发，功能直追Sora，且对中国用户更友好。</p>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-dot">💰</div>
+        <div class="timeline-content">
+          <div class="tl-period">2024下半年-现在</div>
+          <h4>AI视频变现爆发</h4>
+          <p>批量AI视频账号涌现，单号月入过万的案例越来越多。平台开始接受AI内容，流量倾斜明显。</p>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-dot">🔮</div>
+        <div class="timeline-content">
+          <div class="tl-period">2025-2026预测</div>
+          <h4>全民AI视频时代</h4>
+          <p>AI视频工具免费化、傻瓜化，人人都能用。竞争加剧，但垂直细分领域仍有大机会。</p>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- 2024-2025 八大趋势 -->
+    <div class="content-card">
+      <h3><span class="icon">🌟</span> 2024-2025 AI视频八大趋势</h3>
+      <p>以下趋势已经在发生，<strong style="color:#fbbf24;">越早布局越容易吃到红利</strong>：</p>
+
+      <div class="trend-grid">
+
+        <div class="trend-card">
+          <div class="tr-icon">🤖</div>
+          <div class="tr-name">AI数字人直播</div>
+          <div class="tr-desc">24小时无人直播带货，一个人管理10个直播间</div>
+          <span class="tr-tag tag-hot">火爆中</span>
+        </div>
+
+        <div class="trend-card">
+          <div class="tr-icon">🎬</div>
+          <div class="tr-name">AI短剧生成</div>
+          <div class="tr-desc">AI批量生成短剧，单集成本从几千降到几十</div>
+          <span class="tr-tag tag-rising">快速崛起</span>
+        </div>
+
+        <div class="trend-card">
+          <div class="tr-icon">📦</div>
+          <div class="tr-name">AI一键带货视频</div>
+          <div class="tr-desc">输入商品链接，AI自动生成带货视频，1分钟出片</div>
+          <span class="tr-tag tag-hot">火爆中</span>
+        </div>
+
+        <div class="trend-card">
+          <div class="tr-icon">🌍</div>
+          <div class="tr-name">AI多语言出海</div>
+          <div class="tr-desc">一条视频AI翻译+配音成20种语言，赚全球流量</div>
+          <span class="tr-tag tag-rising">快速崛起</span>
+        </div>
+
+        <div class="trend-card">
+          <div class="tr-icon">👤</div>
+          <div class="tr-name">个人AI分身</div>
+          <div class="tr-desc">复刻自己的声音和形象，AI替你出镜拍视频</div>
+          <span class="tr-tag tag-future">未来趋势</span>
+        </div>
+
+        <div class="trend-card">
+          <div class="tr-icon">🔗</div>
+          <div class="tr-name">AI全流程自动化</div>
+          <div class="tr-desc">从选题→脚本→生成→发布→数据分析全AI化</div>
+          <span class="tr-tag tag-future">未来趋势</span>
+        </div>
+
+        <div class="trend-card">
+          <div class="tr-icon">🎓</div>
+          <div class="tr-name">AI教育内容爆发</div>
+          <div class="tr-desc">用AI批量生产知识科普、教学类视频，抢占搜索流量</div>
+          <span class="tr-tag tag-hot">火爆中</span>
+        </div>
+
+        <div class="trend-card">
+          <div class="tr-icon">🛒</div>
+          <div class="tr-name">AI种草视频矩阵</div>
+          <div class="tr-desc">一个产品生成100条不同风格的种草视频，全网覆盖</div>
+          <span class="tr-tag tag-rising">快速崛起</span>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- 入局策略 -->
+    <div class="content-card">
+      <h3><span class="icon">🎯</span> 不同人群的入局策略</h3>
+      <ul>
+        <li><strong style="color:#fbbf24;">纯小白（0基础）：</strong>先学会用AI做一条完整的视频，然后专攻一个平台、一个类型，跑通变现闭环再放大</li>
+        <li><strong style="color:#f59e0b;">有剪辑基础：</strong>用AI替代重复劳动，把精力放在选题和运营上，效率提升10倍</li>
+        <li><strong style="color:#d97706;">有账号基础：</strong>用AI矩阵化运营，一个账号变10个账号，收入翻10倍</li>
+        <li><strong style="color:#fbbf24;">有团队/公司：</strong>搭建AI视频生产线，从接单模式升级为平台模式，吃整个产业链的利润</li>
+      </ul>
+    </div>
+
+    <!-- 风险提醒 -->
+    <div class="content-card" style="border-color: rgba(239,68,68,0.3);">
+      <h3><span class="icon">⚠️</span> 风险与避坑提醒</h3>
+      <ul>
+        <li><strong style="color:#ef4444;">平台政策风险：</strong>各平台对AI内容的审核规则在变，一定要关注平台公告，随时调整</li>
+        <li><strong style="color:#f87171;">同质化竞争：</strong>当所有人用同样的AI工具做同样的事，差异化就会消失。要有自己的"独门秘方"</li>
+        <li><strong style="color:#fca5a5;">版权灰色地带：</strong>AI生成内容的版权归属还不太明确，商业变现时注意规避侵权风险</li>
+        <li><strong style="color:#fbbf24;">别等"完美"：</strong>最大的风险是等待——等工具更成熟、等AI更完善。红利期不会等你准备好了再开始</li>
+      </ul>
+    </div>
+
+    <!-- 金句 -->
+    <div class="quote-card">
+      <span class="quote-mark">"</span>
+      <p class="quote-text">趋势就像一趟列车，你可以选择上车，也可以选择在站台上看着它开走。</p>
+      <p class="quote-author">—— AI视频这趟车，现在刚刚开始检票</p>
+    </div>
+
+    <!-- CTA -->
+    <div class="cta-box">
+      <h3>📈 想在风口来临前提前布局？</h3>
+      <p>先填摸底表，我帮你分析最适合你的入局路径</p>
+      <a href="form.html" class="cta-btn">📋 填写摸底表</a>
+    </div>
+
+    <!-- 上下导航 -->
+    <div class="nav-buttons">
+      <a href="video-analysis.html" class="nav-btn">◀ 上一模块：视频分析</a>
+      <a href="creative.html" class="nav-btn next">下一模块：商业创意 ▶</a>
+    </div>
+
+    <!-- 底部微信 -->
+    <div class="contact-bar">
+      <p class="contact-label">📩 深度带教 · 一对一指导</p>
+      <p class="contact-wx">微信：16500234000</p>
+      <p class="contact-hint">添加备注"AI学习"，优先通过</p>
+    </div>
+    <div class="footer">
+      © 2024 张大业 · AI视频变现 · 微信 16500234000
+    </div>
+
+  </div>
+
+  <script>
+    const canvas = document.getElementById('starsCanvas');
+    const ctx = canvas.getContext('2d');
+    let width, height, particles = [];
+    function resize() {
+      width = window.innerWidth;
+      height = window.innerHeight;
+      canvas.width = width;
+      canvas.height = height;
+    }
+    resize();
+    window.addEventListener('resize', resize);
+    class Particle {
+      constructor() { this.reset(); }
+      reset() {
+        this.x = Math.random() * width;
+        this.y = Math.random() * height;
+        this.size = Math.random() * 1.5 + 0.5;
+        this.speedX = (Math.random() - 0.5) * 0.3;
+        this.speedY = (Math.random() - 0.5) * 0.3;
+        this.opacity = Math.random() * 0.6 + 0.2;
+        this.fadeSpeed = Math.random() * 0.005 + 0.002;
+        this.fading = Math.random() > 0.5;
+      }
+      update() {
+        this.x += this.speedX; this.y += this.speedY;
+        if (this.fading) { this.opacity -= this.fadeSpeed; if (this.opacity <= 0.1) this.fading = false; }
+        else { this.opacity += this.fadeSpeed; if (this.opacity >= 0.7) this.fading = true; }
+        if (this.x < -10 || this.x > width + 10 || this.y < -10 || this.y > height + 10) {
+          this.reset(); this.opacity = Math.random() * 0.5;
+        }
+      }
+      draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(251, 191, 36, ${this.opacity})`;
+        ctx.fill();
+      }
+    }
+    for (let i = 0; i < 150; i++) particles.push(new Particle());
+    function animate() {
+      ctx.clearRect(0, 0, width, height);
+      particles.forEach(p => { p.update(); p.draw(); });
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x;
+          const dy = particles[i].y - particles[j].y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 80) {
+            ctx.beginPath();
+            ctx.moveTo(particles[i].x, particles[i].y);
+            ctx.lineTo(particles[j].x, particles[j].y);
+            ctx.strokeStyle = `rgba(251, 191, 36, ${0.06 * (1 - dist / 80)})`;
+            ctx.lineWidth = 0.5;
+            ctx.stroke();
+          }
+        }
+      }
+      requestAnimationFrame(animate);
+    }
+    animate();
+  </script>
+
+</body>
+</html>
