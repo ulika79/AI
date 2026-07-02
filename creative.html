@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>商业创意 · 张大业AI视频变现</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #000;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+      color: #e2e8f0;
+      line-height: 1.8;
+    }
+
+    .stars {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ========== 导航栏 ========== */
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(0,0,0,0.85);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(244,114,182,0.2);
+      padding: 0 10px;
+    }
+    .navbar-inner {
+      max-width: 680px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      height: 50px;
+      gap: 6px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .navbar-inner::-webkit-scrollbar { display: none; }
+    .nav-home {
+      flex-shrink: 0;
+      text-decoration: none;
+      color: #f472b6;
+      font-weight: 700;
+      font-size: 15px;
+      padding: 6px 12px;
+      border: 1px solid rgba(244,114,182,0.3);
+      border-radius: 20px;
+      white-space: nowrap;
+      transition: all 0.2s;
+      margin-right: 4px;
+    }
+    .nav-home:active { background: rgba(244,114,182,0.15); }
+    .nav-link {
+      flex-shrink: 0;
+      text-decoration: none;
+      color: #94a3b8;
+      font-size: 12px;
+      padding: 6px 10px;
+      border-radius: 14px;
+      white-space: nowrap;
+      transition: all 0.2s;
+      border: 1px solid transparent;
+    }
+    .nav-link:hover { color: #f472b6; }
+    .nav-link.active {
+      color: #f472b6;
+      border-color: rgba(244,114,182,0.3);
+      background: rgba(244,114,182,0.08);
+    }
+    .nav-link:active { background: rgba(244,114,182,0.1); }
+    .nav-divider {
+      width: 1px; height: 16px;
+      background: rgba(255,255,255,0.1);
+      flex-shrink: 0; margin: 0 2px;
+    }
+
+    /* ========== 主容器 ========== */
+    .container {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 20px 15px 60px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ========== 页面标题 ========== */
+    .page-header {
+      text-align: center;
+      padding: 20px 10px 10px;
+    }
+    .page-header .module-icon {
+      font-size: 56px;
+      display: block;
+      margin-bottom: 12px;
+      filter: drop-shadow(0 0 20px rgba(244,114,182,0.5));
+      animation: float 3s ease-in-out infinite;
+    }
+    @keyframes float {
+      0%,100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+    .page-header h1 {
+      font-size: 28px;
+      font-weight: 900;
+      background: linear-gradient(135deg, #f472b6, #c084fc, #818cf8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: 2px;
+    }
+    .page-header .module-num {
+      color: #f472b6;
+      font-size: 13px;
+      letter-spacing: 3px;
+      margin-top: 4px;
+      text-shadow: 0 0 10px rgba(244,114,182,0.4);
+    }
+    .page-header .sub {
+      color: #94a3b8;
+      font-size: 14px;
+      margin-top: 8px;
+    }
+    .neon-line {
+      width: 50%;
+      height: 2px;
+      margin: 16px auto 24px;
+      background: linear-gradient(90deg, transparent, #f472b6, #c084fc, #f472b6, transparent);
+    }
+
+    /* ========== 内容卡片 ========== */
+    .content-card {
+      background: rgba(15,23,42,0.7);
+      border: 1px solid rgba(244,114,182,0.15);
+      border-radius: 20px;
+      padding: 24px 20px;
+      margin-bottom: 16px;
+      backdrop-filter: blur(10px);
+      transition: all 0.3s;
+    }
+    .content-card:hover {
+      border-color: rgba(244,114,182,0.4);
+      box-shadow: 0 0 20px rgba(244,114,182,0.1);
+    }
+    .content-card h3 {
+      font-size: 18px;
+      font-weight: 700;
+      color: #f472b6;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .content-card h3 .icon { font-size: 22px; }
+    .content-card p {
+      color: #cbd5e1;
+      font-size: 14px;
+      margin-bottom: 8px;
+    }
+    .content-card ul {
+      list-style: none;
+      padding: 0;
+    }
+    .content-card ul li {
+      padding: 6px 0 6px 20px;
+      position: relative;
+      color: #94a3b8;
+      font-size: 14px;
+    }
+    .content-card ul li::before {
+      content: "▸";
+      position: absolute;
+      left: 0;
+      color: #f472b6;
+    }
+
+    /* ========== 创意卡片 ========== */
+    .creative-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin: 16px 0;
+    }
+    .creative-card {
+      background: rgba(15,23,42,0.6);
+      border: 1px solid rgba(244,114,182,0.2);
+      border-radius: 16px;
+      padding: 18px 14px;
+      text-align: center;
+      transition: all 0.3s;
+    }
+    .creative-card:hover {
+      border-color: rgba(244,114,182,0.5);
+      box-shadow: 0 0 20px rgba(244,114,182,0.1);
+      transform: translateY(-3px);
+    }
+    .creative-card .cr-icon {
+      font-size: 36px;
+      margin-bottom: 8px;
+    }
+    .creative-card .cr-name {
+      font-size: 15px;
+      font-weight: 700;
+      color: #f472b6;
+      margin-bottom: 4px;
+    }
+    .creative-card .cr-desc {
+      font-size: 11px;
+      color: #94a3b8;
+      line-height: 1.5;
+    }
+    .creative-card .cr-roi {
+      display: inline-block;
+      margin-top: 8px;
+      padding: 3px 10px;
+      border-radius: 10px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+    .roi-high { background: rgba(16,185,129,0.2); color: #34d399; }
+    .roi-mid { background: rgba(251,191,36,0.2); color: #fbbf24; }
+    .roi-new { background: rgba(59,130,246,0.2); color: #60a5fa; }
+
+    /* ========== 商业模式卡片 ========== */
+    .model-card {
+      background: rgba(15,23,42,0.6);
+      border: 1px solid rgba(244,114,182,0.2);
+      border-radius: 16px;
+      padding: 20px 16px;
+      margin-bottom: 12px;
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+      transition: all 0.3s;
+    }
+    .model-card:hover {
+      border-color: rgba(244,114,182,0.5);
+      box-shadow: 0 0 15px rgba(244,114,182,0.1);
+    }
+    .model-num {
+      width: 44px; height: 44px;
+      background: linear-gradient(135deg, #f472b6, #c084fc);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 18px;
+      color: #fff;
+      flex-shrink: 0;
+    }
+    .model-content h4 {
+      font-size: 16px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+    .model-content .model-tagline {
+      font-size: 12px;
+      color: #f472b6;
+      margin-bottom: 6px;
+      font-weight: 600;
+    }
+    .model-content p {
+      font-size: 13px;
+      color: #94a3b8;
+      margin: 0;
+    }
+
+    /* ========== 案例卡片 ========== */
+    .case-card {
+      background: linear-gradient(135deg, rgba(244,114,182,0.08), rgba(192,132,252,0.05));
+      border: 1px solid rgba(244,114,182,0.2);
+      border-radius: 16px;
+      padding: 18px 14px;
+      margin-bottom: 10px;
+    }
+    .case-card .case-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    .case-card .case-icon { font-size: 24px; }
+    .case-card .case-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #fff;
+    }
+    .case-card .case-result {
+      font-size: 13px;
+      color: #10b981;
+      font-weight: 600;
+      margin-left: auto;
+    }
+    .case-card p {
+      font-size: 12px;
+      color: #94a3b8;
+      margin: 0;
+    }
+
+    /* ========== 金句 ========== */
+    .quote-card {
+      background: linear-gradient(135deg, rgba(244,114,182,0.1), rgba(192,132,252,0.08));
+      border: 1px solid rgba(244,114,182,0.3);
+      border-radius: 18px;
+      padding: 20px;
+      margin: 24px 0;
+      text-align: center;
+      position: relative;
+    }
+    .quote-card .quote-mark {
+      font-size: 48px;
+      color: #f472b6;
+      line-height: 1;
+      opacity: 0.5;
+      position: absolute;
+      top: 6px;
+      left: 16px;
+    }
+    .quote-card .quote-text {
+      font-size: 18px;
+      font-weight: 700;
+      color: #f472b6;
+      margin: 10px 0 6px;
+      letter-spacing: 1px;
+    }
+    .quote-card .quote-author {
+      color: #94a3b8;
+      font-size: 13px;
+    }
+
+    /* ========== 底部CTA ========== */
+    .cta-box {
+      background: linear-gradient(135deg, rgba(244,114,182,0.3), rgba(192,132,252,0.15));
+      border: 2px solid rgba(244,114,182,0.4);
+      border-radius: 20px;
+      padding: 20px;
+      text-align: center;
+      margin-top: 24px;
+      box-shadow: 0 0 25px rgba(244,114,182,0.1);
+    }
+    .cta-box h3 {
+      font-size: 19px;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 6px;
+    }
+    .cta-box p {
+      color: #94a3b8;
+      font-size: 13px;
+      margin-bottom: 16px;
+    }
+    .cta-box .cta-btn {
+      display: inline-block;
+      background: linear-gradient(135deg, #f472b6, #c084fc);
+      color: #fff;
+      padding: 12px 28px;
+      border-radius: 30px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 16px;
+      letter-spacing: 1px;
+      transition: all 0.2s;
+      box-shadow: 0 6px 20px rgba(244,114,182,0.3);
+    }
+    .cta-box .cta-btn:active { transform: scale(0.95); }
+
+    /* ========== 底部微信 ========== */
+    .contact-bar {
+      margin-top: 32px;
+      background: rgba(15,23,42,0.9);
+      border: 1px solid rgba(0,240,255,0.2);
+      border-radius: 18px;
+      padding: 18px 20px;
+      text-align: center;
+      backdrop-filter: blur(10px);
+    }
+    .contact-bar .contact-label {
+      color: #94a3b8;
+      font-size: 13px;
+      margin-bottom: 6px;
+      letter-spacing: 1px;
+    }
+    .contact-bar .contact-wx {
+      font-size: 20px;
+      font-weight: 900;
+      background: linear-gradient(135deg, #00f0ff, #fbbf24);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: 2px;
+    }
+    .contact-bar .contact-hint {
+      color: #64748b;
+      font-size: 11px;
+      margin-top: 6px;
+    }
+    .footer {
+      text-align: center;
+      color: #334155;
+      font-size: 11px;
+      margin-top: 20px;
+      letter-spacing: 1px;
+    }
+
+    /* ========== 导航按钮 ========== */
+    .nav-buttons {
+      display: flex;
+      gap: 10px;
+      margin-top: 24px;
+    }
+    .nav-btn {
+      flex: 1;
+      text-align: center;
+      padding: 12px;
+      border-radius: 14px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 14px;
+      transition: all 0.2s;
+      border: 1px solid rgba(244,114,182,0.3);
+      color: #f472b6;
+      background: rgba(244,114,182,0.05);
+    }
+    .nav-btn:active { background: rgba(244,114,182,0.15); }
+    .nav-btn.next {
+      background: linear-gradient(135deg, rgba(244,114,182,0.3), rgba(192,132,252,0.2));
+      border-color: rgba(244,114,182,0.5);
+      color: #fff;
+    }
+
+    /* ========== 适配 ========== */
+    @media (max-width: 400px) {
+      .page-header h1 { font-size: 24px; }
+      .page-header .module-icon { font-size: 44px; }
+      .nav-link { font-size: 11px; padding: 5px 8px; }
+      .nav-home { font-size: 13px; padding: 5px 10px; }
+      .navbar-inner { height: 44px; }
+      .content-card { padding: 18px 14px; }
+      .creative-grid { gap: 8px; }
+      .creative-card { padding: 14px 10px; }
+      .creative-card .cr-icon { font-size: 28px; }
+      .creative-card .cr-name { font-size: 13px; }
+      .model-card { padding: 16px 12px; }
+      .model-num { width: 38px; height: 38px; font-size: 16px; }
+    }
+    @media (min-width: 769px) {
+      .content-card { padding: 28px 24px; }
+      .creative-card { padding: 24px 18px; }
+      .model-card { padding: 24px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <canvas class="stars" id="starsCanvas"></canvas>
+
+  <!-- ==================== 导航栏 ==================== -->
+  <nav class="navbar">
+    <div class="navbar-inner">
+      <a href="index.html" class="nav-home">🏠 主页</a>
+      <span class="nav-divider"></span>
+      <a href="business-thinking.html" class="nav-link">💰商业思维</a>
+      <a href="human-nature.html" class="nav-link">🧠人性弱点</a>
+      <a href="algorithm.html" class="nav-link">📐规则算法</a>
+      <a href="product-selection.html" class="nav-link">🛒带货选品</a>
+      <a href="ai-video.html" class="nav-link">🤖AI视频</a>
+      <a href="video-analysis.html" class="nav-link">📊视频分析</a>
+      <a href="trend.html" class="nav-link">📈发展趋势</a>
+      <a href="creative.html" class="nav-link active">💡商业创意</a>
+    </div>
+  </nav>
+
+  <div class="container">
+
+    <!-- 页面标题 -->
+    <div class="page-header">
+      <span class="module-icon">💡</span>
+      <p class="module-num">MODULE 08</p>
+      <h1>商业创意</h1>
+      <p class="sub">打破常规思维，找到属于你的差异化变现路径</p>
+    </div>
+    <div class="neon-line"></div>
+
+    <!-- 核心认知 -->
+    <div class="content-card">
+      <h3><span class="icon">🌟</span> 创意的本质不是"想出新东西"</h3>
+      <p>很多人以为创意是<strong style="color:#f472b6;">凭空发明</strong>。但商业上的创意，本质上是<strong style="color:#c084fc;">旧元素的新组合</strong>。</p>
+      <ul>
+        <li><strong style="color:#f472b6;">AI + 带货 = </strong>不用真人出镜的带货矩阵</li>
+        <li><strong style="color:#c084fc;">AI + 知识付费 = </strong>批量生产课程视频+自动引流</li>
+        <li><strong style="color:#818cf8;">AI + 跨境电商 = </strong>一条视频赚全球的钱</li>
+        <li><strong style="color:#fbbf24;">AI + 本地生活 = </strong>帮100家餐馆做抖音团购视频</li>
+      </ul>
+      <p style="margin-top:12px;">这8个模块你都看完了，现在最有价值的动作是：<strong style="color:#f472b6;">把你的优势 × AI视频的能力，组合出独特的变现路径。</strong></p>
+    </div>
+
+    <!-- 10个创意模式 -->
+    <div class="content-card">
+      <h3><span class="icon">💼</span> 10个AI视频商业模式</h3>
+      <p>以下模式<strong style="color:#f472b6;">都有人在做且赚到钱了</strong>，看看哪个最适合你：</p>
+    </div>
+
+    <div class="model-card">
+      <div class="model-num">1</div>
+      <div class="model-content">
+        <h4>AI带货矩阵</h4>
+        <div class="model-tagline">投入：低 | 产出：中高 | 门槛：低</div>
+        <p>用AI批量生成产品展示视频，同时运营10-50个账号带货。一个爆款视频可以卖几千单。</p>
+      </div>
+    </div>
+
+    <div class="model-card">
+      <div class="model-num">2</div>
+      <div class="model-content">
+        <h4>AI代运营服务</h4>
+        <div class="model-tagline">投入：低 | 产出：中 | 门槛：中</div>
+        <p>帮本地商家用AI做视频，一个月收2000-5000/家，10个客户就是2-5万月收入。</p>
+      </div>
+    </div>
+
+    <div class="model-card">
+      <div class="model-num">3</div>
+      <div class="model-content">
+        <h4>AI知识付费</h4>
+        <div class="model-tagline">投入：中 | 产出：高 | 门槛：中高</div>
+        <p>把你学到的AI视频技能做成课程，用AI批量生产课程视频引流，打造个人IP。</p>
+      </div>
+    </div>
+
+    <div class="model-card">
+      <div class="model-num">4</div>
+      <div class="model-content">
+        <h4>AI视频素材库</h4>
+        <div class="model-tagline">投入：低 | 产出：中 | 门槛：低</div>
+        <p>用AI生成大量无版权视频素材，打包卖给需要素材的创作者和公司，被动收入。</p>
+      </div>
+    </div>
+
+    <div class="model-card">
+      <div class="model-num">5</div>
+      <div class="model-content">
+        <h4>AI跨境视频</h4>
+        <div class="model-tagline">投入：中 | 产出：高 | 门槛：中</div>
+        <p>用AI把中文视频翻译成多语言版本，分发到YouTube/TikTok海外版赚美元。</p>
+      </div>
+    </div>
+
+    <div class="model-card">
+      <div class="model-num">6</div>
+      <div class="model-content">
+        <h4>AI自媒体IP矩阵</h4>
+        <div class="model-tagline">投入：中 | 产出：高 | 门槛：中高</div>
+        <p>同时打造多个垂直领域的AI账号，每个号吸引不同人群，最后汇聚到同一个私域变现。</p>
+      </div>
+    </div>
+
+    <div class="model-card">
+      <div class="model-num">7</div>
+      <div class="model-content">
+        <h4>AI视频定制服务</h4>
+        <div class="model-tagline">投入：低 | 产出：中 | 门槛：中</div>
+        <p>接企业宣传片、产品广告、活动视频的AI定制，一条视频收费500-3000元。</p>
+      </div>
+    </div>
+
+    <div class="model-card">
+      <div class="model-num">8</div>
+      <div class="model-content">
+        <h4>AI短剧批量生产</h4>
+        <div class="model-tagline">投入：中高 | 产出：高 | 门槛：中高</div>
+        <p>用AI批量生成短剧内容，发布到抖音/快手短剧频道，靠平台分成和广告变现。</p>
+      </div>
+    </div>
+
+    <div class="model-card">
+      <div class="model-num">9</div>
+      <div class="model-content">
+        <h4>AI数字人直播</h4>
+        <div class="model-tagline">投入：中 | 产出：高 | 门槛：中</div>
+        <p>搭建AI数字人直播间，24小时无人直播带货。一个人管理5-10个直播间。</p>
+      </div>
+    </div>
+
+    <div class="model-card">
+      <div class="model-num">10</div>
+      <div class="model-content">
+        <h4>AI视频培训/教练</h4>
+        <div class="model-tagline">投入：低 | 产出：中高 | 门槛：中</div>
+        <p>你学会之后教别人。一对一私教、小班课、社群带教，单价从几百到几千不等。</p>
+      </div>
+    </div>
+
+    <!-- 真实案例 -->
+    <div class="content-card">
+      <h3><span class="icon">📋</span> 真实变现案例</h3>
+      <p>以下案例均来自<strong style="color:#f472b6;">真实AI视频创作者</strong>（数据经脱敏处理）：</p>
+
+      <div class="case-card">
+        <div class="case-header">
+          <span class="case-icon">📦</span>
+          <span class="case-title">AI带货账号矩阵</span>
+          <span class="case-result">月入3万+</span>
+        </div>
+        <p>一个人运营15个AI带货账号，每天发布100+条AI生成的商品视频。精选联盟佣金+视频分成，稳定月入3万以上。</p>
+      </div>
+
+      <div class="case-card">
+        <div class="case-header">
+          <span class="case-icon">🏪</span>
+          <span class="case-title">本地商家AI代运营</span>
+          <span class="case-result">月入2万+</span>
+        </div>
+        <p>帮8家本地餐饮店用AI做抖音视频，每家收2000-3000/月。一个人+AI，服务8个客户毫无压力。</p>
+      </div>
+
+      <div class="case-card">
+        <div class="case-header">
+          <span class="case-icon">🌍</span>
+          <span class="case-title">AI跨境视频搬运</span>
+          <span class="case-result">月入5000美元</span>
+        </div>
+        <p>把国内爆款视频用AI翻译+配音成英文版，发到YouTube。靠广告分成+联盟营销，月入5000美元。</p>
+      </div>
+
+      <div class="case-card">
+        <div class="case-header">
+          <span class="case-icon">🎓</span>
+          <span class="case-title">AI视频私教</span>
+          <span class="case-result">月入5万+</span>
+        </div>
+        <p>一个AI视频博主，开设一对一私教课程，收费2980元/人。一个月招15-20个学员，月入5万以上。</p>
+      </div>
+
+    </div>
+
+    <!-- 如何选择 -->
+    <div class="content-card">
+      <h3><span class="icon">🎯</span> 如何选择适合自己的模式？</h3>
+      <p>不要被10个模式搞晕，选一个最适合你的，<strong style="color:#f472b6;">先做透一个</strong>：</p>
+      <ul>
+        <li><strong style="color:#f472b6;">时间少、想快速见到钱 → </strong>AI带货矩阵 或 AI素材库（门槛最低）</li>
+        <li><strong style="color:#c084fc;">有销售能力、喜欢跟人打交道 → </strong>AI代运营 或 AI视频定制</li>
+        <li><strong style="color:#818cf8;">有行业经验、有个人品牌基础 → </strong>AI知识付费 或 AI私教</li>
+        <li><strong style="color:#fbbf24;">有团队、有资金、想做大 → </strong>AI短剧 或 AI跨境视频</li>
+        <li><strong style="color:#34d399;">技术控、喜欢研究工具 → </strong>AI数字人直播 或 AI自媒体矩阵</li>
+      </ul>
+    </div>
+
+    <!-- 金句 -->
+    <div class="quote-card">
+      <span class="quote-mark">"</span>
+      <p class="quote-text">最好的商业模式，是用你最擅长的方式，解决别人最头疼的问题。</p>
+      <p class="quote-author">—— 用AI把你的优势放大100倍</p>
+    </div>
+
+    <!-- 全部模块回顾 -->
+    <div class="content-card" style="text-align:center;">
+      <h3 style="justify-content:center;">🎉 八大模块全部学完！</h3>
+      <p>你已经完成了<strong style="color:#f472b6;">AI视频变现训练营</strong>的全部8个模块：</p>
+      <p style="font-size:13px;color:#94a3b8;">
+        💰商业思维 → 🧠人性弱点 → 📐规则算法 → 🛒带货选品<br>
+        🤖AI视频 → 📊视频分析 → 📈发展趋势 → 💡商业创意
+      </p>
+      <p style="margin-top:12px;">接下来，你需要的是<strong style="color:#f472b6;">行动</strong>。选一个模式，马上开始做第一条AI视频。</p>
+    </div>
+
+    <!-- CTA -->
+    <div class="cta-box">
+      <h3>🚀 准备好开始你的AI变现之旅了吗？</h3>
+      <p>填摸底表，让我了解你的情况，帮你选最适合的变现模式</p>
+      <a href="form.html" class="cta-btn">📋 填写摸底表</a>
+    </div>
+
+    <!-- 导航 -->
+    <div class="nav-buttons">
+      <a href="trend.html" class="nav-btn">◀ 上一模块：发展趋势</a>
+      <a href="index.html" class="nav-btn next">🏠 返回主页</a>
+    </div>
+
+    <!-- 底部微信 -->
+    <div class="contact-bar">
+      <p class="contact-label">📩 深度带教 · 一对一指导</p>
+      <p class="contact-wx">微信：16500234000</p>
+      <p class="contact-hint">添加备注"AI学习"，优先通过</p>
+    </div>
+    <div class="footer">
+      © 2024 张大业 · AI视频变现 · 微信 16500234000
+    </div>
+
+  </div>
+
+  <script>
+    const canvas = document.getElementById('starsCanvas');
+    const ctx = canvas.getContext('2d');
+    let width, height, particles = [];
+    function resize() {
+      width = window.innerWidth;
+      height = window.innerHeight;
+      canvas.width = width;
+      canvas.height = height;
+    }
+    resize();
+    window.addEventListener('resize', resize);
+    class Particle {
+      constructor() { this.reset(); }
+      reset() {
+        this.x = Math.random() * width;
+        this.y = Math.random() * height;
+        this.size = Math.random() * 1.5 + 0.5;
+        this.speedX = (Math.random() - 0.5) * 0.3;
+        this.speedY = (Math.random() - 0.5) * 0.3;
+        this.opacity = Math.random() * 0.6 + 0.2;
+        this.fadeSpeed = Math.random() * 0.005 + 0.002;
+        this.fading = Math.random() > 0.5;
+      }
+      update() {
+        this.x += this.speedX; this.y += this.speedY;
+        if (this.fading) { this.opacity -= this.fadeSpeed; if (this.opacity <= 0.1) this.fading = false; }
+        else { this.opacity += this.fadeSpeed; if (this.opacity >= 0.7) this.fading = true; }
+        if (this.x < -10 || this.x > width + 10 || this.y < -10 || this.y > height + 10) {
+          this.reset(); this.opacity = Math.random() * 0.5;
+        }
+      }
+      draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(244, 114, 182, ${this.opacity})`;
+        ctx.fill();
+      }
+    }
+    for (let i = 0; i < 150; i++) particles.push(new Particle());
+    function animate() {
+      ctx.clearRect(0, 0, width, height);
+      particles.forEach(p => { p.update(); p.draw(); });
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x;
+          const dy = particles[i].y - particles[j].y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 80) {
+            ctx.beginPath();
+            ctx.moveTo(particles[i].x, particles[i].y);
+            ctx.lineTo(particles[j].x, particles[j].y);
+            ctx.strokeStyle = `rgba(244, 114, 182, ${0.06 * (1 - dist / 80)})`;
+            ctx.lineWidth = 0.5;
+            ctx.stroke();
+          }
+        }
+      }
+      requestAnimationFrame(animate);
+    }
+    animate();
+  </script>
+
+</body>
+</html>

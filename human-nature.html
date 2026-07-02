@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>人性弱点 · 张大业AI视频变现</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #000;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+      color: #e2e8f0;
+      line-height: 1.8;
+    }
+
+    .stars {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ========== 导航栏 ========== */
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(0,0,0,0.85);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(0,240,255,0.2);
+      padding: 0 10px;
+    }
+    .navbar-inner {
+      max-width: 680px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      height: 50px;
+      gap: 6px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .navbar-inner::-webkit-scrollbar { display: none; }
+    .nav-home {
+      flex-shrink: 0;
+      text-decoration: none;
+      color: #00f0ff;
+      font-weight: 700;
+      font-size: 15px;
+      padding: 6px 12px;
+      border: 1px solid rgba(0,240,255,0.3);
+      border-radius: 20px;
+      white-space: nowrap;
+      transition: all 0.2s;
+      margin-right: 4px;
+    }
+    .nav-home:active { background: rgba(0,240,255,0.15); }
+    .nav-link {
+      flex-shrink: 0;
+      text-decoration: none;
+      color: #94a3b8;
+      font-size: 12px;
+      padding: 6px 10px;
+      border-radius: 14px;
+      white-space: nowrap;
+      transition: all 0.2s;
+      border: 1px solid transparent;
+    }
+    .nav-link:hover { color: #00f0ff; }
+    .nav-link.active {
+      color: #00f0ff;
+      border-color: rgba(0,240,255,0.3);
+      background: rgba(0,240,255,0.08);
+    }
+    .nav-link:active { background: rgba(0,240,255,0.1); }
+    .nav-divider {
+      width: 1px;
+      height: 16px;
+      background: rgba(255,255,255,0.1);
+      flex-shrink: 0;
+      margin: 0 2px;
+    }
+
+    /* ========== 主容器 ========== */
+    .container {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 20px 15px 60px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ========== 页面标题 ========== */
+    .page-header {
+      text-align: center;
+      padding: 20px 10px 10px;
+    }
+    .page-header .module-icon {
+      font-size: 56px;
+      display: block;
+      margin-bottom: 12px;
+      filter: drop-shadow(0 0 20px rgba(168,85,247,0.5));
+      animation: float 3s ease-in-out infinite;
+    }
+    @keyframes float {
+      0%,100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+    .page-header h1 {
+      font-size: 28px;
+      font-weight: 900;
+      background: linear-gradient(135deg, #c084fc, #f472b6, #fbbf24);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: 2px;
+    }
+    .page-header .module-num {
+      color: #c084fc;
+      font-size: 13px;
+      letter-spacing: 3px;
+      margin-top: 4px;
+      text-shadow: 0 0 10px rgba(168,85,247,0.4);
+    }
+    .page-header .sub {
+      color: #94a3b8;
+      font-size: 14px;
+      margin-top: 8px;
+    }
+    .neon-line {
+      width: 50%;
+      height: 2px;
+      margin: 16px auto 24px;
+      background: linear-gradient(90deg, transparent, #c084fc, #f472b6, #c084fc, transparent);
+    }
+
+    /* ========== 内容卡片 ========== */
+    .content-card {
+      background: rgba(15,23,42,0.7);
+      border: 1px solid rgba(168,85,247,0.15);
+      border-radius: 20px;
+      padding: 24px 20px;
+      margin-bottom: 16px;
+      backdrop-filter: blur(10px);
+      transition: all 0.3s;
+    }
+    .content-card:hover {
+      border-color: rgba(168,85,247,0.4);
+      box-shadow: 0 0 20px rgba(168,85,247,0.1);
+    }
+    .content-card h3 {
+      font-size: 18px;
+      font-weight: 700;
+      color: #c084fc;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .content-card h3 .icon { font-size: 22px; }
+    .content-card p {
+      color: #cbd5e1;
+      font-size: 14px;
+      margin-bottom: 8px;
+    }
+    .content-card ul {
+      list-style: none;
+      padding: 0;
+    }
+    .content-card ul li {
+      padding: 6px 0 6px 20px;
+      position: relative;
+      color: #94a3b8;
+      font-size: 14px;
+    }
+    .content-card ul li::before {
+      content: "▸";
+      position: absolute;
+      left: 0;
+      color: #c084fc;
+    }
+
+    /* 人性弱点卡片网格 */
+    .weakness-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin: 16px 0;
+    }
+    .weakness-card {
+      background: rgba(15,23,42,0.6);
+      border: 1px solid rgba(168,85,247,0.2);
+      border-radius: 16px;
+      padding: 16px 12px;
+      text-align: center;
+      transition: all 0.3s;
+    }
+    .weakness-card:hover {
+      border-color: rgba(168,85,247,0.5);
+      box-shadow: 0 0 15px rgba(168,85,247,0.1);
+      transform: translateY(-2px);
+    }
+    .weakness-card .w-icon {
+      font-size: 32px;
+      margin-bottom: 8px;
+    }
+    .weakness-card .w-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: #f472b6;
+      margin-bottom: 4px;
+    }
+    .weakness-card .w-use {
+      font-size: 11px;
+      color: #94a3b8;
+      line-height: 1.5;
+    }
+
+    /* ========== 金句卡片 ========== */
+    .quote-card {
+      background: linear-gradient(135deg, rgba(168,85,247,0.1), rgba(244,114,182,0.08));
+      border: 1px solid rgba(244,114,182,0.3);
+      border-radius: 18px;
+      padding: 20px;
+      margin: 24px 0;
+      text-align: center;
+      position: relative;
+    }
+    .quote-card .quote-mark {
+      font-size: 48px;
+      color: #f472b6;
+      line-height: 1;
+      opacity: 0.5;
+      position: absolute;
+      top: 6px;
+      left: 16px;
+    }
+    .quote-card .quote-text {
+      font-size: 18px;
+      font-weight: 700;
+      color: #f472b6;
+      margin: 10px 0 6px;
+      letter-spacing: 1px;
+    }
+    .quote-card .quote-author {
+      color: #94a3b8;
+      font-size: 13px;
+    }
+
+    /* ========== 底部CTA ========== */
+    .cta-box {
+      background: linear-gradient(135deg, rgba(124,58,237,0.3), rgba(168,85,247,0.15));
+      border: 2px solid rgba(168,85,247,0.4);
+      border-radius: 20px;
+      padding: 20px;
+      text-align: center;
+      margin-top: 24px;
+      box-shadow: 0 0 25px rgba(168,85,247,0.1);
+    }
+    .cta-box h3 {
+      font-size: 19px;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 6px;
+    }
+    .cta-box p {
+      color: #94a3b8;
+      font-size: 13px;
+      margin-bottom: 16px;
+    }
+    .cta-box .cta-btn {
+      display: inline-block;
+      background: linear-gradient(135deg, #c084fc, #f472b6);
+      color: #fff;
+      padding: 12px 28px;
+      border-radius: 30px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 16px;
+      letter-spacing: 1px;
+      transition: all 0.2s;
+      box-shadow: 0 6px 20px rgba(168,85,247,0.3);
+    }
+    .cta-box .cta-btn:active { transform: scale(0.95); }
+
+    /* ========== 底部微信 ========== */
+    .contact-bar {
+      margin-top: 32px;
+      background: rgba(15,23,42,0.9);
+      border: 1px solid rgba(0,240,255,0.2);
+      border-radius: 18px;
+      padding: 18px 20px;
+      text-align: center;
+      backdrop-filter: blur(10px);
+    }
+    .contact-bar .contact-label {
+      color: #94a3b8;
+      font-size: 13px;
+      margin-bottom: 6px;
+      letter-spacing: 1px;
+    }
+    .contact-bar .contact-wx {
+      font-size: 20px;
+      font-weight: 900;
+      background: linear-gradient(135deg, #00f0ff, #fbbf24);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: 2px;
+    }
+    .contact-bar .contact-hint {
+      color: #64748b;
+      font-size: 11px;
+      margin-top: 6px;
+    }
+    .footer {
+      text-align: center;
+      color: #334155;
+      font-size: 11px;
+      margin-top: 20px;
+      letter-spacing: 1px;
+    }
+
+    /* ========== 导航按钮 ========== */
+    .nav-buttons {
+      display: flex;
+      gap: 10px;
+      margin-top: 24px;
+    }
+    .nav-btn {
+      flex: 1;
+      text-align: center;
+      padding: 12px;
+      border-radius: 14px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 14px;
+      transition: all 0.2s;
+      border: 1px solid rgba(168,85,247,0.3);
+      color: #c084fc;
+      background: rgba(168,85,247,0.05);
+    }
+    .nav-btn:active { background: rgba(168,85,247,0.15); }
+    .nav-btn.next {
+      background: linear-gradient(135deg, rgba(168,85,247,0.5), rgba(244,114,182,0.2));
+      border-color: rgba(168,85,247,0.5);
+      color: #fff;
+    }
+
+    /* ========== 适配 ========== */
+    @media (max-width: 400px) {
+      .page-header h1 { font-size: 24px; }
+      .page-header .module-icon { font-size: 44px; }
+      .nav-link { font-size: 11px; padding: 5px 8px; }
+      .nav-home { font-size: 13px; padding: 5px 10px; }
+      .navbar-inner { height: 44px; }
+      .content-card { padding: 18px 14px; }
+      .content-card h3 { font-size: 16px; }
+      .weakness-grid { gap: 8px; }
+      .weakness-card { padding: 12px 8px; }
+      .weakness-card .w-icon { font-size: 26px; }
+      .weakness-card .w-name { font-size: 13px; }
+    }
+    @media (min-width: 769px) {
+      .content-card { padding: 28px 24px; }
+      .content-card p { font-size: 15px; }
+      .weakness-grid { gap: 14px; }
+      .weakness-card { padding: 20px 16px; }
+    }
+  </style>
+</head>
+<body>
+
+  <canvas class="stars" id="starsCanvas"></canvas>
+
+  <!-- ==================== 导航栏 ==================== -->
+  <nav class="navbar">
+    <div class="navbar-inner">
+      <a href="index.html" class="nav-home">🏠 主页</a>
+      <span class="nav-divider"></span>
+      <a href="business-thinking.html" class="nav-link">💰商业思维</a>
+      <a href="human-nature.html" class="nav-link active">🧠人性弱点</a>
+      <a href="algorithm.html" class="nav-link">📐规则算法</a>
+      <a href="product-selection.html" class="nav-link">🛒带货选品</a>
+      <a href="ai-video.html" class="nav-link">🤖AI视频</a>
+      <a href="video-analysis.html" class="nav-link">📊视频分析</a>
+      <a href="trend.html" class="nav-link">📈发展趋势</a>
+      <a href="creative.html" class="nav-link">💡商业创意</a>
+    </div>
+  </nav>
+
+  <div class="container">
+
+    <!-- 页面标题 -->
+    <div class="page-header">
+      <span class="module-icon">🧠</span>
+      <p class="module-num">MODULE 02</p>
+      <h1>人性弱点</h1>
+      <p class="sub">洞察用户心理，让每条视频都自带"停不下来"的钩子</p>
+    </div>
+    <div class="neon-line"></div>
+
+    <!-- 核心认知 -->
+    <div class="content-card">
+      <h3><span class="icon">💡</span> 为什么AI视频要懂人性？</h3>
+      <p>AI负责生产效率，人性负责转化效果。</p>
+      <p>一条视频能不能火，不取决于画面多精美、剪辑多炫酷，而取决于它能不能<strong style="color:#f472b6;">触发用户的情绪反应</strong>。</p>
+      <ul>
+        <li>AI可以帮你1小时生成100条视频</li>
+        <li>但只有懂人性，这100条里才有能爆的那一条</li>
+        <li>人性=钩子=停留=完播=流量</li>
+      </ul>
+    </div>
+
+    <!-- 7大人性弱点 -->
+    <div class="content-card">
+      <h3><span class="icon">🔥</span> 驱动用户行为的7大人性弱点</h3>
+      <p>每一类弱点，对应一种视频策略。你的视频至少要用上其中一种：</p>
+
+      <div class="weakness-grid">
+
+        <div class="weakness-card">
+          <div class="w-icon">😱</div>
+          <div class="w-name">恐惧</div>
+          <div class="w-use">"再不学会AI，你就要被淘汰了"——制造焦虑，给出解药</div>
+        </div>
+
+        <div class="weakness-card">
+          <div class="w-icon">🤑</div>
+          <div class="w-name">贪婪</div>
+          <div class="w-use">"用这个AI工具，我一天赚了5000"——展示结果，激发欲望</div>
+        </div>
+
+        <div class="weakness-card">
+          <div class="w-icon">😴</div>
+          <div class="w-name">懒惰</div>
+          <div class="w-use">"一键生成100条视频，躺着赚钱"——强调简单，降低门槛</div>
+        </div>
+
+        <div class="weakness-card">
+          <div class="w-icon">👀</div>
+          <div class="w-name">好奇</div>
+          <div class="w-use">"这个AI做出来的视频，把所有人都骗了"——制造悬念</div>
+        </div>
+
+        <div class="weakness-card">
+          <div class="w-icon">🏆</div>
+          <div class="w-name">虚荣</div>
+          <div class="w-use">"粉丝过万的AI创作者都在用的工具"——身份标签</div>
+        </div>
+
+        <div class="weakness-card">
+          <div class="w-icon">😢</div>
+          <div class="w-name">共情</div>
+          <div class="w-use">"我也曾月薪3000，直到我学会了AI"——情感共鸣</div>
+        </div>
+
+        <div class="weakness-card">
+          <div class="w-icon">⏰</div>
+          <div class="w-name">稀缺</div>
+          <div class="w-use">"限时免费，明天就删"——制造紧迫感</div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- 前3秒钩子 -->
+    <div class="content-card">
+      <h3><span class="icon">🎣</span> 前3秒钩子公式</h3>
+      <p>用户刷到视频的前3秒决定划走还是留下。四种最强钩子：</p>
+      <ul>
+        <li><strong style="color:#f472b6;">反常识：</strong>"AI做的视频，比真人拍的火10倍"（打破认知）</li>
+        <li><strong style="color:#c084fc;">强结果：</strong>"我靠这个方法，单条视频赚了8000"（利益前置）</li>
+        <li><strong style="color:#fbbf24;">设悬念：</strong>"这个AI功能99%的人都不知道，第3个太强了"（信息缺口）</li>
+        <li><strong style="color:#00f0ff;">戳痛点：</strong>"每天花3小时剪视频的人，看完这条会哭"（精准打击）</li>
+      </ul>
+      <p style="margin-top:12px;">用AI批量测试这四种开头，数据好的留下，差的淘汰。不是凭感觉，是<strong style="color:#f472b6;">用数据选钩子</strong>。</p>
+    </div>
+
+    <!-- 内容节奏 -->
+    <div class="content-card">
+      <h3><span class="icon">🎵</span> 让人停不下来的内容节奏</h3>
+      <ul>
+        <li><strong style="color:#f472b6;">0-3秒：</strong>钩子——制造好奇或痛点，让人"不得不看"</li>
+        <li><strong style="color:#c084fc;">3-15秒：</strong>展开——快速给信息，每5秒一个"小钩子"</li>
+        <li><strong style="color:#fbbf24;">15-30秒：</strong>高潮——核心价值输出，情绪推到顶点</li>
+        <li><strong style="color:#00f0ff;">最后5秒：</strong>行动——引导点赞、关注、进私域</li>
+      </ul>
+    </div>
+
+    <!-- 金句 -->
+    <div class="quote-card">
+      <span class="quote-mark">"</span>
+      <p class="quote-text">用户不会为"你有多努力"买单，只会为"你对我有什么用"买单。</p>
+      <p class="quote-author">—— 从用户的人性出发，而不是从你的产品出发</p>
+    </div>
+
+    <!-- CTA -->
+    <div class="cta-box">
+      <h3>🧠 想让你的视频自带"上瘾"属性？</h3>
+      <p>先填摸底表，我根据你的情况帮你设计钩子策略</p>
+      <a href="form.html" class="cta-btn">📋 填写摸底表</a>
+    </div>
+
+    <!-- 上下导航 -->
+    <div class="nav-buttons">
+      <a href="business-thinking.html" class="nav-btn">◀ 上一模块：商业思维</a>
+      <a href="algorithm.html" class="nav-btn next">下一模块：规则算法 ▶</a>
+    </div>
+
+    <!-- 底部微信 -->
+    <div class="contact-bar">
+      <p class="contact-label">📩 深度带教 · 一对一指导</p>
+      <p class="contact-wx">微信：16500234000</p>
+      <p class="contact-hint">添加备注"AI学习"，优先通过</p>
+    </div>
+    <div class="footer">
+      © 2024 张大业 · AI视频变现 · 微信 16500234000
+    </div>
+
+  </div>
+
+  <script>
+    const canvas = document.getElementById('starsCanvas');
+    const ctx = canvas.getContext('2d');
+    let width, height, particles = [];
+    function resize() {
+      width = window.innerWidth;
+      height = window.innerHeight;
+      canvas.width = width;
+      canvas.height = height;
+    }
+    resize();
+    window.addEventListener('resize', resize);
+    class Particle {
+      constructor() { this.reset(); }
+      reset() {
+        this.x = Math.random() * width;
+        this.y = Math.random() * height;
+        this.size = Math.random() * 1.5 + 0.5;
+        this.speedX = (Math.random() - 0.5) * 0.3;
+        this.speedY = (Math.random() - 0.5) * 0.3;
+        this.opacity = Math.random() * 0.6 + 0.2;
+        this.fadeSpeed = Math.random() * 0.005 + 0.002;
+        this.fading = Math.random() > 0.5;
+      }
+      update() {
+        this.x += this.speedX; this.y += this.speedY;
+        if (this.fading) { this.opacity -= this.fadeSpeed; if (this.opacity <= 0.1) this.fading = false; }
+        else { this.opacity += this.fadeSpeed; if (this.opacity >= 0.7) this.fading = true; }
+        if (this.x < -10 || this.x > width + 10 || this.y < -10 || this.y > height + 10) {
+          this.reset(); this.opacity = Math.random() * 0.5;
+        }
+      }
+      draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(168, 85, 247, ${this.opacity})`;
+        ctx.fill();
+      }
+    }
+    for (let i = 0; i < 150; i++) particles.push(new Particle());
+    function animate() {
+      ctx.clearRect(0, 0, width, height);
+      particles.forEach(p => { p.update(); p.draw(); });
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x;
+          const dy = particles[i].y - particles[j].y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 80) {
+            ctx.beginPath();
+            ctx.moveTo(particles[i].x, particles[i].y);
+            ctx.lineTo(particles[j].x, particles[j].y);
+            ctx.strokeStyle = `rgba(168, 85, 247, ${0.06 * (1 - dist / 80)})`;
+            ctx.lineWidth = 0.5;
+            ctx.stroke();
+          }
+        }
+      }
+      requestAnimationFrame(animate);
+    }
+    animate();
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>带货选品 · 张大业AI视频变现</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #000;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+      color: #e2e8f0;
+      line-height: 1.8;
+    }
+
+    .stars {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ========== 导航栏 ========== */
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(0,0,0,0.85);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(251,146,60,0.2);
+      padding: 0 10px;
+    }
+    .navbar-inner {
+      max-width: 680px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      height: 50px;
+      gap: 6px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .navbar-inner::-webkit-scrollbar { display: none; }
+    .nav-home {
+      flex-shrink: 0;
+      text-decoration: none;
+      color: #fb923c;
+      font-weight: 700;
+      font-size: 15px;
+      padding: 6px 12px;
+      border: 1px solid rgba(251,146,60,0.3);
+      border-radius: 20px;
+      white-space: nowrap;
+      transition: all 0.2s;
+      margin-right: 4px;
+    }
+    .nav-home:active { background: rgba(251,146,60,0.15); }
+    .nav-link {
+      flex-shrink: 0;
+      text-decoration: none;
+      color: #94a3b8;
+      font-size: 12px;
+      padding: 6px 10px;
+      border-radius: 14px;
+      white-space: nowrap;
+      transition: all 0.2s;
+      border: 1px solid transparent;
+    }
+    .nav-link:hover { color: #fb923c; }
+    .nav-link.active {
+      color: #fb923c;
+      border-color: rgba(251,146,60,0.3);
+      background: rgba(251,146,60,0.08);
+    }
+    .nav-link:active { background: rgba(251,146,60,0.1); }
+    .nav-divider {
+      width: 1px; height: 16px;
+      background: rgba(255,255,255,0.1);
+      flex-shrink: 0; margin: 0 2px;
+    }
+
+    /* ========== 主容器 ========== */
+    .container {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 20px 15px 60px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ========== 页面标题 ========== */
+    .page-header {
+      text-align: center;
+      padding: 20px 10px 10px;
+    }
+    .page-header .module-icon {
+      font-size: 56px;
+      display: block;
+      margin-bottom: 12px;
+      filter: drop-shadow(0 0 20px rgba(251,146,60,0.5));
+      animation: float 3s ease-in-out infinite;
+    }
+    @keyframes float {
+      0%,100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+    .page-header h1 {
+      font-size: 28px;
+      font-weight: 900;
+      background: linear-gradient(135deg, #fb923c, #f97316, #ef4444);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: 2px;
+    }
+    .page-header .module-num {
+      color: #fb923c;
+      font-size: 13px;
+      letter-spacing: 3px;
+      margin-top: 4px;
+      text-shadow: 0 0 10px rgba(251,146,60,0.4);
+    }
+    .page-header .sub {
+      color: #94a3b8;
+      font-size: 14px;
+      margin-top: 8px;
+    }
+    .neon-line {
+      width: 50%;
+      height: 2px;
+      margin: 16px auto 24px;
+      background: linear-gradient(90deg, transparent, #fb923c, #f97316, #fb923c, transparent);
+    }
+
+    /* ========== 内容卡片 ========== */
+    .content-card {
+      background: rgba(15,23,42,0.7);
+      border: 1px solid rgba(251,146,60,0.15);
+      border-radius: 20px;
+      padding: 24px 20px;
+      margin-bottom: 16px;
+      backdrop-filter: blur(10px);
+      transition: all 0.3s;
+    }
+    .content-card:hover {
+      border-color: rgba(251,146,60,0.4);
+      box-shadow: 0 0 20px rgba(251,146,60,0.1);
+    }
+    .content-card h3 {
+      font-size: 18px;
+      font-weight: 700;
+      color: #fb923c;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .content-card h3 .icon { font-size: 22px; }
+    .content-card p {
+      color: #cbd5e1;
+      font-size: 14px;
+      margin-bottom: 8px;
+    }
+    .content-card ul {
+      list-style: none;
+      padding: 0;
+    }
+    .content-card ul li {
+      padding: 6px 0 6px 20px;
+      position: relative;
+      color: #94a3b8;
+      font-size: 14px;
+    }
+    .content-card ul li::before {
+      content: "▸";
+      position: absolute;
+      left: 0;
+      color: #fb923c;
+    }
+
+    /* ========== 选品策略卡片 ========== */
+    .strategy-card {
+      background: rgba(15,23,42,0.6);
+      border: 1px solid rgba(251,146,60,0.2);
+      border-radius: 16px;
+      padding: 18px 14px;
+      margin-bottom: 12px;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      transition: all 0.3s;
+    }
+    .strategy-card:hover {
+      border-color: rgba(251,146,60,0.5);
+      box-shadow: 0 0 15px rgba(251,146,60,0.1);
+    }
+    .strategy-num {
+      width: 36px; height: 36px;
+      background: linear-gradient(135deg, #fb923c, #f97316);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 16px;
+      color: #000;
+      flex-shrink: 0;
+    }
+    .strategy-content h4 {
+      font-size: 15px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+    .strategy-content p {
+      font-size: 13px;
+      color: #94a3b8;
+      margin: 0;
+    }
+
+    /* ========== 选品清单 ========== */
+    .checklist-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin: 12px 0;
+    }
+    .check-item {
+      background: rgba(15,23,42,0.5);
+      border: 1px solid rgba(251,146,60,0.15);
+      border-radius: 12px;
+      padding: 12px;
+      text-align: center;
+      font-size: 13px;
+      color: #cbd5e1;
+      transition: all 0.2s;
+    }
+    .check-item:hover { border-color: rgba(251,146,60,0.4); }
+    .check-item .check-icon { font-size: 24px; display: block; margin-bottom: 4px; }
+    .check-item .check-label { font-weight: 700; color: #fb923c; }
+    .check-item .check-desc { font-size: 11px; color: #94a3b8; margin-top: 2px; }
+
+    /* ========== 平台选品对比 ========== */
+    .compare-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+      margin: 12px 0;
+    }
+    .compare-table th {
+      background: rgba(251,146,60,0.2);
+      padding: 10px 6px;
+      text-align: center;
+      color: #fb923c;
+      font-weight: 700;
+      border: 1px solid rgba(251,146,60,0.15);
+    }
+    .compare-table td {
+      padding: 10px 6px;
+      text-align: center;
+      color: #94a3b8;
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    /* ========== 金句 ========== */
+    .quote-card {
+      background: linear-gradient(135deg, rgba(251,146,60,0.1), rgba(239,68,68,0.08));
+      border: 1px solid rgba(251,146,60,0.3);
+      border-radius: 18px;
+      padding: 20px;
+      margin: 24px 0;
+      text-align: center;
+      position: relative;
+    }
+    .quote-card .quote-mark {
+      font-size: 48px;
+      color: #fb923c;
+      line-height: 1;
+      opacity: 0.5;
+      position: absolute;
+      top: 6px;
+      left: 16px;
+    }
+    .quote-card .quote-text {
+      font-size: 18px;
+      font-weight: 700;
+      color: #fb923c;
+      margin: 10px 0 6px;
+      letter-spacing: 1px;
+    }
+    .quote-card .quote-author {
+      color: #94a3b8;
+      font-size: 13px;
+    }
+
+    /* ========== 底部CTA ========== */
+    .cta-box {
+      background: linear-gradient(135deg, rgba(251,146,60,0.3), rgba(239,68,68,0.15));
+      border: 2px solid rgba(251,146,60,0.4);
+      border-radius: 20px;
+      padding: 20px;
+      text-align: center;
+      margin-top: 24px;
+      box-shadow: 0 0 25px rgba(251,146,60,0.1);
+    }
+    .cta-box h3 {
+      font-size: 19px;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 6px;
+    }
+    .cta-box p {
+      color: #94a3b8;
+      font-size: 13px;
+      margin-bottom: 16px;
+    }
+    .cta-box .cta-btn {
+      display: inline-block;
+      background: linear-gradient(135deg, #fb923c, #f97316);
+      color: #fff;
+      padding: 12px 28px;
+      border-radius: 30px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 16px;
+      letter-spacing: 1px;
+      transition: all 0.2s;
+      box-shadow: 0 6px 20px rgba(251,146,60,0.3);
+    }
+    .cta-box .cta-btn:active { transform: scale(0.95); }
+
+    /* ========== 底部微信 ========== */
+    .contact-bar {
+      margin-top: 32px;
+      background: rgba(15,23,42,0.9);
+      border: 1px solid rgba(0,240,255,0.2);
+      border-radius: 18px;
+      padding: 18px 20px;
+      text-align: center;
+      backdrop-filter: blur(10px);
+    }
+    .contact-bar .contact-label {
+      color: #94a3b8;
+      font-size: 13px;
+      margin-bottom: 6px;
+      letter-spacing: 1px;
+    }
+    .contact-bar .contact-wx {
+      font-size: 20px;
+      font-weight: 900;
+      background: linear-gradient(135deg, #00f0ff, #fbbf24);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: 2px;
+    }
+    .contact-bar .contact-hint {
+      color: #64748b;
+      font-size: 11px;
+      margin-top: 6px;
+    }
+    .footer {
+      text-align: center;
+      color: #334155;
+      font-size: 11px;
+      margin-top: 20px;
+      letter-spacing: 1px;
+    }
+
+    /* ========== 导航按钮 ========== */
+    .nav-buttons {
+      display: flex;
+      gap: 10px;
+      margin-top: 24px;
+    }
+    .nav-btn {
+      flex: 1;
+      text-align: center;
+      padding: 12px;
+      border-radius: 14px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 14px;
+      transition: all 0.2s;
+      border: 1px solid rgba(251,146,60,0.3);
+      color: #fb923c;
+      background: rgba(251,146,60,0.05);
+    }
+    .nav-btn:active { background: rgba(251,146,60,0.15); }
+    .nav-btn.next {
+      background: linear-gradient(135deg, rgba(251,146,60,0.5), rgba(239,68,68,0.2));
+      border-color: rgba(251,146,60,0.5);
+      color: #fff;
+    }
+
+    /* ========== 适配 ========== */
+    @media (max-width: 400px) {
+      .page-header h1 { font-size: 24px; }
+      .page-header .module-icon { font-size: 44px; }
+      .nav-link { font-size: 11px; padding: 5px 8px; }
+      .nav-home { font-size: 13px; padding: 5px 10px; }
+      .navbar-inner { height: 44px; }
+      .content-card { padding: 18px 14px; }
+      .strategy-card { padding: 14px 10px; }
+      .checklist-grid { gap: 6px; }
+      .check-item { padding: 10px 6px; }
+    }
+    @media (min-width: 769px) {
+      .content-card { padding: 28px 24px; }
+      .strategy-card { padding: 22px 18px; }
+    }
+  </style>
+</head>
+<body>
+
+  <canvas class="stars" id="starsCanvas"></canvas>
+
+  <!-- ==================== 导航栏 ==================== -->
+  <nav class="navbar">
+    <div class="navbar-inner">
+      <a href="index.html" class="nav-home">🏠 主页</a>
+      <span class="nav-divider"></span>
+      <a href="business-thinking.html" class="nav-link">💰商业思维</a>
+      <a href="human-nature.html" class="nav-link">🧠人性弱点</a>
+      <a href="algorithm.html" class="nav-link">📐规则算法</a>
+      <a href="product-selection.html" class="nav-link active">🛒带货选品</a>
+      <a href="ai-video.html" class="nav-link">🤖AI视频</a>
+      <a href="video-analysis.html" class="nav-link">📊视频分析</a>
+      <a href="trend.html" class="nav-link">📈发展趋势</a>
+      <a href="creative.html" class="nav-link">💡商业创意</a>
+    </div>
+  </nav>
+
+  <div class="container">
+
+    <!-- 页面标题 -->
+    <div class="page-header">
+      <span class="module-icon">🛒</span>
+      <p class="module-num">MODULE 04</p>
+      <h1>带货选品</h1>
+      <p class="sub">选品定生死——用AI帮你找到最好卖的爆款产品</p>
+    </div>
+    <div class="neon-line"></div>
+
+    <!-- 核心认知 -->
+    <div class="content-card">
+      <h3><span class="icon">🎯</span> 选品为什么是带货的第一要素？</h3>
+      <p>带货这个事，<strong style="color:#fb923c;">七分靠选品，三分靠内容</strong>。产品选错了，视频做得再好也白费。</p>
+      <ul>
+        <li>选对品 = 流量自动来 + 转化率高 + 退货率低</li>
+        <li>选错品 = 视频没流量 + 用户不买单 + 差评退货一大堆</li>
+        <li>AI的作用：爬数据、找趋势、筛爆品，把选品从"凭感觉"变成"看数据"</li>
+      </ul>
+    </div>
+
+    <!-- 7大选品策略 -->
+    <div class="content-card">
+      <h3><span class="icon">🔥</span> 7大爆款选品策略</h3>
+      <p>每一类策略都可以用AI工具辅助分析，大大提高选品效率：</p>
+    </div>
+
+    <div class="strategy-card">
+      <div class="strategy-num">1</div>
+      <div class="strategy-content">
+        <h4>🎯 跟爆品法</h4>
+        <p>看抖音热榜、精选联盟热销榜，什么火就跟什么。AI帮你监控同行账号，自动抓取爆品数据。</p>
+      </div>
+    </div>
+
+    <div class="strategy-card">
+      <div class="strategy-num">2</div>
+      <div class="strategy-content">
+        <h4>🔮 提前预判法</h4>
+        <p>季节性选品+节日选品。夏天卖防晒、冬天卖保暖、节前卖礼品。AI分析历年数据，提前1-2个月布局。</p>
+      </div>
+    </div>
+
+    <div class="strategy-card">
+      <div class="strategy-num">3</div>
+      <div class="strategy-content">
+        <h4>💡 需求挖掘法</h4>
+        <p>解决用户真实痛点的产品最好卖。用AI爬评论区的用户反馈，找到"还没被满足的需求"。</p>
+      </div>
+    </div>
+
+    <div class="strategy-card">
+      <div class="strategy-num">4</div>
+      <div class="strategy-content">
+        <h4>📊 数据筛选法</h4>
+        <p>用AI分析商品的销量趋势、评价、佣金比例、竞品数量，用数据说话而不是凭感觉。</p>
+      </div>
+    </div>
+
+    <div class="strategy-card">
+      <div class="strategy-num">5</div>
+      <div class="strategy-content">
+        <h4>🔄 跨平台搬运法</h4>
+        <p>拼多多爆款→抖音卖、淘宝爆款→小红书卖、亚马逊爆款→视频号卖。AI帮你对比各平台价格和竞争情况。</p>
+      </div>
+    </div>
+
+    <div class="strategy-card">
+      <div class="strategy-num">6</div>
+      <div class="strategy-content">
+        <h4>💰 高佣优先法</h4>
+        <p>佣金低于30%的不碰，优先选50%+的高佣产品。用AI筛选精选联盟里高佣金+高销量的"双高"产品。</p>
+      </div>
+    </div>
+
+    <div class="strategy-card">
+      <div class="strategy-num">7</div>
+      <div class="strategy-content">
+        <h4>🎨 小众蓝海法</h4>
+        <p>不要在大红海和几万个同行抢。用AI找那些"搜索量增长快、但做的人还不多"的细分品类。</p>
+      </div>
+    </div>
+
+    <!-- 选品避坑清单 -->
+    <div class="content-card">
+      <h3><span class="icon">🚫</span> 选品避坑清单</h3>
+      <p>这些品类千万别碰，否则退货率高、差评多、甚至被平台处罚：</p>
+      <div class="checklist-grid">
+        <div class="check-item">
+          <span class="check-icon">🔋</span>
+          <span class="check-label">电池类</span>
+          <span class="check-desc">物流受限，售后麻烦</span>
+        </div>
+        <div class="check-item">
+          <span class="check-icon">💄</span>
+          <span class="check-label">化妆品</span>
+          <span class="check-desc">资质要求高，易过敏退货</span>
+        </div>
+        <div class="check-item">
+          <span class="check-icon">💊</span>
+          <span class="check-label">保健品</span>
+          <span class="check-desc">合规风险大，夸大宣传违规</span>
+        </div>
+        <div class="check-item">
+          <span class="check-icon">👟</span>
+          <span class="check-label">鞋服类</span>
+          <span class="check-desc">尺码退货率极高</span>
+        </div>
+        <div class="check-item">
+          <span class="check-icon">🍔</span>
+          <span class="check-label">食品类</span>
+          <span class="check-desc">保质期、食品安全风险</span>
+        </div>
+        <div class="check-item">
+          <span class="check-icon">🏷️</span>
+          <span class="check-label">大品牌</span>
+          <span class="check-desc">授权难拿，假货风险</span>
+        </div>
+        <div class="check-item">
+          <span class="check-icon">⚡</span>
+          <span class="check-label">电器类</span>
+          <span class="check-desc">售后维修率高</span>
+        </div>
+        <div class="check-item">
+          <span class="check-icon">💎</span>
+          <span class="check-label">珠宝玉石</span>
+          <span class="check-desc">真假鉴定纠纷多</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 选品黄金公式 -->
+    <div class="content-card">
+      <h3><span class="icon">🔢</span> 选品黄金公式</h3>
+      <p style="font-size:20px;text-align:center;font-weight:900;background:linear-gradient(135deg,#fb923c,#ef4444);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin:12px 0;">
+        好品 = 高需求 × 低竞争 × 高佣金 × 强视觉
+      </p>
+      <ul>
+        <li><strong style="color:#fb923c;">高需求：</strong>每天有大量人在搜、在问、在买</li>
+        <li><strong style="color:#f97316;">低竞争：</strong>做这个品的人还不算太多</li>
+        <li><strong style="color:#ef4444;">高佣金：</strong>30%以上，最好50%+</li>
+        <li><strong style="color:#fbbf24;">强视觉：</strong>产品本身有看点，视频拍出来有冲击力</li>
+      </ul>
+    </div>
+
+    <!-- 平台选品对比 -->
+    <div class="content-card">
+      <h3><span class="icon">📊</span> 不同平台适合卖什么？</h3>
+      <div style="overflow-x:auto;">
+        <table class="compare-table">
+          <thead>
+            <tr>
+              <th>平台</th>
+              <th>适合品类</th>
+              <th>价格区间</th>
+              <th>用户特征</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="color:#fff;">🎵 抖音</td>
+              <td>快消品、日用百货、3C配件、新奇玩具</td>
+              <td>9.9-99元</td>
+              <td>冲动消费，价格敏感</td>
+            </tr>
+            <tr>
+              <td style="color:#fed700;">💬 视频号</td>
+              <td>茶叶、滋补品、知识付费、国潮产品</td>
+              <td>50-300元</td>
+              <td>中年为主，信任消费</td>
+            </tr>
+            <tr>
+              <td style="color:#ff2442;">📕 小红书</td>
+              <td>美妆护肤、服饰穿搭、家居好物、母婴</td>
+              <td>50-500元</td>
+              <td>年轻女性，精致消费</td>
+            </tr>
+            <tr>
+              <td style="color:#ff4803;">⚡ 快手</td>
+              <td>农特产品、生活用品、性价比好物</td>
+              <td>9.9-69元</td>
+              <td>下沉市场，实用主义</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- AI选品工具 -->
+    <div class="content-card">
+      <h3><span class="icon">🤖</span> AI辅助选品全流程</h3>
+      <ul>
+        <li><strong style="color:#fb923c;">① 挖品：</strong>AI爬取热榜+同行爆品+评论区需求，生成选品池</li>
+        <li><strong style="color:#f97316;">② 筛品：</strong>AI对比销量趋势、佣金、竞争度、退货率，自动排名</li>
+        <li><strong style="color:#ef4444;">③ 测品：</strong>用AI批量生成10条不同风格的带货视频，投放测试</li>
+        <li><strong style="color:#fbbf24;">④ 爆品放大：</strong>测出来的爆品，用AI批量生产100条视频矩阵推广</li>
+        <li><strong style="color:#10b981;">⑤ 淘汰换品：</strong>AI监控数据，销量下滑的品及时下架，换新爆品</li>
+      </ul>
+    </div>
+
+    <!-- 金句 -->
+    <div class="quote-card">
+      <span class="quote-mark">"</span>
+      <p class="quote-text">选品选对了，狗都能卖出去。</p>
+      <p class="quote-author">—— 产品本身占了带货成功的70%</p>
+    </div>
+
+    <!-- CTA -->
+    <div class="cta-box">
+      <h3>🛒 想让AI帮你找到下一个爆款？</h3>
+      <p>先填摸底表，我帮你分析适合带什么品、用什么策略</p>
+      <a href="form.html" class="cta-btn">📋 填写摸底表</a>
+    </div>
+
+    <!-- 上下导航 -->
+    <div class="nav-buttons">
+      <a href="algorithm.html" class="nav-btn">◀ 上一模块：规则算法</a>
+      <a href="ai-video.html" class="nav-btn next">下一模块：AI视频 ▶</a>
+    </div>
+
+    <!-- 底部微信 -->
+    <div class="contact-bar">
+      <p class="contact-label">📩 深度带教 · 一对一指导</p>
+      <p class="contact-wx">微信：16500234000</p>
+      <p class="contact-hint">添加备注"AI学习"，优先通过</p>
+    </div>
+    <div class="footer">
+      © 2024 张大业 · AI视频变现 · 微信 16500234000
+    </div>
+
+  </div>
+
+  <script>
+    const canvas = document.getElementById('starsCanvas');
+    const ctx = canvas.getContext('2d');
+    let width, height, particles = [];
+    function resize() {
+      width = window.innerWidth;
+      height = window.innerHeight;
+      canvas.width = width;
+      canvas.height = height;
+    }
+    resize();
+    window.addEventListener('resize', resize);
+    class Particle {
+      constructor() { this.reset(); }
+      reset() {
+        this.x = Math.random() * width;
+        this.y = Math.random() * height;
+        this.size = Math.random() * 1.5 + 0.5;
+        this.speedX = (Math.random() - 0.5) * 0.3;
+        this.speedY = (Math.random() - 0.5) * 0.3;
+        this.opacity = Math.random() * 0.6 + 0.2;
+        this.fadeSpeed = Math.random() * 0.005 + 0.002;
+        this.fading = Math.random() > 0.5;
+      }
+      update() {
+        this.x += this.speedX; this.y += this.speedY;
+        if (this.fading) { this.opacity -= this.fadeSpeed; if (this.opacity <= 0.1) this.fading = false; }
+        else { this.opacity += this.fadeSpeed; if (this.opacity >= 0.7) this.fading = true; }
+        if (this.x < -10 || this.x > width + 10 || this.y < -10 || this.y > height + 10) {
+          this.reset(); this.opacity = Math.random() * 0.5;
+        }
+      }
+      draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(251, 146, 60, ${this.opacity})`;
+        ctx.fill();
+      }
+    }
+    for (let i = 0; i < 150; i++) particles.push(new Particle());
+    function animate() {
+      ctx.clearRect(0, 0, width, height);
+      particles.forEach(p => { p.update(); p.draw(); });
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x;
+          const dy = particles[i].y - particles[j].y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 80) {
+            ctx.beginPath();
+            ctx.moveTo(particles[i].x, particles[i].y);
+            ctx.lineTo(particles[j].x, particles[j].y);
+            ctx.strokeStyle = `rgba(251, 146, 60, ${0.06 * (1 - dist / 80)})`;
+            ctx.lineWidth = 0.5;
+            ctx.stroke();
+          }
+        }
+      }
+      requestAnimationFrame(animate);
+    }
+    animate();
+  </script>
+
+</body>
+</html>

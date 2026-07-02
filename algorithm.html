@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>规则算法 · 张大业AI视频变现</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #000;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+      color: #e2e8f0;
+      line-height: 1.8;
+    }
+
+    .stars {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ========== 导航栏 ========== */
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(0,0,0,0.85);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(0,240,255,0.2);
+      padding: 0 10px;
+    }
+    .navbar-inner {
+      max-width: 680px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      height: 50px;
+      gap: 6px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .navbar-inner::-webkit-scrollbar { display: none; }
+    .nav-home {
+      flex-shrink: 0;
+      text-decoration: none;
+      color: #00f0ff;
+      font-weight: 700;
+      font-size: 15px;
+      padding: 6px 12px;
+      border: 1px solid rgba(0,240,255,0.3);
+      border-radius: 20px;
+      white-space: nowrap;
+      transition: all 0.2s;
+      margin-right: 4px;
+    }
+    .nav-home:active { background: rgba(0,240,255,0.15); }
+    .nav-link {
+      flex-shrink: 0;
+      text-decoration: none;
+      color: #94a3b8;
+      font-size: 12px;
+      padding: 6px 10px;
+      border-radius: 14px;
+      white-space: nowrap;
+      transition: all 0.2s;
+      border: 1px solid transparent;
+    }
+    .nav-link:hover { color: #00f0ff; }
+    .nav-link.active {
+      color: #00f0ff;
+      border-color: rgba(0,240,255,0.3);
+      background: rgba(0,240,255,0.08);
+    }
+    .nav-link:active { background: rgba(0,240,255,0.1); }
+    .nav-divider {
+      width: 1px; height: 16px;
+      background: rgba(255,255,255,0.1);
+      flex-shrink: 0; margin: 0 2px;
+    }
+
+    /* ========== 主容器 ========== */
+    .container {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 20px 15px 60px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ========== 页面标题 ========== */
+    .page-header {
+      text-align: center;
+      padding: 20px 10px 10px;
+    }
+    .page-header .module-icon {
+      font-size: 56px;
+      display: block;
+      margin-bottom: 12px;
+      filter: drop-shadow(0 0 20px rgba(59,130,246,0.5));
+      animation: float 3s ease-in-out infinite;
+    }
+    @keyframes float {
+      0%,100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+    .page-header h1 {
+      font-size: 28px;
+      font-weight: 900;
+      background: linear-gradient(135deg, #3b82f6, #06b6d4, #10b981);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: 2px;
+    }
+    .page-header .module-num {
+      color: #3b82f6;
+      font-size: 13px;
+      letter-spacing: 3px;
+      margin-top: 4px;
+      text-shadow: 0 0 10px rgba(59,130,246,0.4);
+    }
+    .page-header .sub {
+      color: #94a3b8;
+      font-size: 14px;
+      margin-top: 8px;
+    }
+    .neon-line {
+      width: 50%;
+      height: 2px;
+      margin: 16px auto 24px;
+      background: linear-gradient(90deg, transparent, #3b82f6, #06b6d4, #3b82f6, transparent);
+    }
+
+    /* ========== 内容卡片 ========== */
+    .content-card {
+      background: rgba(15,23,42,0.7);
+      border: 1px solid rgba(59,130,246,0.15);
+      border-radius: 20px;
+      padding: 24px 20px;
+      margin-bottom: 16px;
+      backdrop-filter: blur(10px);
+      transition: all 0.3s;
+    }
+    .content-card:hover {
+      border-color: rgba(59,130,246,0.4);
+      box-shadow: 0 0 20px rgba(59,130,246,0.1);
+    }
+    .content-card h3 {
+      font-size: 18px;
+      font-weight: 700;
+      color: #60a5fa;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .content-card h3 .icon { font-size: 22px; }
+    .content-card p {
+      color: #cbd5e1;
+      font-size: 14px;
+      margin-bottom: 8px;
+    }
+    .content-card ul {
+      list-style: none;
+      padding: 0;
+    }
+    .content-card ul li {
+      padding: 6px 0 6px 20px;
+      position: relative;
+      color: #94a3b8;
+      font-size: 14px;
+    }
+    .content-card ul li::before {
+      content: "▸";
+      position: absolute;
+      left: 0;
+      color: #3b82f6;
+    }
+
+    /* ========== 平台标签 ========== */
+    .platform-tag {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+      margin-right: 6px;
+      margin-bottom: 6px;
+      letter-spacing: 1px;
+    }
+    .tag-douyin { background: rgba(0,0,0,0.6); color: #fff; border: 1px solid #fff; }
+    .tag-shipin { background: rgba(254,215,0,0.15); color: #fed700; border: 1px solid #fed700; }
+    .tag-xiaohongshu { background: rgba(255,36,66,0.15); color: #ff2442; border: 1px solid #ff2442; }
+    .tag-kuaishou { background: rgba(255,72,3,0.15); color: #ff4803; border: 1px solid #ff4803; }
+
+    /* ========== 平台卡片 ========== */
+    .platform-card {
+      background: rgba(15,23,42,0.6);
+      border: 1px solid rgba(59,130,246,0.2);
+      border-radius: 18px;
+      padding: 20px 16px;
+      margin-bottom: 14px;
+      transition: all 0.3s;
+    }
+    .platform-card:hover {
+      border-color: rgba(59,130,246,0.5);
+      box-shadow: 0 0 20px rgba(59,130,246,0.08);
+    }
+    .platform-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .platform-header .p-icon {
+      font-size: 36px;
+    }
+    .platform-header .p-info h4 {
+      font-size: 17px;
+      font-weight: 700;
+      color: #fff;
+    }
+    .platform-header .p-info span {
+      font-size: 12px;
+      color: #64748b;
+    }
+    .algo-item {
+      display: flex;
+      gap: 10px;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+    .algo-item:last-child { border-bottom: none; }
+    .algo-label {
+      font-size: 12px;
+      color: #3b82f6;
+      font-weight: 700;
+      white-space: nowrap;
+      min-width: 60px;
+    }
+    .algo-value {
+      font-size: 13px;
+      color: #94a3b8;
+    }
+
+    /* ========== 对比表格 ========== */
+    .compare-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+      margin: 12px 0;
+    }
+    .compare-table th {
+      background: rgba(59,130,246,0.2);
+      padding: 10px 6px;
+      text-align: center;
+      color: #60a5fa;
+      font-weight: 700;
+      border: 1px solid rgba(59,130,246,0.15);
+    }
+    .compare-table td {
+      padding: 10px 6px;
+      text-align: center;
+      color: #94a3b8;
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+    .compare-table tr:hover td {
+      background: rgba(59,130,246,0.05);
+    }
+
+    /* ========== 金句 ========== */
+    .quote-card {
+      background: linear-gradient(135deg, rgba(59,130,246,0.1), rgba(6,182,212,0.08));
+      border: 1px solid rgba(59,130,246,0.3);
+      border-radius: 18px;
+      padding: 20px;
+      margin: 24px 0;
+      text-align: center;
+      position: relative;
+    }
+    .quote-card .quote-mark {
+      font-size: 48px;
+      color: #3b82f6;
+      line-height: 1;
+      opacity: 0.5;
+      position: absolute;
+      top: 6px;
+      left: 16px;
+    }
+    .quote-card .quote-text {
+      font-size: 18px;
+      font-weight: 700;
+      color: #60a5fa;
+      margin: 10px 0 6px;
+      letter-spacing: 1px;
+    }
+    .quote-card .quote-author {
+      color: #94a3b8;
+      font-size: 13px;
+    }
+
+    /* ========== 底部CTA ========== */
+    .cta-box {
+      background: linear-gradient(135deg, rgba(59,130,246,0.3), rgba(6,182,212,0.15));
+      border: 2px solid rgba(59,130,246,0.4);
+      border-radius: 20px;
+      padding: 20px;
+      text-align: center;
+      margin-top: 24px;
+      box-shadow: 0 0 25px rgba(59,130,246,0.1);
+    }
+    .cta-box h3 {
+      font-size: 19px;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 6px;
+    }
+    .cta-box p {
+      color: #94a3b8;
+      font-size: 13px;
+      margin-bottom: 16px;
+    }
+    .cta-box .cta-btn {
+      display: inline-block;
+      background: linear-gradient(135deg, #3b82f6, #06b6d4);
+      color: #fff;
+      padding: 12px 28px;
+      border-radius: 30px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 16px;
+      letter-spacing: 1px;
+      transition: all 0.2s;
+      box-shadow: 0 6px 20px rgba(59,130,246,0.3);
+    }
+    .cta-box .cta-btn:active { transform: scale(0.95); }
+
+    /* ========== 底部微信 ========== */
+    .contact-bar {
+      margin-top: 32px;
+      background: rgba(15,23,42,0.9);
+      border: 1px solid rgba(0,240,255,0.2);
+      border-radius: 18px;
+      padding: 18px 20px;
+      text-align: center;
+      backdrop-filter: blur(10px);
+    }
+    .contact-bar .contact-label {
+      color: #94a3b8;
+      font-size: 13px;
+      margin-bottom: 6px;
+      letter-spacing: 1px;
+    }
+    .contact-bar .contact-wx {
+      font-size: 20px;
+      font-weight: 900;
+      background: linear-gradient(135deg, #00f0ff, #fbbf24);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: 2px;
+    }
+    .contact-bar .contact-hint {
+      color: #64748b;
+      font-size: 11px;
+      margin-top: 6px;
+    }
+    .footer {
+      text-align: center;
+      color: #334155;
+      font-size: 11px;
+      margin-top: 20px;
+      letter-spacing: 1px;
+    }
+
+    /* ========== 导航按钮 ========== */
+    .nav-buttons {
+      display: flex;
+      gap: 10px;
+      margin-top: 24px;
+    }
+    .nav-btn {
+      flex: 1;
+      text-align: center;
+      padding: 12px;
+      border-radius: 14px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 14px;
+      transition: all 0.2s;
+      border: 1px solid rgba(59,130,246,0.3);
+      color: #60a5fa;
+      background: rgba(59,130,246,0.05);
+    }
+    .nav-btn:active { background: rgba(59,130,246,0.15); }
+    .nav-btn.next {
+      background: linear-gradient(135deg, rgba(59,130,246,0.5), rgba(6,182,212,0.2));
+      border-color: rgba(59,130,246,0.5);
+      color: #fff;
+    }
+
+    /* ========== 适配 ========== */
+    @media (max-width: 400px) {
+      .page-header h1 { font-size: 24px; }
+      .page-header .module-icon { font-size: 44px; }
+      .nav-link { font-size: 11px; padding: 5px 8px; }
+      .nav-home { font-size: 13px; padding: 5px 10px; }
+      .navbar-inner { height: 44px; }
+      .content-card { padding: 18px 14px; }
+      .platform-card { padding: 16px 12px; }
+      .compare-table { font-size: 10px; }
+      .compare-table th, .compare-table td { padding: 8px 4px; }
+    }
+    @media (min-width: 769px) {
+      .content-card { padding: 28px 24px; }
+      .platform-card { padding: 24px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <canvas class="stars" id="starsCanvas"></canvas>
+
+  <!-- ==================== 导航栏 ==================== -->
+  <nav class="navbar">
+    <div class="navbar-inner">
+      <a href="index.html" class="nav-home">🏠 主页</a>
+      <span class="nav-divider"></span>
+      <a href="business-thinking.html" class="nav-link">💰商业思维</a>
+      <a href="human-nature.html" class="nav-link">🧠人性弱点</a>
+      <a href="algorithm.html" class="nav-link active">📐规则算法</a>
+      <a href="product-selection.html" class="nav-link">🛒带货选品</a>
+      <a href="ai-video.html" class="nav-link">🤖AI视频</a>
+      <a href="video-analysis.html" class="nav-link">📊视频分析</a>
+      <a href="trend.html" class="nav-link">📈发展趋势</a>
+      <a href="creative.html" class="nav-link">💡商业创意</a>
+    </div>
+  </nav>
+
+  <div class="container">
+
+    <!-- 页面标题 -->
+    <div class="page-header">
+      <span class="module-icon">📐</span>
+      <p class="module-num">MODULE 03</p>
+      <h1>规则算法</h1>
+      <p class="sub">吃透四大平台规则，用AI精准匹配算法，让每条视频都跑赢大盘</p>
+    </div>
+    <div class="neon-line"></div>
+
+    <!-- 核心认知 -->
+    <div class="content-card">
+      <h3><span class="icon">🎯</span> 为什么要懂算法？</h3>
+      <p>做视频就像在商场开店：</p>
+      <ul>
+        <li><strong style="color:#60a5fa;">不懂算法</strong> = 在商场角落开店，没人看得见</li>
+        <li><strong style="color:#3b82f6;">懂算法</strong> = 开在电梯口，每一个路过的人都看到你</li>
+        <li><strong style="color:#06b6d4;">AI+懂算法</strong> = 在商场每个入口都开一家店，24小时自动揽客</li>
+      </ul>
+      <p style="margin-top:12px;">每条平台都有自己的"推荐引擎"，核心逻辑都一样：<strong style="color:#60a5fa;">用数据判断你的内容好不好，然后决定要不要推给更多人。</strong></p>
+    </div>
+
+    <!-- 算法通用逻辑 -->
+    <div class="content-card">
+      <h3><span class="icon">⚙️</span> 所有平台通用的推荐逻辑</h3>
+      <p>无论抖音、视频号、小红书还是快手，都遵循这个流程：</p>
+      <ul>
+        <li><strong style="color:#3b82f6;">① 内容审核：</strong>AI先检查你的视频有没有违规（画面、文字、音频）</li>
+        <li><strong style="color:#06b6d4;">② 冷启动：</strong>先推给200-500个人测试，看数据表现</li>
+        <li><strong style="color:#10b981;">③ 数据反馈：</strong>系统看这些人的反应——完播率、点赞、评论、转发、关注</li>
+        <li><strong style="color:#f59e0b;">④ 加权分发：</strong>数据好 → 推给更多相似人群 → 继续看数据 → 好的再加推</li>
+        <li><strong style="color:#ef4444;">⑤ 流量池跃迁：</strong>从500→1000→1万→10万→100万，逐级突破</li>
+      </ul>
+    </div>
+
+    <!-- 四大平台对比 -->
+    <div class="content-card">
+      <h3><span class="icon">📊</span> 四大平台核心数据对比</h3>
+      <div style="overflow-x:auto;">
+        <table class="compare-table">
+          <thead>
+            <tr>
+              <th>维度</th>
+              <th><span class="platform-tag tag-douyin">抖音</span></th>
+              <th><span class="platform-tag tag-shipin">视频号</span></th>
+              <th><span class="platform-tag tag-xiaohongshu">小红书</span></th>
+              <th><span class="platform-tag tag-kuaishou">快手</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>核心算法</td>
+              <td>兴趣推荐+实时赛马</td>
+              <td>社交推荐+算法推荐</td>
+              <td>搜索推荐+社区互动</td>
+              <td>普惠算法+社交关系</td>
+            </tr>
+            <tr>
+              <td>关键指标</td>
+              <td>完播率>互动率>转粉率</td>
+              <td>社交传播>完播>点赞</td>
+              <td>收藏>点赞>评论</td>
+              <td>完播>评论>点赞</td>
+            </tr>
+            <tr>
+              <td>流量特点</td>
+              <td>爆发式，来得快去得快</td>
+              <td>长尾效应，持续推荐</td>
+              <td>精准搜索，长期流量</td>
+              <td>老铁粘性，强信任</td>
+            </tr>
+            <tr>
+              <td>AI视频接受度</td>
+              <td>高，但需质量过关</td>
+              <td>中高，偏重内容价值</td>
+              <td>中，偏真实感</td>
+              <td>中，偏接地气</td>
+            </tr>
+            <tr>
+              <td>最佳视频时长</td>
+              <td>15-60秒</td>
+              <td>30-90秒</td>
+              <td>30-120秒</td>
+              <td>15-60秒</td>
+            </tr>
+            <tr>
+              <td>带货转化</td>
+              <td>冲动消费，价格敏感</td>
+              <td>信任消费，中年群体</td>
+              <td>种草消费，女性为主</td>
+              <td>信任消费，下沉市场</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 抖音 -->
+    <div class="platform-card">
+      <div class="platform-header">
+        <span class="p-icon">🎵</span>
+        <div class="p-info">
+          <h4>抖音 · 兴趣推荐引擎</h4>
+          <span>日活7亿+ | 核心算法：实时赛马+标签匹配</span>
+        </div>
+      </div>
+      <div class="algo-item">
+        <span class="algo-label">流量结构</span>
+        <span class="algo-value">推荐流70% + 搜索15% + 关注10% + 同城5%</span>
+      </div>
+      <div class="algo-item">
+        <span class="algo-label">核心指标</span>
+        <span class="algo-value">完播率（最重要）> 点赞 > 评论 > 转发 > 关注</span>
+      </div>
+      <div class="algo-item">
+        <span class="algo-label">AI策略</span>
+        <span class="algo-value">用AI批量生产测试视频，看哪个完播率高就加大投入，数据差的直接淘汰</span>
+      </div>
+      <div class="algo-item">
+        <span class="algo-label">避坑要点</span>
+        <span class="algo-value">避免搬运、低画质、硬广；前3秒没留住人=废号</span>
+      </div>
+    </div>
+
+    <!-- 视频号 -->
+    <div class="platform-card">
+      <div class="platform-header">
+        <span class="p-icon">💬</span>
+        <div class="p-info">
+          <h4>视频号 · 社交推荐引擎</h4>
+          <span>日活5亿+ | 核心算法：社交关系链+算法双驱动</span>
+        </div>
+      </div>
+      <div class="algo-item">
+        <span class="algo-label">流量结构</span>
+        <span class="algo-value">朋友点赞推荐60% + 算法推荐30% + 关注10%</span>
+      </div>
+      <div class="algo-item">
+        <span class="algo-label">核心指标</span>
+        <span class="algo-value">社交传播（朋友点赞）> 完播率 > 点赞 > 评论</span>
+      </div>
+      <div class="algo-item">
+        <span class="algo-label">AI策略</span>
+        <span class="algo-value">内容偏正能量、知识类、中年群体喜好；用AI做知识科普、励志语录类视频</span>
+      </div>
+      <div class="algo-item">
+        <span class="algo-label">避坑要点</span>
+        <span class="algo-value">不要低俗、不要夸大；视频号用户偏成熟，信任感比炫技重要</span>
+      </div>
+    </div>
+
+    <!-- 小红书 -->
+    <div class="platform-card">
+      <div class="platform-header">
+        <span class="p-icon">📕</span>
+        <div class="p-info">
+          <h4>小红书 · 搜索推荐引擎</h4>
+          <span>日活1亿+ | 核心算法：搜索+社区互动双驱动</span>
+        </div>
+      </div>
+      <div class="algo-item">
+        <span class="algo-label">流量结构</span>
+        <span class="algo-value">搜索流量40% + 推荐流40% + 关注20%</span>
+      </div>
+      <div class="algo-item">
+        <span class="algo-label">核心指标</span>
+        <span class="algo-value">收藏 > 点赞 > 评论 > 转发（收藏是小红书最重要的信号）</span>
+      </div>
+      <div class="algo-item">
+        <span class="algo-label">AI策略</span>
+        <span class="algo-value">标题和封面最重要，做好SEO关键词；用AI生成图文+视频混合内容</span>
+      </div>
+      <div class="algo-item">
+        <span class="algo-label">避坑要点</span>
+        <span class="algo-value">不能直接搬抖音内容，小红书用户更看重"有用"，干货类最吃香</span>
+      </div>
+    </div>
+
+    <!-- 快手 -->
+    <div class="platform-card">
+      <div class="platform-header">
+        <span class="p-icon">⚡</span>
+        <div class="p-info">
+          <h4>快手 · 普惠算法引擎</h4>
+          <span>日活3亿+ | 核心算法：流量普惠+社交关系</span>
+        </div>
+      </div>
+      <div class="algo-item">
+        <span class="algo-label">流量结构</span>
+        <span class="algo-value">推荐流50% + 关注30% + 同城15% + 搜索5%</span>
+      </div>
+      <div class="algo-item">
+        <span class="algo-label">核心指标</span>
+        <span class="algo-value">完播率 > 评论 > 点赞（互动深度比广度重要）</span>
+      </div>
+      <div class="algo-item">
+        <span class="algo-label">AI策略</span>
+        <span class="algo-value">内容要接地气，避免太精致；用AI做批量剧情、生活类视频</span>
+      </div>
+      <div class="algo-item">
+        <span class="algo-label">避坑要点</span>
+        <span class="algo-value">快手的"老铁文化"重信任，人设比技术重要，不能冷冰冰</span>
+      </div>
+    </div>
+
+    <!-- AI+算法的核心打法 -->
+    <div class="content-card">
+      <h3><span class="icon">🤖</span> AI + 算法的黄金打法</h3>
+      <ul>
+        <li><strong style="color:#3b82f6;">批量测试：</strong>AI日产100条，每条微调开头/选题/时长，同时发布</li>
+        <li><strong style="color:#06b6d4;">数据驱动：</strong>24小时后看数据，完播率>30%的留下，<20%的直接删除</li>
+        <li><strong style="color:#10b981;">放大优质：</strong>表现好的视频，用AI生成10个变体（不同开头、不同角度）继续推</li>
+        <li><strong style="color:#f59e0b;">跨平台适配：</strong>一条视频用AI改成4个版本，适配不同平台的调性</li>
+        <li><strong style="color:#ef4444;">持续迭代：</strong>每周分析所有账号的数据，找到规律，优化AI生成模板</li>
+      </ul>
+    </div>
+
+    <!-- 金句 -->
+    <div class="quote-card">
+      <span class="quote-mark">"</span>
+      <p class="quote-text">不要跟算法对抗，要学会跟算法合作。</p>
+      <p class="quote-author">—— 算法是你的合伙人，不是你的敌人</p>
+    </div>
+
+    <!-- CTA -->
+    <div class="cta-box">
+      <h3>📐 想精准匹配每个平台的算法？</h3>
+      <p>先填摸底表，我帮你分析适合哪个平台、用什么打法</p>
+      <a href="form.html" class="cta-btn">📋 填写摸底表</a>
+    </div>
+
+    <!-- 上下导航 -->
+    <div class="nav-buttons">
+      <a href="human-nature.html" class="nav-btn">◀ 上一模块：人性弱点</a>
+      <a href="product-selection.html" class="nav-btn next">下一模块：带货选品 ▶</a>
+    </div>
+
+    <!-- 底部微信 -->
+    <div class="contact-bar">
+      <p class="contact-label">📩 深度带教 · 一对一指导</p>
+      <p class="contact-wx">微信：16500234000</p>
+      <p class="contact-hint">添加备注"AI学习"，优先通过</p>
+    </div>
+    <div class="footer">
+      © 2024 张大业 · AI视频变现 · 微信 16500234000
+    </div>
+
+  </div>
+
+  <script>
+    const canvas = document.getElementById('starsCanvas');
+    const ctx = canvas.getContext('2d');
+    let width, height, particles = [];
+    function resize() {
+      width = window.innerWidth;
+      height = window.innerHeight;
+      canvas.width = width;
+      canvas.height = height;
+    }
+    resize();
+    window.addEventListener('resize', resize);
+    class Particle {
+      constructor() { this.reset(); }
+      reset() {
+        this.x = Math.random() * width;
+        this.y = Math.random() * height;
+        this.size = Math.random() * 1.5 + 0.5;
+        this.speedX = (Math.random() - 0.5) * 0.3;
+        this.speedY = (Math.random() - 0.5) * 0.3;
+        this.opacity = Math.random() * 0.6 + 0.2;
+        this.fadeSpeed = Math.random() * 0.005 + 0.002;
+        this.fading = Math.random() > 0.5;
+      }
+      update() {
+        this.x += this.speedX; this.y += this.speedY;
+        if (this.fading) { this.opacity -= this.fadeSpeed; if (this.opacity <= 0.1) this.fading = false; }
+        else { this.opacity += this.fadeSpeed; if (this.opacity >= 0.7) this.fading = true; }
+        if (this.x < -10 || this.x > width + 10 || this.y < -10 || this.y > height + 10) {
+          this.reset(); this.opacity = Math.random() * 0.5;
+        }
+      }
+      draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(59, 130, 246, ${this.opacity})`;
+        ctx.fill();
+      }
+    }
+    for (let i = 0; i < 150; i++) particles.push(new Particle());
+    function animate() {
+      ctx.clearRect(0, 0, width, height);
+      particles.forEach(p => { p.update(); p.draw(); });
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x;
+          const dy = particles[i].y - particles[j].y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 80) {
+            ctx.beginPath();
+            ctx.moveTo(particles[i].x, particles[i].y);
+            ctx.lineTo(particles[j].x, particles[j].y);
+            ctx.strokeStyle = `rgba(59, 130, 246, ${0.06 * (1 - dist / 80)})`;
+            ctx.lineWidth = 0.5;
+            ctx.stroke();
+          }
+        }
+      }
+      requestAnimationFrame(animate);
+    }
+    animate();
+  </script>
+
+</body>
+</html>
