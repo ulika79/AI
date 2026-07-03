@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>抖音 · 发布 · 张大业AI视频变现</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #000;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      min-height: 100vh; overflow-x: hidden; color: #e2e8f0; line-height: 1.8;
+    }
+    .stars { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
+
+    .navbar {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(0,0,0,0.85); backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(16,185,129,0.2); padding: 0 10px;
+    }
+    .navbar-inner {
+      max-width: 680px; margin: 0 auto;
+      display: flex; align-items: center; height: 50px; gap: 6px;
+      overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none;
+    }
+    .navbar-inner::-webkit-scrollbar { display: none; }
+    .nav-home {
+      flex-shrink: 0; text-decoration: none; color: #10b981; font-weight: 700;
+      font-size: 15px; padding: 6px 12px; border: 1px solid rgba(16,185,129,0.3);
+      border-radius: 20px; white-space: nowrap; margin-right: 4px;
+    }
+    .nav-home:active { background: rgba(16,185,129,0.15); }
+    .nav-link {
+      flex-shrink: 0; text-decoration: none; color: #94a3b8; font-size: 12px;
+      padding: 6px 10px; border-radius: 14px; white-space: nowrap; border: 1px solid transparent;
+    }
+    .nav-link:hover { color: #10b981; }
+    .nav-link.active { color: #10b981; border-color: rgba(16,185,129,0.3); background: rgba(16,185,129,0.08); }
+    .nav-divider { width: 1px; height: 16px; background: rgba(255,255,255,0.1); flex-shrink: 0; margin: 0 2px; }
+
+    .sub-navbar {
+      position: sticky; top: 50px; z-index: 99;
+      background: rgba(0,0,0,0.8); backdrop-filter: blur(15px);
+      border-bottom: 1px solid rgba(16,185,129,0.15); padding: 0 10px;
+    }
+    .sub-navbar-inner {
+      max-width: 680px; margin: 0 auto;
+      display: flex; align-items: center; height: 44px; gap: 4px;
+      overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none;
+    }
+    .sub-navbar-inner::-webkit-scrollbar { display: none; }
+    .sub-nav-link {
+      flex-shrink: 0; text-decoration: none; color: #94a3b8; font-size: 12px;
+      padding: 6px 14px; border-radius: 18px; white-space: nowrap;
+      border: 1px solid rgba(16,185,129,0.2); font-weight: 600; letter-spacing: 0.5px;
+    }
+    .sub-nav-link:hover { color: #fff; border-color: rgba(16,185,129,0.5); background: rgba(16,185,129,0.1); }
+    .sub-nav-link.active { color: #fff; background: linear-gradient(135deg, #059669, #10b981); border-color: transparent; }
+
+    .third-navbar {
+      position: sticky; top: 94px; z-index: 98;
+      background: rgba(0,0,0,0.75); backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(16,185,129,0.1); padding: 0 10px;
+    }
+    .third-navbar-inner {
+      max-width: 680px; margin: 0 auto;
+      display: flex; align-items: center; height: 38px; gap: 3px;
+      overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none;
+    }
+    .third-navbar-inner::-webkit-scrollbar { display: none; }
+    .third-nav-link {
+      flex-shrink: 0; text-decoration: none; color: #94a3b8; font-size: 11px;
+      padding: 4px 10px; border-radius: 12px; white-space: nowrap;
+      border: 1px solid rgba(16,185,129,0.15); font-weight: 500;
+    }
+    .third-nav-link:hover { color: #10b981; border-color: rgba(16,185,129,0.4); background: rgba(16,185,129,0.08); }
+    .third-nav-link.active { color: #10b981; border-color: rgba(16,185,129,0.4); background: rgba(16,185,129,0.12); }
+
+    .container { max-width: 680px; margin: 0 auto; padding: 20px 15px 60px; position: relative; z-index: 1; }
+    .page-header { text-align: center; padding: 20px 10px 10px; }
+    .page-header .module-icon {
+      font-size: 56px; display: block; margin-bottom: 12px;
+      filter: drop-shadow(0 0 20px rgba(0,0,0,0.5)); animation: float 3s ease-in-out infinite;
+    }
+    @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+    .page-header h1 {
+      font-size: 26px; font-weight: 900;
+      background: linear-gradient(135deg, #fff, #e2e8f0, #94a3b8);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; letter-spacing: 2px;
+    }
+    .page-header .step-badge {
+      display: inline-block; background: linear-gradient(135deg, #fff, #cbd5e1);
+      color: #000; padding: 4px 16px; border-radius: 20px; font-size: 12px; font-weight: 700; letter-spacing: 2px; margin-bottom: 8px;
+    }
+    .page-header .sub { color: #94a3b8; font-size: 14px; margin-top: 8px; }
+    .neon-line {
+      width: 50%; height: 2px; margin: 16px auto 24px;
+      background: linear-gradient(90deg, transparent, #fff, #94a3b8, #fff, transparent);
+    }
+
+    .content-card {
+      background: rgba(15,23,42,0.7); border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 20px; padding: 24px 20px; margin-bottom: 16px; backdrop-filter: blur(10px);
+    }
+    .content-card h3 { font-size: 18px; font-weight: 700; color: #fff; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+    .content-card h3 .icon { font-size: 22px; }
+    .content-card p { color: #cbd5e1; font-size: 14px; margin-bottom: 8px; }
+    .content-card ul { list-style: none; padding: 0; }
+    .content-card ul li { padding: 6px 0 6px 20px; position: relative; color: #94a3b8; font-size: 14px; }
+    .content-card ul li::before { content: "▸"; position: absolute; left: 0; color: #fff; }
+
+    .tip-box {
+      background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 14px; padding: 16px; margin: 10px 0;
+    }
+    .tip-box .tp-title { font-size: 14px; font-weight: 700; color: #fff; margin-bottom: 4px; }
+    .tip-box .tp-desc { font-size: 12px; color: #94a3b8; }
+
+    .warning-box {
+      background: linear-gradient(135deg, rgba(239,68,68,0.15), rgba(248,113,113,0.1));
+      border: 2px solid rgba(239,68,68,0.5); border-radius: 14px;
+      padding: 16px; margin: 12px 0; text-align: center;
+    }
+    .warning-box .warn-title { font-size: 16px; font-weight: 900; color: #f87171; margin-bottom: 6px; }
+    .warning-box .warn-text { font-size: 13px; color: #fca5a5; line-height: 1.6; }
+
+    .quote-card {
+      background: linear-gradient(135deg, rgba(255,255,255,0.05), rgba(148,163,184,0.05));
+      border: 1px solid rgba(255,255,255,0.2); border-radius: 18px; padding: 20px;
+      margin: 24px 0; text-align: center; position: relative;
+    }
+    .quote-card .quote-mark { font-size: 48px; color: #fff; opacity: 0.3; position: absolute; top: 6px; left: 16px; }
+    .quote-card .quote-text { font-size: 18px; font-weight: 700; color: #fff; margin: 10px 0 6px; }
+    .quote-card .quote-author { color: #94a3b8; font-size: 13px; }
+    .cta-box {
+      background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(148,163,184,0.05));
+      border: 2px solid rgba(255,255,255,0.2); border-radius: 20px; padding: 20px; text-align: center; margin-top: 24px;
+    }
+    .cta-box h3 { font-size: 19px; font-weight: 800; color: #fff; margin-bottom: 6px; }
+    .cta-box p { color: #94a3b8; font-size: 13px; margin-bottom: 16px; }
+    .cta-box .cta-btn {
+      display: inline-block; background: #fff; color: #000;
+      padding: 12px 28px; border-radius: 30px; text-decoration: none; font-weight: 700; font-size: 16px;
+    }
+    .contact-bar {
+      margin-top: 32px; background: rgba(15,23,42,0.9); border: 1px solid rgba(0,240,255,0.2);
+      border-radius: 18px; padding: 18px 20px; text-align: center; backdrop-filter: blur(10px);
+    }
+    .contact-bar .contact-label { color: #94a3b8; font-size: 13px; margin-bottom: 6px; letter-spacing: 1px; }
+    .contact-bar .contact-wx {
+      font-size: 20px; font-weight: 900;
+      background: linear-gradient(135deg, #00f0ff, #fbbf24);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; letter-spacing: 2px;
+    }
+    .contact-bar .contact-hint { color: #64748b; font-size: 11px; margin-top: 6px; }
+    .footer { text-align: center; color: #334155; font-size: 11px; margin-top: 20px; letter-spacing: 1px; }
+    .nav-buttons { display: flex; gap: 10px; margin-top: 24px; }
+    .nav-btn {
+      flex: 1; text-align: center; padding: 12px; border-radius: 14px; text-decoration: none;
+      font-weight: 700; font-size: 14px; border: 1px solid rgba(255,255,255,0.2); color: #fff; background: rgba(255,255,255,0.05);
+    }
+    .nav-btn.next { background: rgba(255,255,255,0.15); color: #fff; }
+
+    @media (max-width: 400px) {
+      .page-header h1 { font-size: 22px; }
+      .page-header .module-icon { font-size: 44px; }
+      .sub-nav-link { font-size: 11px; padding: 5px 10px; }
+      .sub-navbar-inner { height: 40px; }
+      .third-nav-link { font-size: 10px; padding: 3px 8px; }
+      .third-navbar-inner { height: 34px; }
+      .content-card { padding: 18px 14px; }
+    }
+    @media (min-width: 769px) { .content-card { padding: 28px 24px; } }
+  </style>
+</head>
+<body>
+  <canvas class="stars" id="starsCanvas"></canvas>
+
+  <nav class="navbar">
+    <div class="navbar-inner">
+      <a href="../../index.html" class="nav-home">🏠 主页</a>
+      <span class="nav-divider"></span>
+      <a href="../../business-thinking.html" class="nav-link">💰商业思维</a>
+      <a href="../../human-nature.html" class="nav-link">🧠人性弱点</a>
+      <a href="../../algorithm.html" class="nav-link">📐规则算法</a>
+      <a href="../../product-selection.html" class="nav-link">🛒带货选品</a>
+      <a href="../../ai-video.html" class="nav-link active">🤖AI视频</a>
+      <a href="../../video-analysis.html" class="nav-link">📊视频分析</a>
+      <a href="../../trend.html" class="nav-link">📈发展趋势</a>
+      <a href="../../creative.html" class="nav-link">💡商业创意</a>
+    </div>
+  </nav>
+
+  <nav class="sub-navbar">
+    <div class="sub-navbar-inner">
+      <a href="../../ai-video.html" class="sub-nav-link">📋 总览</a>
+      <a href="../text/" class="sub-nav-link">📝 文字</a>
+      <a href="../image/" class="sub-nav-link">🎨 图片</a>
+      <a href="../video/" class="sub-nav-link">🎬 视频</a>
+      <a href="../audio/" class="sub-nav-link">🔊 声音</a>
+      <a href="../edit/" class="sub-nav-link">✂️ 剪辑</a>
+      <a href="../publish/" class="sub-nav-link active">🚀 发布</a>
+    </div>
+  </nav>
+
+  <nav class="third-navbar">
+    <div class="third-navbar-inner">
+      <a href="index.html" class="third-nav-link">📋 总览</a>
+      <a href="douyin.html" class="third-nav-link active">🎵 抖音</a>
+      <a href="shipinhao.html" class="third-nav-link">💬 视频号</a>
+      <a href="xiaohongshu.html" class="third-nav-link">📕 小红书</a>
+      <a href="kuaishou.html" class="third-nav-link">⚡ 快手</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="page-header">
+      <span class="module-icon">🎵</span>
+      <span class="step-badge">发布 · 抖音</span>
+      <h1>抖音发布技巧</h1>
+      <p class="sub">7亿日活平台，AI视频变现的主战场</p>
+    </div>
+    <div class="neon-line"></div>
+
+    <div class="content-card">
+      <h3><span class="icon">🌟</span> 抖音平台特点</h3>
+      <p>抖音是<strong style="color:#fff;">目前全球最大的短视频平台</strong>，也是AI视频变现的主战场。算法推荐机制让新人也有机会获得百万播放。</p>
+      <ul>
+        <li><strong style="color:#fff;">流量最大：</strong>7亿日活，任何赛道都有足够的受众</li>
+        <li><strong style="color:#e2e8f0;">算法公平：</strong>不看粉丝数，只看内容质量，新人也能出爆款</li>
+        <li><strong style="color:#94a3b8;">变现成熟：</strong>橱窗带货、直播、星图广告、小程序等多种变现方式</li>
+      </ul>
+    </div>
+
+    <!-- ==================== 发布全流程（含AI声明） ==================== -->
+    <div class="content-card">
+      <h3><span class="icon">📋</span> 抖音发布全流程（7步）</h3>
+      <ul>
+        <li><strong style="color:#fff;">① 上传视频：</strong>点击+号 → 选择视频文件（推荐1080P，横屏16:9或竖屏9:16）</li>
+        <li><strong style="color:#e2e8f0;">② 写标题：</strong>15-20字最佳，包含关键词，用AI生成5个备选标题选最好的</li>
+        <li><strong style="color:#94a3b8;">③ 选封面：</strong>用AI生成的封面图，要清晰有吸引力</li>
+        <li><strong style="color:#fff;">④ 加话题标签：</strong>1个核心标签+2个相关标签+1个热门标签</li>
+        <li><strong style="color:#e2e8f0;">⑤ 设置定位：</strong>本地内容加定位，全国内容可跳过</li>
+        <li><strong style="color:#f87171;">⑥ ⚠️ AI作者声明（必做！）：</strong>在发布设置中找到"作者声明"→勾选"内容由AI生成"（详见下方说明）</li>
+        <li><strong style="color:#94a3b8;">⑦ 定时发布：</strong>选择黄金时段发布（早7-9/午12-14/晚18-22）</li>
+      </ul>
+    </div>
+
+    <!-- AI作者声明 -->
+    <div class="content-card" style="border-color: rgba(239,68,68,0.4);">
+      <h3><span class="icon">⚠️</span> 关于"作者声明——内容由AI生成"</h3>
+      <p><strong style="color:#f87171;">抖音平台明确规定：使用AI生成的内容必须在发布时进行作者声明。</strong>这是平台规则，不是可选项。</p>
+
+      <div class="warning-box">
+        <div class="warn-title">🚨 为什么要声明？</div>
+        <div class="warn-text">
+          1. <strong style="color:#fff;">平台强制要求：</strong>抖音《AI生成内容标识规范》要求所有AI生成内容必须打标<br>
+          2. <strong style="color:#fff;">避免违规处罚：</strong>不声明可能被判定为"虚假内容"，导致限流、下架甚至封号<br>
+          3. <strong style="color:#fff;">不影响流量：</strong>合理使用AI+诚实声明，平台不会因此限流<br>
+          4. <strong style="color:#fff;">建立信任：</strong>观众知道是AI内容反而会更好奇，完播率可能更高
+        </div>
+      </div>
+
+      <p style="margin-top:12px;"><strong style="color:#f87171;">具体操作步骤：</strong></p>
+      <ul>
+        <li><strong style="color:#fff;">发布页面 → 向下滑动 → 找到"作者声明"</strong></li>
+        <li><strong style="color:#fff;">点击进入 → 勾选"内容由AI生成"</strong></li>
+        <li><strong style="color:#fff;">确认后返回 → 继续完成发布</strong></li>
+      </ul>
+      <p style="margin-top:8px;color:#94a3b8;font-size:13px;">💡 提示：不同版本的抖音App界面可能略有差异，但"作者声明"功能已在全量上线。如果暂时没找到，请将App更新到最新版本。</p>
+    </div>
+
+    <div class="content-card">
+      <h3><span class="icon">💡</span> 抖音SEO关键词技巧</h3>
+      <p>抖音搜索流量越来越大，<strong style="color:#fff;">做好SEO能带来长期稳定流量</strong>：</p>
+      <div class="tip-box">
+        <div class="tp-title">🔑 标题中必须包含搜索关键词</div>
+        <div class="tp-desc">比如你教AI视频，标题里必须出现"AI视频"这个词，用户搜索才能找到你</div>
+      </div>
+      <div class="tip-box">
+        <div class="tp-title">📝 视频描述中重复关键词</div>
+        <div class="tp-desc">在视频描述中自然地重复核心关键词2-3次</div>
+      </div>
+      <div class="tip-box">
+        <div class="tp-title">🏷️ 话题标签=搜索入口</div>
+        <div class="tp-desc">把核心关键词作为话题标签，如 #AI视频制作 #AI绘画</div>
+      </div>
+    </div>
+
+    <!-- ==================== 短视频带货 ==================== -->
+    <div class="content-card">
+      <h3><span class="icon">🛒</span> 抖音变现方式：短视频带货（核心）</h3>
+      <p>短视频带货是<strong style="color:#fff;">AI视频变现最直接的方式</strong>。用AI批量生成带货视频，挂小黄车赚佣金，是目前最成熟的AI变现路径。</p>
+    </div>
+
+    <div class="content-card">
+      <h3><span class="icon">📦</span> 短视频带货全流程</h3>
+      <ul>
+        <li><strong style="color:#fff;">① 开通橱窗：</strong>1000粉丝+实名认证+缴纳保证金，即可开通商品橱窗</li>
+        <li><strong style="color:#e2e8f0;">② 选品：</strong>在精选联盟选高佣金（30%+）商品，添加到橱窗</li>
+        <li><strong style="color:#94a3b8;">③ AI生成带货视频：</strong>用AI写脚本→生成产品展示图→生成视频→配音→剪辑</li>
+        <li><strong style="color:#fff;">④ 发布时挂商品链接：</strong>发布视频时，点击"添加标签"→"商品"→选择橱窗中的商品</li>
+        <li><strong style="color:#e2e8f0;">⑤ 优化转化：</strong>看视频数据（点击率、转化率），优化脚本和画面</li>
+      </ul>
+    </div>
+
+    <div class="content-card">
+      <h3><span class="icon">🎯</span> AI带货视频制作要点</h3>
+      <ul>
+        <li><strong style="color:#fff;">产品展示要清晰：</strong>AI生成的素材图必须能看清产品细节</li>
+        <li><strong style="color:#e2e8f0;">前3秒是关键：</strong>用痛点/好奇/结果型开头，让人不想划走</li>
+        <li><strong style="color:#94a3b8;">价格锚点：</strong>原价vs现价对比，制造"便宜"的感觉</li>
+        <li><strong style="color:#fff;">限时限量：</strong>"只剩XX件""今天特价"，制造紧迫感</li>
+        <li><strong style="color:#e2e8f0;">口播+字幕：</strong>配音+BGM+字幕一个不能少，提升专业感</li>
+      </ul>
+    </div>
+
+    <div class="content-card">
+      <h3><span class="icon">💰</span> 带货佣金参考</h3>
+      <ul>
+        <li><strong style="color:#fff;">日用百货：</strong>佣金10%-30%，走量为主，单量大了收入可观</li>
+        <li><strong style="color:#e2e8f0;">美妆护肤：</strong>佣金20%-50%，客单价高，利润空间大</li>
+        <li><strong style="color:#94a3b8;">3C数码配件：</strong>佣金10%-30%，AI展示效果好，转化率高</li>
+        <li><strong style="color:#fff;">食品零食：</strong>佣金15%-35%，复购率高，适合矩阵号操作</li>
+        <li><strong style="color:#e2e8f0;">家居好物：</strong>佣金20%-40%，视频展示效果直观，容易出单</li>
+      </ul>
+    </div>
+
+    <div class="content-card">
+      <h3><span class="icon">📈</span> Dou+投放策略（可选）</h3>
+      <ul>
+        <li><strong style="color:#fff;">什么情况投Dou+？</strong>视频发布后自然播放量不错（完播率>30%，点赞率>3%），用Dou+助推</li>
+        <li><strong style="color:#e2e8f0;">带货视频投放：</strong>选择"商品点击"为优化目标，让钱花在刀刃上</li>
+        <li><strong style="color:#94a3b8;">投放金额：</strong>新手每次100-300元测试，ROI为正再追加</li>
+        <li><strong style="color:#fff;">投放时间：</strong>选择用户活跃时段（晚18-24点效果最好）</li>
+      </ul>
+    </div>
+
+    <div class="quote-card">
+      <span class="quote-mark">"</span>
+      <p class="quote-text">AI+抖音带货=一个人管理10个带货账号，日产100条带货视频。</p>
+      <p class="quote-author">—— 这是目前最成熟的AI视频变现路径</p>
+    </div>
+
+    <div class="cta-box">
+      <h3>🎵 准备在抖音发布你的第一条AI带货视频了吗？</h3>
+      <p>按照上面的流程，今天就发出你的作品</p>
+      <a href="../../form.html" class="cta-btn">📋 填写摸底表</a>
+    </div>
+
+    <div class="nav-buttons">
+      <a href="index.html" class="nav-btn">◀ 返回发布总览</a>
+      <a href="shipinhao.html" class="nav-btn next">下一平台：视频号 ▶</a>
+    </div>
+
+    <div class="contact-bar">
+      <p class="contact-label">📩 深度带教 · 一对一指导</p>
+      <p class="contact-wx">微信：16500234000</p>
+      <p class="contact-hint">添加备注"AI学习"，优先通过</p>
+    </div>
+    <div class="footer">© 2024 张大业 · AI视频变现 · 微信 16500234000</div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('starsCanvas');
+    const ctx = canvas.getContext('2d');
+    let width, height, particles = [];
+    function resize() { width = window.innerWidth; height = window.innerHeight; canvas.width = width; canvas.height = height; }
+    resize(); window.addEventListener('resize', resize);
+    class Particle {
+      constructor() { this.reset(); }
+      reset() { this.x = Math.random() * width; this.y = Math.random() * height; this.size = Math.random() * 1.5 + 0.5; this.speedX = (Math.random() - 0.5) * 0.3; this.speedY = (Math.random() - 0.5) * 0.3; this.opacity = Math.random() * 0.6 + 0.2; this.fadeSpeed = Math.random() * 0.005 + 0.002; this.fading = Math.random() > 0.5; }
+      update() { this.x += this.speedX; this.y += this.speedY; if (this.fading) { this.opacity -= this.fadeSpeed; if (this.opacity <= 0.1) this.fading = false; } else { this.opacity += this.fadeSpeed; if (this.opacity >= 0.7) this.fading = true; } if (this.x < -10 || this.x > width + 10 || this.y < -10 || this.y > height + 10) { this.reset(); this.opacity = Math.random() * 0.5; } }
+      draw() { ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`; ctx.fill(); }
+    }
+    for (let i = 0; i < 150; i++) particles.push(new Particle());
+    function animate() {
+      ctx.clearRect(0, 0, width, height);
+      particles.forEach(p => { p.update(); p.draw(); });
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x; const dy = particles[i].y - particles[j].y; const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 80) { ctx.beginPath(); ctx.moveTo(particles[i].x, particles[i].y); ctx.lineTo(particles[j].x, particles[j].y); ctx.strokeStyle = `rgba(255, 255, 255, ${0.04 * (1 - dist / 80)})`; ctx.lineWidth = 0.5; ctx.stroke(); }
+        }
+      }
+      requestAnimationFrame(animate);
+    }
+    animate();
+  </script>
+</body>
+</html>

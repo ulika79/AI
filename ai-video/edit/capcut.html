@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>CapCut · AI剪辑 · 张大业AI视频变现</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #000;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      min-height: 100vh; overflow-x: hidden; color: #e2e8f0; line-height: 1.8;
+    }
+    .stars { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
+
+    .navbar {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(0,0,0,0.85); backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(251,146,60,0.2); padding: 0 10px;
+    }
+    .navbar-inner {
+      max-width: 680px; margin: 0 auto;
+      display: flex; align-items: center; height: 50px; gap: 6px;
+      overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none;
+    }
+    .navbar-inner::-webkit-scrollbar { display: none; }
+    .nav-home {
+      flex-shrink: 0; text-decoration: none; color: #fb923c; font-weight: 700;
+      font-size: 15px; padding: 6px 12px; border: 1px solid rgba(251,146,60,0.3);
+      border-radius: 20px; white-space: nowrap; margin-right: 4px;
+    }
+    .nav-home:active { background: rgba(251,146,60,0.15); }
+    .nav-link {
+      flex-shrink: 0; text-decoration: none; color: #94a3b8; font-size: 12px;
+      padding: 6px 10px; border-radius: 14px; white-space: nowrap; border: 1px solid transparent;
+    }
+    .nav-link:hover { color: #fb923c; }
+    .nav-link.active { color: #fb923c; border-color: rgba(251,146,60,0.3); background: rgba(251,146,60,0.08); }
+    .nav-divider { width: 1px; height: 16px; background: rgba(255,255,255,0.1); flex-shrink: 0; margin: 0 2px; }
+
+    .sub-navbar {
+      position: sticky; top: 50px; z-index: 99;
+      background: rgba(0,0,0,0.8); backdrop-filter: blur(15px);
+      border-bottom: 1px solid rgba(251,146,60,0.15); padding: 0 10px;
+    }
+    .sub-navbar-inner {
+      max-width: 680px; margin: 0 auto;
+      display: flex; align-items: center; height: 44px; gap: 4px;
+      overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none;
+    }
+    .sub-navbar-inner::-webkit-scrollbar { display: none; }
+    .sub-nav-link {
+      flex-shrink: 0; text-decoration: none; color: #94a3b8; font-size: 12px;
+      padding: 6px 14px; border-radius: 18px; white-space: nowrap;
+      border: 1px solid rgba(251,146,60,0.2); font-weight: 600; letter-spacing: 0.5px;
+    }
+    .sub-nav-link:hover { color: #fff; border-color: rgba(251,146,60,0.5); background: rgba(251,146,60,0.1); }
+    .sub-nav-link.active { color: #fff; background: linear-gradient(135deg, #f97316, #fb923c); border-color: transparent; }
+
+    .third-navbar {
+      position: sticky; top: 94px; z-index: 98;
+      background: rgba(0,0,0,0.75); backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(251,146,60,0.1); padding: 0 10px;
+    }
+    .third-navbar-inner {
+      max-width: 680px; margin: 0 auto;
+      display: flex; align-items: center; height: 38px; gap: 3px;
+      overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none;
+    }
+    .third-navbar-inner::-webkit-scrollbar { display: none; }
+    .third-nav-link {
+      flex-shrink: 0; text-decoration: none; color: #94a3b8; font-size: 11px;
+      padding: 4px 10px; border-radius: 12px; white-space: nowrap;
+      border: 1px solid rgba(251,146,60,0.15); font-weight: 500;
+    }
+    .third-nav-link:hover { color: #fb923c; border-color: rgba(251,146,60,0.4); background: rgba(251,146,60,0.08); }
+    .third-nav-link.active { color: #fb923c; border-color: rgba(251,146,60,0.4); background: rgba(251,146,60,0.12); }
+
+    .container { max-width: 680px; margin: 0 auto; padding: 20px 15px 60px; position: relative; z-index: 1; }
+    .page-header { text-align: center; padding: 20px 10px 10px; }
+    .page-header .module-icon {
+      font-size: 56px; display: block; margin-bottom: 12px;
+      filter: drop-shadow(0 0 20px rgba(59,130,246,0.5)); animation: float 3s ease-in-out infinite;
+    }
+    @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+    .page-header h1 {
+      font-size: 26px; font-weight: 900;
+      background: linear-gradient(135deg, #3b82f6, #60a5fa, #818cf8);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; letter-spacing: 2px;
+    }
+    .page-header .step-badge {
+      display: inline-block; background: linear-gradient(135deg, #3b82f6, #2563eb);
+      color: #fff; padding: 4px 16px; border-radius: 20px; font-size: 12px; font-weight: 700; letter-spacing: 2px; margin-bottom: 8px;
+    }
+    .page-header .sub { color: #94a3b8; font-size: 14px; margin-top: 8px; }
+    .neon-line {
+      width: 50%; height: 2px; margin: 16px auto 24px;
+      background: linear-gradient(90deg, transparent, #3b82f6, #60a5fa, #3b82f6, transparent);
+    }
+
+    .content-card {
+      background: rgba(15,23,42,0.7); border: 1px solid rgba(59,130,246,0.15);
+      border-radius: 20px; padding: 24px 20px; margin-bottom: 16px; backdrop-filter: blur(10px);
+    }
+    .content-card h3 { font-size: 18px; font-weight: 700; color: #60a5fa; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+    .content-card h3 .icon { font-size: 22px; }
+    .content-card p { color: #cbd5e1; font-size: 14px; margin-bottom: 8px; }
+    .content-card ul { list-style: none; padding: 0; }
+    .content-card ul li { padding: 6px 0 6px 20px; position: relative; color: #94a3b8; font-size: 14px; }
+    .content-card ul li::before { content: "▸"; position: absolute; left: 0; color: #3b82f6; }
+
+    .feature-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 16px 0;
+    }
+    .feature-card {
+      background: rgba(15,23,42,0.6); border: 1px solid rgba(59,130,246,0.2);
+      border-radius: 14px; padding: 16px 12px; text-align: center; transition: all 0.3s;
+    }
+    .feature-card:hover { border-color: rgba(59,130,246,0.5); box-shadow: 0 0 15px rgba(59,130,246,0.1); }
+    .feature-card .fc-icon { font-size: 28px; margin-bottom: 6px; }
+    .feature-card .fc-name { font-size: 14px; font-weight: 700; color: #60a5fa; margin-bottom: 4px; }
+    .feature-card .fc-desc { font-size: 11px; color: #94a3b8; line-height: 1.4; }
+
+    .compare-table {
+      width: 100%; border-collapse: collapse; font-size: 12px; margin: 12px 0;
+    }
+    .compare-table th {
+      background: rgba(59,130,246,0.2); padding: 10px 8px; text-align: center;
+      color: #60a5fa; font-weight: 700; border: 1px solid rgba(59,130,246,0.15);
+    }
+    .compare-table td {
+      padding: 10px 8px; text-align: center; color: #94a3b8;
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .quote-card {
+      background: linear-gradient(135deg, rgba(59,130,246,0.1), rgba(96,165,250,0.08));
+      border: 1px solid rgba(59,130,246,0.3); border-radius: 18px; padding: 20px;
+      margin: 24px 0; text-align: center; position: relative;
+    }
+    .quote-card .quote-mark { font-size: 48px; color: #60a5fa; opacity: 0.5; position: absolute; top: 6px; left: 16px; }
+    .quote-card .quote-text { font-size: 18px; font-weight: 700; color: #60a5fa; margin: 10px 0 6px; }
+    .quote-card .quote-author { color: #94a3b8; font-size: 13px; }
+    .cta-box {
+      background: linear-gradient(135deg, rgba(59,130,246,0.3), rgba(37,99,235,0.15));
+      border: 2px solid rgba(59,130,246,0.4); border-radius: 20px; padding: 20px; text-align: center; margin-top: 24px;
+    }
+    .cta-box h3 { font-size: 19px; font-weight: 800; color: #fff; margin-bottom: 6px; }
+    .cta-box p { color: #94a3b8; font-size: 13px; margin-bottom: 16px; }
+    .cta-box .cta-btn {
+      display: inline-block; background: linear-gradient(135deg, #3b82f6, #2563eb); color: #fff;
+      padding: 12px 28px; border-radius: 30px; text-decoration: none; font-weight: 700; font-size: 16px;
+    }
+    .contact-bar {
+      margin-top: 32px; background: rgba(15,23,42,0.9); border: 1px solid rgba(0,240,255,0.2);
+      border-radius: 18px; padding: 18px 20px; text-align: center; backdrop-filter: blur(10px);
+    }
+    .contact-bar .contact-label { color: #94a3b8; font-size: 13px; margin-bottom: 6px; letter-spacing: 1px; }
+    .contact-bar .contact-wx {
+      font-size: 20px; font-weight: 900;
+      background: linear-gradient(135deg, #00f0ff, #fbbf24);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; letter-spacing: 2px;
+    }
+    .contact-bar .contact-hint { color: #64748b; font-size: 11px; margin-top: 6px; }
+    .footer { text-align: center; color: #334155; font-size: 11px; margin-top: 20px; letter-spacing: 1px; }
+    .nav-buttons { display: flex; gap: 10px; margin-top: 24px; }
+    .nav-btn {
+      flex: 1; text-align: center; padding: 12px; border-radius: 14px; text-decoration: none;
+      font-weight: 700; font-size: 14px; border: 1px solid rgba(59,130,246,0.3); color: #60a5fa; background: rgba(59,130,246,0.05);
+    }
+    .nav-btn.next { background: linear-gradient(135deg, rgba(59,130,246,0.5), rgba(37,99,235,0.2)); color: #fff; }
+
+    @media (max-width: 400px) {
+      .page-header h1 { font-size: 22px; }
+      .page-header .module-icon { font-size: 44px; }
+      .sub-nav-link { font-size: 11px; padding: 5px 10px; }
+      .sub-navbar-inner { height: 40px; }
+      .third-nav-link { font-size: 10px; padding: 3px 8px; }
+      .third-navbar-inner { height: 34px; }
+      .content-card { padding: 18px 14px; }
+      .feature-grid { gap: 8px; }
+      .feature-card { padding: 12px 8px; }
+    }
+    @media (min-width: 769px) { .content-card { padding: 28px 24px; } }
+  </style>
+</head>
+<body>
+  <canvas class="stars" id="starsCanvas"></canvas>
+
+  <nav class="navbar">
+    <div class="navbar-inner">
+      <a href="../../index.html" class="nav-home">🏠 主页</a>
+      <span class="nav-divider"></span>
+      <a href="../../business-thinking.html" class="nav-link">💰商业思维</a>
+      <a href="../../human-nature.html" class="nav-link">🧠人性弱点</a>
+      <a href="../../algorithm.html" class="nav-link">📐规则算法</a>
+      <a href="../../product-selection.html" class="nav-link">🛒带货选品</a>
+      <a href="../../ai-video.html" class="nav-link active">🤖AI视频</a>
+      <a href="../../video-analysis.html" class="nav-link">📊视频分析</a>
+      <a href="../../trend.html" class="nav-link">📈发展趋势</a>
+      <a href="../../creative.html" class="nav-link">💡商业创意</a>
+    </div>
+  </nav>
+
+  <nav class="sub-navbar">
+    <div class="sub-navbar-inner">
+      <a href="../../ai-video.html" class="sub-nav-link">📋 总览</a>
+      <a href="../text/" class="sub-nav-link">📝 文字</a>
+      <a href="../image/" class="sub-nav-link">🎨 图片</a>
+      <a href="../video/" class="sub-nav-link">🎬 视频</a>
+      <a href="../audio/" class="sub-nav-link">🔊 声音</a>
+      <a href="../edit/" class="sub-nav-link active">✂️ 剪辑</a>
+      <a href="../publish/" class="sub-nav-link">🚀 发布</a>
+    </div>
+  </nav>
+
+  <nav class="third-navbar">
+    <div class="third-navbar-inner">
+      <a href="index.html" class="third-nav-link">📋 总览</a>
+      <a href="jianying.html" class="third-nav-link">✂️ 剪映专业版</a>
+      <a href="capcut.html" class="third-nav-link active">🎞️ CapCut</a>
+      <a href="subtitle.html" class="third-nav-link">💬 自动字幕</a>
+      <a href="workflow.html" class="third-nav-link">🧩 剪辑工作流</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="page-header">
+      <span class="module-icon">🎞️</span>
+      <span class="step-badge">剪辑 · CapCut</span>
+      <h1>CapCut</h1>
+      <p class="sub">剪映国际版，高级调色+专业特效+全球素材库</p>
+    </div>
+    <div class="neon-line"></div>
+
+    <div class="content-card">
+      <h3><span class="icon">🌟</span> 为什么选CapCut？</h3>
+      <p>CapCut是<strong style="color:#60a5fa;">剪映的国际版</strong>，功能和剪映专业版大部分重叠，但有一些独特的优势。如果你做跨境内容、需要高级调色、或者想用国际素材库，CapCut更合适。</p>
+      <ul>
+        <li><strong style="color:#60a5fa;">高级调色：</strong>支持LUT导入、HSL调色、曲线调色，电影级调色功能</li>
+        <li><strong style="color:#3b82f6;">LUT导入：</strong>可以导入专业调色预设，一键套用电影级色彩风格</li>
+        <li><strong style="color:#2563eb;">国际素材库：</strong>海量国际版权素材、音乐、音效，适合跨境内容</li>
+        <li><strong style="color:#60a5fa;">多平台导出：</strong>优化TikTok、YouTube、Instagram等平台的导出预设</li>
+      </ul>
+    </div>
+
+    <div class="content-card">
+      <h3><span class="icon">⚖️</span> 剪映专业版 vs CapCut</h3>
+      <div style="overflow-x:auto;">
+        <table class="compare-table">
+          <thead>
+            <tr><th>维度</th><th>✂️ 剪映专业版</th><th>🎞️ CapCut</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>语言</td><td>中文</td><td style="color:#60a5fa;">多语言</td></tr>
+            <tr><td>素材库</td><td>国内素材为主</td><td style="color:#60a5fa;">国际素材库</td></tr>
+            <tr><td>调色功能</td><td>基础调色</td><td style="color:#60a5fa;">高级调色+LUT</td></tr>
+            <tr><td>AI功能</td><td style="color:#60a5fa;">更丰富</td><td>基本一致</td></tr>
+            <tr><td>导出优化</td><td>抖音优先</td><td style="color:#60a5fa;">TikTok/YouTube</td></tr>
+            <tr><td>适合人群</td><td>国内创作者</td><td style="color:#60a5fa;">跨境/追求画质</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="margin-top:12px;"><strong style="color:#60a5fa;">建议：</strong>做国内内容用剪映专业版，做跨境内容或对画质有高要求用CapCut。两者可以同时安装。</p>
+    </div>
+
+    <div class="content-card">
+      <h3><span class="icon">🎨</span> CapCut独有优势功能</h3>
+      <div class="feature-grid">
+        <div class="feature-card">
+          <div class="fc-icon">🎨</div>
+          <div class="fc-name">高级调色</div>
+          <div class="fc-desc">LUT导入、HSL、曲线调色，电影级色彩</div>
+        </div>
+        <div class="feature-card">
+          <div class="fc-icon">🌍</div>
+          <div class="fc-name">国际素材库</div>
+          <div class="fc-desc">全球版权素材、音乐、字体</div>
+        </div>
+        <div class="feature-card">
+          <div class="fc-icon">📤</div>
+          <div class="fc-name">多平台优化</div>
+          <div class="fc-desc">TikTok/YouTube/Ins导出预设</div>
+        </div>
+        <div class="feature-card">
+          <div class="fc-icon">👥</div>
+          <div class="fc-name">团队协作</div>
+          <div class="fc-desc">云端协作，多人同时编辑项目</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="content-card">
+      <h3><span class="icon">🚀</span> 快速上手</h3>
+      <ul>
+        <li><strong style="color:#60a5fa;">① 下载安装：</strong>访问 capcut.com 下载桌面版，支持Windows/Mac</li>
+        <li><strong style="color:#3b82f6;">② 导入素材：</strong>把AI生成的图片和视频拖入时间轴</li>
+        <li><strong style="color:#2563eb;">③ AI功能使用：</strong>和剪映专业版一样，可以使用图文成片、自动字幕等功能</li>
+        <li><strong style="color:#60a5fa;">④ 高级调色：</strong>在调色面板导入LUT预设，或手动调整色彩参数</li>
+        <li><strong style="color:#3b82f6;">⑤ 导出：</strong>选择目标平台（TikTok/YouTube等），自动优化格式</li>
+      </ul>
+    </div>
+
+    <div class="quote-card">
+      <span class="quote-mark">"</span>
+      <p class="quote-text">如果你想让视频画面有电影质感，CapCut的调色功能值得花时间学习。</p>
+      <p class="quote-author">—— 好的调色让AI生成的画面更有质感</p>
+    </div>
+
+    <div class="cta-box">
+      <h3>🎞️ 准备下载CapCut了吗？</h3>
+      <p>官网免费下载，体验高级调色功能</p>
+      <a href="../../form.html" class="cta-btn">📋 填写摸底表</a>
+    </div>
+
+    <div class="nav-buttons">
+      <a href="jianying.html" class="nav-btn">◀ 上一工具：剪映专业版</a>
+      <a href="subtitle.html" class="nav-btn next">下一工具：自动字幕 ▶</a>
+    </div>
+
+    <div class="contact-bar">
+      <p class="contact-label">📩 深度带教 · 一对一指导</p>
+      <p class="contact-wx">微信：16500234000</p>
+      <p class="contact-hint">添加备注"AI学习"，优先通过</p>
+    </div>
+    <div class="footer">© 2024 张大业 · AI视频变现 · 微信 16500234000</div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('starsCanvas');
+    const ctx = canvas.getContext('2d');
+    let width, height, particles = [];
+    function resize() { width = window.innerWidth; height = window.innerHeight; canvas.width = width; canvas.height = height; }
+    resize(); window.addEventListener('resize', resize);
+    class Particle {
+      constructor() { this.reset(); }
+      reset() { this.x = Math.random() * width; this.y = Math.random() * height; this.size = Math.random() * 1.5 + 0.5; this.speedX = (Math.random() - 0.5) * 0.3; this.speedY = (Math.random() - 0.5) * 0.3; this.opacity = Math.random() * 0.6 + 0.2; this.fadeSpeed = Math.random() * 0.005 + 0.002; this.fading = Math.random() > 0.5; }
+      update() { this.x += this.speedX; this.y += this.speedY; if (this.fading) { this.opacity -= this.fadeSpeed; if (this.opacity <= 0.1) this.fading = false; } else { this.opacity += this.fadeSpeed; if (this.opacity >= 0.7) this.fading = true; } if (this.x < -10 || this.x > width + 10 || this.y < -10 || this.y > height + 10) { this.reset(); this.opacity = Math.random() * 0.5; } }
+      draw() { ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fillStyle = `rgba(59, 130, 246, ${this.opacity})`; ctx.fill(); }
+    }
+    for (let i = 0; i < 150; i++) particles.push(new Particle());
+    function animate() {
+      ctx.clearRect(0, 0, width, height);
+      particles.forEach(p => { p.update(); p.draw(); });
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x; const dy = particles[i].y - particles[j].y; const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 80) { ctx.beginPath(); ctx.moveTo(particles[i].x, particles[i].y); ctx.lineTo(particles[j].x, particles[j].y); ctx.strokeStyle = `rgba(59, 130, 246, ${0.06 * (1 - dist / 80)})`; ctx.lineWidth = 0.5; ctx.stroke(); }
+        }
+      }
+      requestAnimationFrame(animate);
+    }
+    animate();
+  </script>
+</body>
+</html>

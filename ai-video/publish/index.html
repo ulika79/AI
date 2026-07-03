@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>发布·多平台分发 · 张大业AI视频变现</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #000;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      min-height: 100vh; overflow-x: hidden; color: #e2e8f0; line-height: 1.8;
+    }
+    .stars { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
+
+    .navbar {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(0,0,0,0.85); backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(16,185,129,0.2); padding: 0 10px;
+    }
+    .navbar-inner {
+      max-width: 680px; margin: 0 auto;
+      display: flex; align-items: center; height: 50px; gap: 6px;
+      overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none;
+    }
+    .navbar-inner::-webkit-scrollbar { display: none; }
+    .nav-home {
+      flex-shrink: 0; text-decoration: none; color: #10b981; font-weight: 700;
+      font-size: 15px; padding: 6px 12px; border: 1px solid rgba(16,185,129,0.3);
+      border-radius: 20px; white-space: nowrap; margin-right: 4px;
+    }
+    .nav-home:active { background: rgba(16,185,129,0.15); }
+    .nav-link {
+      flex-shrink: 0; text-decoration: none; color: #94a3b8; font-size: 12px;
+      padding: 6px 10px; border-radius: 14px; white-space: nowrap; border: 1px solid transparent;
+    }
+    .nav-link:hover { color: #10b981; }
+    .nav-link.active { color: #10b981; border-color: rgba(16,185,129,0.3); background: rgba(16,185,129,0.08); }
+    .nav-divider { width: 1px; height: 16px; background: rgba(255,255,255,0.1); flex-shrink: 0; margin: 0 2px; }
+
+    .sub-navbar {
+      position: sticky; top: 50px; z-index: 99;
+      background: rgba(0,0,0,0.8); backdrop-filter: blur(15px);
+      border-bottom: 1px solid rgba(16,185,129,0.15); padding: 0 10px;
+    }
+    .sub-navbar-inner {
+      max-width: 680px; margin: 0 auto;
+      display: flex; align-items: center; height: 44px; gap: 4px;
+      overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none;
+    }
+    .sub-navbar-inner::-webkit-scrollbar { display: none; }
+    .sub-nav-link {
+      flex-shrink: 0; text-decoration: none; color: #94a3b8; font-size: 12px;
+      padding: 6px 14px; border-radius: 18px; white-space: nowrap;
+      border: 1px solid rgba(16,185,129,0.2); font-weight: 600; letter-spacing: 0.5px;
+    }
+    .sub-nav-link:hover { color: #fff; border-color: rgba(16,185,129,0.5); background: rgba(16,185,129,0.1); }
+    .sub-nav-link.active { color: #fff; background: linear-gradient(135deg, #059669, #10b981); border-color: transparent; }
+
+    .third-navbar {
+      position: sticky; top: 94px; z-index: 98;
+      background: rgba(0,0,0,0.75); backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(16,185,129,0.1); padding: 0 10px;
+    }
+    .third-navbar-inner {
+      max-width: 680px; margin: 0 auto;
+      display: flex; align-items: center; height: 38px; gap: 3px;
+      overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none;
+    }
+    .third-navbar-inner::-webkit-scrollbar { display: none; }
+    .third-nav-link {
+      flex-shrink: 0; text-decoration: none; color: #94a3b8; font-size: 11px;
+      padding: 4px 10px; border-radius: 12px; white-space: nowrap;
+      border: 1px solid rgba(16,185,129,0.15); font-weight: 500;
+    }
+    .third-nav-link:hover { color: #10b981; border-color: rgba(16,185,129,0.4); background: rgba(16,185,129,0.08); }
+    .third-nav-link.active { color: #10b981; border-color: rgba(16,185,129,0.4); background: rgba(16,185,129,0.12); }
+
+    .container { max-width: 680px; margin: 0 auto; padding: 20px 15px 60px; position: relative; z-index: 1; }
+    .page-header { text-align: center; padding: 20px 10px 10px; }
+    .page-header .module-icon {
+      font-size: 56px; display: block; margin-bottom: 12px;
+      filter: drop-shadow(0 0 20px rgba(16,185,129,0.5)); animation: float 3s ease-in-out infinite;
+    }
+    @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+    .page-header h1 {
+      font-size: 26px; font-weight: 900;
+      background: linear-gradient(135deg, #10b981, #34d399, #6ee7b7);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; letter-spacing: 2px;
+    }
+    .page-header .step-badge {
+      display: inline-block; background: linear-gradient(135deg, #059669, #10b981);
+      color: #fff; padding: 4px 16px; border-radius: 20px; font-size: 12px; font-weight: 700; letter-spacing: 2px; margin-bottom: 8px;
+    }
+    .page-header .sub { color: #94a3b8; font-size: 14px; margin-top: 8px; }
+    .neon-line {
+      width: 50%; height: 2px; margin: 16px auto 24px;
+      background: linear-gradient(90deg, transparent, #10b981, #34d399, #10b981, transparent);
+    }
+
+    .content-card {
+      background: rgba(15,23,42,0.7); border: 1px solid rgba(16,185,129,0.15);
+      border-radius: 20px; padding: 24px 20px; margin-bottom: 16px; backdrop-filter: blur(10px);
+    }
+    .content-card h3 { font-size: 18px; font-weight: 700; color: #34d399; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+    .content-card h3 .icon { font-size: 22px; }
+    .content-card p { color: #cbd5e1; font-size: 14px; margin-bottom: 8px; }
+    .content-card ul { list-style: none; padding: 0; }
+    .content-card ul li { padding: 6px 0 6px 20px; position: relative; color: #94a3b8; font-size: 14px; }
+    .content-card ul li::before { content: "▸"; position: absolute; left: 0; color: #10b981; }
+
+    .tool-entry-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 16px 0;
+    }
+    .tool-entry {
+      display: block; text-decoration: none;
+      background: rgba(15,23,42,0.6); border: 1px solid rgba(16,185,129,0.2);
+      border-radius: 16px; padding: 18px 12px; text-align: center; transition: all 0.3s;
+    }
+    .tool-entry:hover { border-color: rgba(16,185,129,0.5); box-shadow: 0 0 15px rgba(16,185,129,0.1); transform: translateY(-2px); }
+    .tool-entry .te-icon { font-size: 32px; margin-bottom: 8px; }
+    .tool-entry .te-name { font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 4px; }
+    .tool-entry .te-desc { font-size: 11px; color: #94a3b8; line-height: 1.4; }
+    .tool-entry .te-tags { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; margin-top: 6px; }
+    .te-tag { display: inline-block; padding: 2px 8px; border-radius: 8px; font-size: 10px; font-weight: 700; }
+    .tag-china { background: rgba(59,130,246,0.2); color: #60a5fa; }
+
+    .compare-table {
+      width: 100%; border-collapse: collapse; font-size: 12px; margin: 12px 0;
+    }
+    .compare-table th {
+      background: rgba(16,185,129,0.2); padding: 10px 8px; text-align: center;
+      color: #34d399; font-weight: 700; border: 1px solid rgba(16,185,129,0.15);
+    }
+    .compare-table td {
+      padding: 10px 8px; text-align: center; color: #94a3b8;
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .quote-card {
+      background: linear-gradient(135deg, rgba(16,185,129,0.1), rgba(52,211,153,0.08));
+      border: 1px solid rgba(16,185,129,0.3); border-radius: 18px; padding: 20px;
+      margin: 24px 0; text-align: center; position: relative;
+    }
+    .quote-card .quote-mark { font-size: 48px; color: #34d399; opacity: 0.5; position: absolute; top: 6px; left: 16px; }
+    .quote-card .quote-text { font-size: 18px; font-weight: 700; color: #34d399; margin: 10px 0 6px; }
+    .quote-card .quote-author { color: #94a3b8; font-size: 13px; }
+    .cta-box {
+      background: linear-gradient(135deg, rgba(16,185,129,0.3), rgba(5,150,105,0.15));
+      border: 2px solid rgba(16,185,129,0.4); border-radius: 20px; padding: 20px; text-align: center; margin-top: 24px;
+    }
+    .cta-box h3 { font-size: 19px; font-weight: 800; color: #fff; margin-bottom: 6px; }
+    .cta-box p { color: #94a3b8; font-size: 13px; margin-bottom: 16px; }
+    .cta-box .cta-btn {
+      display: inline-block; background: linear-gradient(135deg, #10b981, #059669); color: #fff;
+      padding: 12px 28px; border-radius: 30px; text-decoration: none; font-weight: 700; font-size: 16px;
+    }
+    .contact-bar {
+      margin-top: 32px; background: rgba(15,23,42,0.9); border: 1px solid rgba(0,240,255,0.2);
+      border-radius: 18px; padding: 18px 20px; text-align: center; backdrop-filter: blur(10px);
+    }
+    .contact-bar .contact-label { color: #94a3b8; font-size: 13px; margin-bottom: 6px; letter-spacing: 1px; }
+    .contact-bar .contact-wx {
+      font-size: 20px; font-weight: 900;
+      background: linear-gradient(135deg, #00f0ff, #fbbf24);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; letter-spacing: 2px;
+    }
+    .contact-bar .contact-hint { color: #64748b; font-size: 11px; margin-top: 6px; }
+    .footer { text-align: center; color: #334155; font-size: 11px; margin-top: 20px; letter-spacing: 1px; }
+    .nav-buttons { display: flex; gap: 10px; margin-top: 24px; }
+    .nav-btn {
+      flex: 1; text-align: center; padding: 12px; border-radius: 14px; text-decoration: none;
+      font-weight: 700; font-size: 14px; border: 1px solid rgba(16,185,129,0.3); color: #34d399; background: rgba(16,185,129,0.05);
+    }
+    .nav-btn.next { background: linear-gradient(135deg, rgba(16,185,129,0.5), rgba(5,150,105,0.2)); color: #fff; }
+
+    @media (max-width: 400px) {
+      .page-header h1 { font-size: 22px; }
+      .page-header .module-icon { font-size: 44px; }
+      .sub-nav-link { font-size: 11px; padding: 5px 10px; }
+      .sub-navbar-inner { height: 40px; }
+      .third-nav-link { font-size: 10px; padding: 3px 8px; }
+      .third-navbar-inner { height: 34px; }
+      .content-card { padding: 18px 14px; }
+      .tool-entry-grid { gap: 8px; }
+      .tool-entry { padding: 14px 10px; }
+    }
+    @media (min-width: 769px) { .content-card { padding: 28px 24px; } }
+  </style>
+</head>
+<body>
+  <canvas class="stars" id="starsCanvas"></canvas>
+
+  <nav class="navbar">
+    <div class="navbar-inner">
+      <a href="../../index.html" class="nav-home">🏠 主页</a>
+      <span class="nav-divider"></span>
+      <a href="../../business-thinking.html" class="nav-link">💰商业思维</a>
+      <a href="../../human-nature.html" class="nav-link">🧠人性弱点</a>
+      <a href="../../algorithm.html" class="nav-link">📐规则算法</a>
+      <a href="../../product-selection.html" class="nav-link">🛒带货选品</a>
+      <a href="../../ai-video.html" class="nav-link active">🤖AI视频</a>
+      <a href="../../video-analysis.html" class="nav-link">📊视频分析</a>
+      <a href="../../trend.html" class="nav-link">📈发展趋势</a>
+      <a href="../../creative.html" class="nav-link">💡商业创意</a>
+    </div>
+  </nav>
+
+  <nav class="sub-navbar">
+    <div class="sub-navbar-inner">
+      <a href="../../ai-video.html" class="sub-nav-link">📋 总览</a>
+      <a href="../text/" class="sub-nav-link">📝 文字</a>
+      <a href="../image/" class="sub-nav-link">🎨 图片</a>
+      <a href="../video/" class="sub-nav-link">🎬 视频</a>
+      <a href="../audio/" class="sub-nav-link">🔊 声音</a>
+      <a href="../edit/" class="sub-nav-link">✂️ 剪辑</a>
+      <a href="../publish/" class="sub-nav-link active">🚀 发布</a>
+    </div>
+  </nav>
+
+  <nav class="third-navbar">
+    <div class="third-navbar-inner">
+      <a href="index.html" class="third-nav-link active">📋 总览</a>
+      <a href="douyin.html" class="third-nav-link">🎵 抖音</a>
+      <a href="shipinhao.html" class="third-nav-link">💬 视频号</a>
+      <a href="xiaohongshu.html" class="third-nav-link">📕 小红书</a>
+      <a href="kuaishou.html" class="third-nav-link">⚡ 快手</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="page-header">
+      <span class="module-icon">🚀</span>
+      <span class="step-badge">STEP 6</span>
+      <h1>多平台发布</h1>
+      <p class="sub">把做好的视频发布到四大平台，最大化内容价值</p>
+    </div>
+    <div class="neon-line"></div>
+
+    <div class="content-card">
+      <h3><span class="icon">🎯</span> 为什么要多平台发布？</h3>
+      <p>一条视频做出来，<strong style="color:#34d399;">只发一个平台=浪费80%的价值</strong>。不同平台的用户群体不同，多平台分发能最大化你的内容曝光和收益。</p>
+      <ul>
+        <li><strong style="color:#34d399;">内容复用：</strong>一条视频稍作调整，适配4个平台，工作量只增加20%，曝光增加300%</li>
+        <li><strong style="color:#10b981;">风险分散：</strong>不把鸡蛋放在一个篮子里，某个平台限流不影响全局</li>
+        <li><strong style="color:#6ee7b7;">收益叠加：</strong>各平台的流量分成、带货佣金、广告收入可以叠加</li>
+      </ul>
+    </div>
+
+    <div class="content-card">
+      <h3><span class="icon">📊</span> 四大平台对比</h3>
+      <div style="overflow-x:auto;">
+        <table class="compare-table">
+          <thead>
+            <tr><th>维度</th><th>🎵 抖音</th><th>💬 视频号</th><th>📕 小红书</th><th>⚡ 快手</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>日活</td><td>7亿+</td><td>5亿+</td><td>1亿+</td><td>3亿+</td></tr>
+            <tr><td>核心用户</td><td>全年龄段</td><td>30-50岁</td><td>18-35岁女性</td><td>下沉市场</td></tr>
+            <tr><td>最佳时长</td><td>15-60秒</td><td>30-90秒</td><td>30-120秒</td><td>15-60秒</td></tr>
+            <tr><td>内容调性</td><td>新潮/娱乐</td><td>正能量/知识</td><td>精致/实用</td><td>接地气/真实</td></tr>
+            <tr><td>带货能力</td><td>⭐⭐⭐⭐⭐</td><td>⭐⭐⭐</td><td>⭐⭐⭐⭐</td><td>⭐⭐⭐⭐</td></tr>
+            <tr><td>私域导流</td><td>受限</td><td>⭐⭐⭐⭐⭐</td><td>⭐⭐⭐</td><td>⭐⭐</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="content-card">
+      <h3><span class="icon">⏰</span> 各平台最佳发布时间</h3>
+      <ul>
+        <li><strong style="color:#34d399;">🎵 抖音：</strong>早7-9点（通勤）、午12-14点（午休）、晚18-22点（黄金时段）</li>
+        <li><strong style="color:#10b981;">💬 视频号：</strong>早6-8点（晨起阅读）、午12-13点、晚20-22点</li>
+        <li><strong style="color:#6ee7b7;">📕 小红书：</strong>早7-8点、午12-14点、晚18-20点（女性用户活跃高峰）</li>
+        <li><strong style="color:#34d399;">⚡ 快手：</strong>早6-8点、午12-13点、晚17-21点（下沉市场作息）</li>
+      </ul>
+    </div>
+
+    <div class="content-card">
+      <h3><span class="icon">🧰</span> 点击进入各平台发布教程</h3>
+      <div class="tool-entry-grid">
+        <a href="douyin.html" class="tool-entry">
+          <div class="te-icon">🎵</div>
+          <div class="te-name">抖音</div>
+          <div class="te-desc">7亿日活，短视频流量之王</div>
+          <div class="te-tags"><span class="te-tag tag-china">带货首选</span></div>
+        </a>
+        <a href="shipinhao.html" class="tool-entry">
+          <div class="te-icon">💬</div>
+          <div class="te-name">视频号</div>
+          <div class="te-desc">微信生态，私域引流利器</div>
+          <div class="te-tags"><span class="te-tag tag-china">私域首选</span></div>
+        </a>
+        <a href="xiaohongshu.html" class="tool-entry">
+          <div class="te-icon">📕</div>
+          <div class="te-name">小红书</div>
+          <div class="te-desc">种草社区，女性用户集中</div>
+          <div class="te-tags"><span class="te-tag tag-china">高客单价</span></div>
+        </a>
+        <a href="kuaishou.html" class="tool-entry">
+          <div class="te-icon">⚡</div>
+          <div class="te-name">快手</div>
+          <div class="te-desc">老铁文化，下沉市场之王</div>
+          <div class="te-tags"><span class="te-tag tag-china">强信任感</span></div>
+        </a>
+      </div>
+    </div>
+
+    <div class="quote-card">
+      <span class="quote-mark">"</span>
+      <p class="quote-text">做内容不发布，等于种了庄稼不收。</p>
+      <p class="quote-author">—— 多平台分发，让每一条视频的价值最大化</p>
+    </div>
+
+    <div class="cta-box">
+      <h3>🚀 准备把视频发布到各大平台了吗？</h3>
+      <p>选择目标平台，查看发布技巧</p>
+      <a href="../../form.html" class="cta-btn">📋 填写摸底表</a>
+    </div>
+
+    <div class="nav-buttons">
+      <a href="../edit/workflow.html" class="nav-btn">◀ 上一步：剪辑</a>
+      <a href="../../index.html" class="nav-btn next">🏠 返回主页</a>
+    </div>
+
+    <div class="contact-bar">
+      <p class="contact-label">📩 深度带教 · 一对一指导</p>
+      <p class="contact-wx">微信：16500234000</p>
+      <p class="contact-hint">添加备注"AI学习"，优先通过</p>
+    </div>
+    <div class="footer">© 2024 张大业 · AI视频变现 · 微信 16500234000</div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('starsCanvas');
+    const ctx = canvas.getContext('2d');
+    let width, height, particles = [];
+    function resize() { width = window.innerWidth; height = window.innerHeight; canvas.width = width; canvas.height = height; }
+    resize(); window.addEventListener('resize', resize);
+    class Particle {
+      constructor() { this.reset(); }
+      reset() { this.x = Math.random() * width; this.y = Math.random() * height; this.size = Math.random() * 1.5 + 0.5; this.speedX = (Math.random() - 0.5) * 0.3; this.speedY = (Math.random() - 0.5) * 0.3; this.opacity = Math.random() * 0.6 + 0.2; this.fadeSpeed = Math.random() * 0.005 + 0.002; this.fading = Math.random() > 0.5; }
+      update() { this.x += this.speedX; this.y += this.speedY; if (this.fading) { this.opacity -= this.fadeSpeed; if (this.opacity <= 0.1) this.fading = false; } else { this.opacity += this.fadeSpeed; if (this.opacity >= 0.7) this.fading = true; } if (this.x < -10 || this.x > width + 10 || this.y < -10 || this.y > height + 10) { this.reset(); this.opacity = Math.random() * 0.5; } }
+      draw() { ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fillStyle = `rgba(16, 185, 129, ${this.opacity})`; ctx.fill(); }
+    }
+    for (let i = 0; i < 150; i++) particles.push(new Particle());
+    function animate() {
+      ctx.clearRect(0, 0, width, height);
+      particles.forEach(p => { p.update(); p.draw(); });
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x; const dy = particles[i].y - particles[j].y; const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 80) { ctx.beginPath(); ctx.moveTo(particles[i].x, particles[i].y); ctx.lineTo(particles[j].x, particles[j].y); ctx.strokeStyle = `rgba(16, 185, 129, ${0.06 * (1 - dist / 80)})`; ctx.lineWidth = 0.5; ctx.stroke(); }
+        }
+      }
+      requestAnimationFrame(animate);
+    }
+    animate();
+  </script>
+</body>
+</html>

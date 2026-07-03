@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>声音·AI配音与音乐 · 张大业AI视频变现</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #000;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      min-height: 100vh; overflow-x: hidden; color: #e2e8f0; line-height: 1.8;
+    }
+    .stars { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
+
+    .navbar {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(0,0,0,0.85); backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(6,182,212,0.2); padding: 0 10px;
+    }
+    .navbar-inner {
+      max-width: 680px; margin: 0 auto;
+      display: flex; align-items: center; height: 50px; gap: 6px;
+      overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none;
+    }
+    .navbar-inner::-webkit-scrollbar { display: none; }
+    .nav-home {
+      flex-shrink: 0; text-decoration: none; color: #06b6d4; font-weight: 700;
+      font-size: 15px; padding: 6px 12px; border: 1px solid rgba(6,182,212,0.3);
+      border-radius: 20px; white-space: nowrap; margin-right: 4px;
+    }
+    .nav-home:active { background: rgba(6,182,212,0.15); }
+    .nav-link {
+      flex-shrink: 0; text-decoration: none; color: #94a3b8; font-size: 12px;
+      padding: 6px 10px; border-radius: 14px; white-space: nowrap; border: 1px solid transparent;
+    }
+    .nav-link:hover { color: #06b6d4; }
+    .nav-link.active { color: #06b6d4; border-color: rgba(6,182,212,0.3); background: rgba(6,182,212,0.08); }
+    .nav-divider { width: 1px; height: 16px; background: rgba(255,255,255,0.1); flex-shrink: 0; margin: 0 2px; }
+
+    .sub-navbar {
+      position: sticky; top: 50px; z-index: 99;
+      background: rgba(0,0,0,0.8); backdrop-filter: blur(15px);
+      border-bottom: 1px solid rgba(6,182,212,0.15); padding: 0 10px;
+    }
+    .sub-navbar-inner {
+      max-width: 680px; margin: 0 auto;
+      display: flex; align-items: center; height: 44px; gap: 4px;
+      overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none;
+    }
+    .sub-navbar-inner::-webkit-scrollbar { display: none; }
+    .sub-nav-link {
+      flex-shrink: 0; text-decoration: none; color: #94a3b8; font-size: 12px;
+      padding: 6px 14px; border-radius: 18px; white-space: nowrap;
+      border: 1px solid rgba(6,182,212,0.2); font-weight: 600; letter-spacing: 0.5px;
+    }
+    .sub-nav-link:hover { color: #fff; border-color: rgba(6,182,212,0.5); background: rgba(6,182,212,0.1); }
+    .sub-nav-link.active { color: #fff; background: linear-gradient(135deg, #0891b2, #06b6d4); border-color: transparent; }
+
+    .third-navbar {
+      position: sticky; top: 94px; z-index: 98;
+      background: rgba(0,0,0,0.75); backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(6,182,212,0.1); padding: 0 10px;
+    }
+    .third-navbar-inner {
+      max-width: 680px; margin: 0 auto;
+      display: flex; align-items: center; height: 38px; gap: 3px;
+      overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none;
+    }
+    .third-navbar-inner::-webkit-scrollbar { display: none; }
+    .third-nav-link {
+      flex-shrink: 0; text-decoration: none; color: #94a3b8; font-size: 11px;
+      padding: 4px 10px; border-radius: 12px; white-space: nowrap;
+      border: 1px solid rgba(6,182,212,0.15); font-weight: 500;
+    }
+    .third-nav-link:hover { color: #06b6d4; border-color: rgba(6,182,212,0.4); background: rgba(6,182,212,0.08); }
+    .third-nav-link.active { color: #06b6d4; border-color: rgba(6,182,212,0.4); background: rgba(6,182,212,0.12); }
+
+    .container { max-width: 680px; margin: 0 auto; padding: 20px 15px 60px; position: relative; z-index: 1; }
+    .page-header { text-align: center; padding: 20px 10px 10px; }
+    .page-header .module-icon {
+      font-size: 56px; display: block; margin-bottom: 12px;
+      filter: drop-shadow(0 0 20px rgba(6,182,212,0.5)); animation: float 3s ease-in-out infinite;
+    }
+    @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+    .page-header h1 {
+      font-size: 26px; font-weight: 900;
+      background: linear-gradient(135deg, #06b6d4, #22d3ee, #10b981);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; letter-spacing: 2px;
+    }
+    .page-header .step-badge {
+      display: inline-block; background: linear-gradient(135deg, #0891b2, #06b6d4);
+      color: #000; padding: 4px 16px; border-radius: 20px; font-size: 12px; font-weight: 700; letter-spacing: 2px; margin-bottom: 8px;
+    }
+    .page-header .sub { color: #94a3b8; font-size: 14px; margin-top: 8px; }
+    .neon-line {
+      width: 50%; height: 2px; margin: 16px auto 24px;
+      background: linear-gradient(90deg, transparent, #06b6d4, #22d3ee, #06b6d4, transparent);
+    }
+
+    .content-card {
+      background: rgba(15,23,42,0.7); border: 1px solid rgba(6,182,212,0.15);
+      border-radius: 20px; padding: 24px 20px; margin-bottom: 16px; backdrop-filter: blur(10px);
+    }
+    .content-card h3 { font-size: 18px; font-weight: 700; color: #22d3ee; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+    .content-card h3 .icon { font-size: 22px; }
+    .content-card p { color: #cbd5e1; font-size: 14px; margin-bottom: 8px; }
+    .content-card ul { list-style: none; padding: 0; }
+    .content-card ul li { padding: 6px 0 6px 20px; position: relative; color: #94a3b8; font-size: 14px; }
+    .content-card ul li::before { content: "▸"; position: absolute; left: 0; color: #06b6d4; }
+
+    .tool-entry-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 16px 0;
+    }
+    .tool-entry {
+      display: block; text-decoration: none;
+      background: rgba(15,23,42,0.6); border: 1px solid rgba(6,182,212,0.2);
+      border-radius: 16px; padding: 18px 12px; text-align: center; transition: all 0.3s;
+    }
+    .tool-entry:hover { border-color: rgba(6,182,212,0.5); box-shadow: 0 0 15px rgba(6,182,212,0.1); transform: translateY(-2px); }
+    .tool-entry .te-icon { font-size: 32px; margin-bottom: 8px; }
+    .tool-entry .te-name { font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 4px; }
+    .tool-entry .te-desc { font-size: 11px; color: #94a3b8; line-height: 1.4; }
+    .tool-entry .te-tags { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; margin-top: 6px; }
+    .te-tag { display: inline-block; padding: 2px 8px; border-radius: 8px; font-size: 10px; font-weight: 700; }
+    .tag-free { background: rgba(16,185,129,0.2); color: #34d399; }
+    .tag-pay { background: rgba(251,191,36,0.2); color: #fbbf24; }
+    .tag-china { background: rgba(59,130,246,0.2); color: #60a5fa; }
+
+    .compare-table {
+      width: 100%; border-collapse: collapse; font-size: 12px; margin: 12px 0;
+    }
+    .compare-table th {
+      background: rgba(6,182,212,0.2); padding: 10px 8px; text-align: center;
+      color: #22d3ee; font-weight: 700; border: 1px solid rgba(6,182,212,0.15);
+    }
+    .compare-table td {
+      padding: 10px 8px; text-align: center; color: #94a3b8;
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    /* ========== 知识维度卡片 ========== */
+    .dimension-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 16px 0;
+    }
+    .dimension-card {
+      background: rgba(15,23,42,0.6); border: 1px solid rgba(6,182,212,0.2);
+      border-radius: 14px; padding: 16px 12px; text-align: center; transition: all 0.3s;
+    }
+    .dimension-card:hover { border-color: rgba(6,182,212,0.5); box-shadow: 0 0 15px rgba(6,182,212,0.1); }
+    .dimension-card .dc-icon { font-size: 28px; margin-bottom: 6px; }
+    .dimension-card .dc-name { font-size: 14px; font-weight: 700; color: #22d3ee; margin-bottom: 4px; }
+    .dimension-card .dc-desc { font-size: 11px; color: #94a3b8; line-height: 1.5; }
+
+    .quote-card {
+      background: linear-gradient(135deg, rgba(6,182,212,0.1), rgba(34,211,238,0.08));
+      border: 1px solid rgba(6,182,212,0.3); border-radius: 18px; padding: 20px;
+      margin: 24px 0; text-align: center; position: relative;
+    }
+    .quote-card .quote-mark { font-size: 48px; color: #22d3ee; opacity: 0.5; position: absolute; top: 6px; left: 16px; }
+    .quote-card .quote-text { font-size: 18px; font-weight: 700; color: #22d3ee; margin: 10px 0 6px; }
+    .quote-card .quote-author { color: #94a3b8; font-size: 13px; }
+    .cta-box {
+      background: linear-gradient(135deg, rgba(6,182,212,0.3), rgba(8,145,178,0.15));
+      border: 2px solid rgba(6,182,212,0.4); border-radius: 20px; padding: 20px; text-align: center; margin-top: 24px;
+    }
+    .cta-box h3 { font-size: 19px; font-weight: 800; color: #fff; margin-bottom: 6px; }
+    .cta-box p { color: #94a3b8; font-size: 13px; margin-bottom: 16px; }
+    .cta-box .cta-btn {
+      display: inline-block; background: linear-gradient(135deg, #06b6d4, #0891b2); color: #fff;
+      padding: 12px 28px; border-radius: 30px; text-decoration: none; font-weight: 700; font-size: 16px;
+    }
+    .contact-bar {
+      margin-top: 32px; background: rgba(15,23,42,0.9); border: 1px solid rgba(0,240,255,0.2);
+      border-radius: 18px; padding: 18px 20px; text-align: center; backdrop-filter: blur(10px);
+    }
+    .contact-bar .contact-label { color: #94a3b8; font-size: 13px; margin-bottom: 6px; letter-spacing: 1px; }
+    .contact-bar .contact-wx {
+      font-size: 20px; font-weight: 900;
+      background: linear-gradient(135deg, #00f0ff, #fbbf24);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; letter-spacing: 2px;
+    }
+    .contact-bar .contact-hint { color: #64748b; font-size: 11px; margin-top: 6px; }
+    .footer { text-align: center; color: #334155; font-size: 11px; margin-top: 20px; letter-spacing: 1px; }
+    .nav-buttons { display: flex; gap: 10px; margin-top: 24px; }
+    .nav-btn {
+      flex: 1; text-align: center; padding: 12px; border-radius: 14px; text-decoration: none;
+      font-weight: 700; font-size: 14px; border: 1px solid rgba(6,182,212,0.3); color: #22d3ee; background: rgba(6,182,212,0.05);
+    }
+    .nav-btn.next { background: linear-gradient(135deg, rgba(6,182,212,0.5), rgba(8,145,178,0.2)); color: #fff; }
+
+    @media (max-width: 400px) {
+      .page-header h1 { font-size: 22px; }
+      .page-header .module-icon { font-size: 44px; }
+      .sub-nav-link { font-size: 11px; padding: 5px 10px; }
+      .sub-navbar-inner { height: 40px; }
+      .third-nav-link { font-size: 10px; padding: 3px 8px; }
+      .third-navbar-inner { height: 34px; }
+      .content-card { padding: 18px 14px; }
+      .tool-entry-grid { gap: 8px; }
+      .tool-entry { padding: 14px 10px; }
+      .dimension-grid { gap: 8px; }
+      .dimension-card { padding: 12px 8px; }
+      .compare-table { font-size: 10px; }
+    }
+    @media (min-width: 769px) { .content-card { padding: 28px 24px; } }
+  </style>
+</head>
+<body>
+  <canvas class="stars" id="starsCanvas"></canvas>
+
+  <!-- ==================== 一级导航栏 ==================== -->
+  <nav class="navbar">
+    <div class="navbar-inner">
+      <a href="../../index.html" class="nav-home">🏠 主页</a>
+      <span class="nav-divider"></span>
+      <a href="../../business-thinking.html" class="nav-link">💰商业思维</a>
+      <a href="../../human-nature.html" class="nav-link">🧠人性弱点</a>
+      <a href="../../algorithm.html" class="nav-link">📐规则算法</a>
+      <a href="../../product-selection.html" class="nav-link">🛒带货选品</a>
+      <a href="../../ai-video.html" class="nav-link active">🤖AI视频</a>
+      <a href="../../video-analysis.html" class="nav-link">📊视频分析</a>
+      <a href="../../trend.html" class="nav-link">📈发展趋势</a>
+      <a href="../../creative.html" class="nav-link">💡商业创意</a>
+    </div>
+  </nav>
+
+  <!-- ==================== 二级导航栏 ==================== -->
+  <nav class="sub-navbar">
+    <div class="sub-navbar-inner">
+      <a href="../../ai-video.html" class="sub-nav-link">📋 总览</a>
+      <a href="../text/" class="sub-nav-link">📝 文字</a>
+      <a href="../image/" class="sub-nav-link">🎨 图片</a>
+      <a href="../video/" class="sub-nav-link">🎬 视频</a>
+      <a href="../audio/" class="sub-nav-link active">🔊 声音</a>
+      <a href="../edit/" class="sub-nav-link">✂️ 剪辑</a>
+      <a href="../publish/" class="sub-nav-link">🚀 发布</a>
+    </div>
+  </nav>
+
+  <!-- ==================== 三级导航栏 ==================== -->
+  <nav class="third-navbar">
+    <div class="third-navbar-inner">
+      <a href="index.html" class="third-nav-link active">📋 总览</a>
+      <a href="jianyinai.html" class="third-nav-link">🎙️ 剪映AI</a>
+      <a href="elevenlabs.html" class="third-nav-link">🗣️ ElevenLabs</a>
+      <a href="moyin.html" class="third-nav-link">🎤 魔音工坊</a>
+      <a href="suno.html" class="third-nav-link">🎵 Suno</a>
+      <a href="udio.html" class="third-nav-link">🎶 Udio</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="page-header">
+      <span class="module-icon">🔊</span>
+      <span class="step-badge">STEP 4</span>
+      <h1>AI声音与音乐</h1>
+      <p class="sub">从配音到BGM，全方位掌握AI音频制作</p>
+    </div>
+    <div class="neon-line"></div>
+
+    <!-- 声音在视频中的作用 -->
+    <div class="content-card">
+      <h3><span class="icon">🎯</span> 声音在视频中的重要性</h3>
+      <p>视频是<strong style="color:#22d3ee;">视听艺术</strong>。画面决定用户看不看，声音决定用户<strong style="color:#06b6d4;">听不听得进去</strong>。好的配音+BGM能让视频的完播率提升30%以上。</p>
+      <ul>
+        <li><strong style="color:#22d3ee;">说话声（配音）：</strong>传递信息的核心载体，决定了内容的专业度和感染力</li>
+        <li><strong style="color:#06b6d4;">环境音（音效）：</strong>营造场景真实感，让观众"身临其境"</li>
+        <li><strong style="color:#10b981;">BGM（背景音乐）：</strong>烘托情绪氛围，引导观众的情感走向</li>
+      </ul>
+    </div>
+
+    <!-- ==================== 声音全维度知识体系 ==================== -->
+    <div class="content-card">
+      <h3><span class="icon">📚</span> AI声音全维度知识体系</h3>
+      <p>掌握以下<strong style="color:#22d3ee;">10个声音维度</strong>，你就能精准控制AI输出的每一种声音效果：</p>
+    </div>
+
+    <!-- 声音分类 -->
+    <div class="content-card">
+      <h3><span class="icon">🎵</span> 声音三大分类</h3>
+      <div class="dimension-grid">
+        <div class="dimension-card">
+          <div class="dc-icon">🗣️</div>
+          <div class="dc-name">说话声（配音）</div>
+          <div class="dc-desc">旁白、解说、口播配音<br>AI文字转语音（TTS）<br>声音克隆+定制音色</div>
+        </div>
+        <div class="dimension-card">
+          <div class="dc-icon">🌿</div>
+          <div class="dc-name">环境音（音效）</div>
+          <div class="dc-desc">自然声、城市声、室内声<br>AI生成+音效库<br>营造场景真实感</div>
+        </div>
+        <div class="dimension-card">
+          <div class="dc-icon">🎼</div>
+          <div class="dc-name">BGM（背景音乐）</div>
+          <div class="dc-desc">情绪音乐、氛围音乐<br>AI生成+版权音乐<br>Suno / Udio生成</div>
+        </div>
+        <div class="dimension-card">
+          <div class="dc-icon">🔊</div>
+          <div class="dc-name">声音混音</div>
+          <div class="dc-desc">多层音轨叠加<br>音量平衡+淡入淡出<br>配音+BGM+音效合成</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 声音克隆与训练 -->
+    <div class="content-card">
+      <h3><span class="icon">🧬</span> 声音克隆与声音训练</h3>
+      <div class="dimension-grid">
+        <div class="dimension-card">
+          <div class="dc-icon">🎯</div>
+          <div class="dc-name">声音克隆</div>
+          <div class="dc-desc">上传10-30秒音频样本<br>AI提取音色特征<br>生成一模一样的克隆声音</div>
+        </div>
+        <div class="dimension-card">
+          <div class="dc-icon">🏋️</div>
+          <div class="dc-name">声音训练</div>
+          <div class="dc-desc">上传大量音频数据<br>训练专属声音模型<br>更稳定、更自然的克隆效果</div>
+        </div>
+        <div class="dimension-card">
+          <div class="dc-icon">⚖️</div>
+          <div class="dc-name">克隆vs训练</div>
+          <div class="dc-desc">克隆：快速但质量一般<br>训练：耗时但质量极高<br>根据需求选择方案</div>
+        </div>
+        <div class="dimension-card">
+          <div class="dc-icon">⚠️</div>
+          <div class="dc-name">法律边界</div>
+          <div class="dc-desc">克隆自己声音=合法<br>克隆他人声音需授权<br>严禁用于诈骗等违法用途</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 人声音色维度 -->
+    <div class="content-card">
+      <h3><span class="icon">🎤</span> 人说话的声音维度</h3>
+      <p>AI配音工具可以控制的<strong style="color:#22d3ee;">6个核心声音参数</strong>：</p>
+      <div style="overflow-x:auto;">
+        <table class="compare-table">
+          <thead>
+            <tr><th>维度</th><th>说明</th><th>可调参数</th><th>适用场景</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="color:#22d3ee;font-weight:700;">🎵 音色</td>
+              <td>声音的"颜色"和质感</td>
+              <td>浑厚/清脆/沙哑/甜美/磁性</td>
+              <td>选配音员风格</td>
+            </tr>
+            <tr>
+              <td style="color:#22d3ee;font-weight:700;">🎼 音韵</td>
+              <td>声音的韵律和调性</td>
+              <td>字正腔圆/口语化/方言</td>
+              <td>调整说话风格</td>
+            </tr>
+            <tr>
+              <td style="color:#22d3ee;font-weight:700;">😊 情绪</td>
+              <td>声音中的情感色彩</td>
+              <td>平静/兴奋/悲伤/严肃/温柔</td>
+              <td>匹配视频内容情绪</td>
+            </tr>
+            <tr>
+              <td style="color:#22d3ee;font-weight:700;">❤️ 情感</td>
+              <td>深层情感表达能力</td>
+              <td>真诚/感人/激励/幽默/深情</td>
+              <td>打动观众的关键</td>
+            </tr>
+            <tr>
+              <td style="color:#22d3ee;font-weight:700;">⏱️ 节奏</td>
+              <td>语速和停顿控制</td>
+              <td>快节奏/慢节奏/有停顿/连贯</td>
+              <td>控制信息密度</td>
+            </tr>
+            <tr>
+              <td style="color:#22d3ee;font-weight:700;">📏 语调</td>
+              <td>音高变化模式</td>
+              <td>升调/降调/平调/抑扬顿挫</td>
+              <td>增强表达感染力</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 情绪与情感详解 -->
+    <div class="content-card">
+      <h3><span class="icon">🎭</span> 情绪与情感在配音中的应用</h3>
+      <p>AI配音不只是"念稿子"，关键是<strong style="color:#22d3ee;">让声音带上正确的情绪</strong>：</p>
+      <div class="dimension-grid">
+        <div class="dimension-card">
+          <div class="dc-icon">😊</div>
+          <div class="dc-name">温暖亲切</div>
+          <div class="dc-desc">适合：知识分享<br>生活记录、育儿内容<br>让人感到舒适放松</div>
+        </div>
+        <div class="dimension-card">
+          <div class="dc-icon">🔥</div>
+          <div class="dc-name">激昂激励</div>
+          <div class="dc-desc">适合：励志内容<br>商业演讲、宣传片<br>充满力量和感染力</div>
+        </div>
+        <div class="dimension-card">
+          <div class="dc-icon">😢</div>
+          <div class="dc-name">深情感人</div>
+          <div class="dc-desc">适合：情感故事<br>纪录片、人物传记<br>引发观众情感共鸣</div>
+        </div>
+        <div class="dimension-card">
+          <div class="dc-icon">😎</div>
+          <div class="dc-name">专业沉稳</div>
+          <div class="dc-desc">适合：商业分析<br>新闻播报、教程解说<br>建立专业信任感</div>
+        </div>
+        <div class="dimension-card">
+          <div class="dc-icon">😂</div>
+          <div class="dc-name">幽默风趣</div>
+          <div class="dc-desc">适合：娱乐内容<br>搞笑视频、轻松话题<br>让人感到愉快</div>
+        </div>
+        <div class="dimension-card">
+          <div class="dc-icon">😱</div>
+          <div class="dc-name">紧张悬疑</div>
+          <div class="dc-desc">适合：悬疑故事<br>推理内容、惊悚题材<br>营造紧张氛围</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 节奏与语速 -->
+    <div class="content-card">
+      <h3><span class="icon">⏱️</span> 节奏与语速控制技巧</h3>
+      <p>说话节奏直接影响<strong style="color:#22d3ee;">用户的听感和信息接收效率</strong>：</p>
+      <ul>
+        <li><strong style="color:#22d3ee;">快节奏（4-5字/秒）：</strong>适合开头钩子、高潮部分、促销信息——制造紧迫感</li>
+        <li><strong style="color:#06b6d4;">中节奏（3-4字/秒）：</strong>适合正文讲解、知识科普——最佳信息接收速度</li>
+        <li><strong style="color:#10b981;">慢节奏（2-3字/秒）：</strong>适合情感表达、金句结尾——给观众思考和回味的时间</li>
+        <li><strong style="color:#22d3ee;">停顿技巧：</strong>重要信息前停顿0.5秒（引起注意），段落间停顿1秒（信息分层）</li>
+        <li><strong style="color:#06b6d4;">变速技巧：</strong>开头快速抓住注意力 → 中间正常语速讲解 → 结尾放慢强调重点</li>
+      </ul>
+    </div>
+
+    <!-- 四大配音工具对比 -->
+    <div class="content-card">
+      <h3><span class="icon">📊</span> 四大AI配音工具对比</h3>
+      <div style="overflow-x:auto;">
+        <table class="compare-table">
+          <thead>
+            <tr><th>工具</th><th>价格</th><th>中文支持</th><th>声音克隆</th><th>情感控制</th><th>最适合</th></tr>
+          </thead>
+          <tbody>
+            <tr><td style="color:#fff;font-weight:700;">🎙️ 剪映AI</td><td>免费</td><td>⭐⭐⭐⭐⭐</td><td>❌</td><td>⭐⭐</td><td>日常快速配音</td></tr>
+            <tr><td style="color:#fff;font-weight:700;">🗣️ ElevenLabs</td><td>付费</td><td>⭐⭐⭐</td><td>✅</td><td>⭐⭐⭐⭐⭐</td><td>高品质专业配音</td></tr>
+            <tr><td style="color:#fff;font-weight:700;">🎤 魔音工坊</td><td>部分免费</td><td>⭐⭐⭐⭐⭐</td><td>✅</td><td>⭐⭐⭐⭐</td><td>国内专业配音</td></tr>
+            <tr><td style="color:#fff;font-weight:700;">🤖 ComfyUI</td><td>免费</td><td>⭐⭐</td><td>✅</td><td>⭐⭐⭐</td><td>声音克隆+自定义</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- AI音乐工具 -->
+    <div class="content-card">
+      <h3><span class="icon">🎵</span> AI音乐生成工具对比</h3>
+      <div style="overflow-x:auto;">
+        <table class="compare-table">
+          <thead>
+            <tr><th>工具</th><th>价格</th><th>音乐风格</th><th>商用版权</th><th>上手难度</th></tr>
+          </thead>
+          <tbody>
+            <tr><td style="color:#fff;font-weight:700;">🎵 Suno</td><td>部分免费</td><td>流行/摇滚/电子/古典等</td><td>付费版可商用</td><td>⭐</td></tr>
+            <tr><td style="color:#fff;font-weight:700;">🎶 Udio</td><td>部分免费</td><td>多元风格，音质出色</td><td>付费版可商用</td><td>⭐</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 工具入口 -->
+    <div class="content-card">
+      <h3><span class="icon">🧰</span> 点击进入各工具详细教程</h3>
+      <div class="tool-entry-grid">
+        <a href="jianyinai.html" class="tool-entry">
+          <div class="te-icon">🎙️</div>
+          <div class="te-name">剪映AI配音</div>
+          <div class="te-desc">免费配音，中文友好，一键生成</div>
+          <div class="te-tags"><span class="te-tag tag-free">免费</span><span class="te-tag tag-china">国产</span></div>
+        </a>
+        <a href="elevenlabs.html" class="tool-entry">
+          <div class="te-icon">🗣️</div>
+          <div class="te-name">ElevenLabs</div>
+          <div class="te-desc">最强AI配音，声音克隆+情感控制</div>
+          <div class="te-tags"><span class="te-tag tag-pay">付费</span></div>
+        </a>
+        <a href="moyin.html" class="tool-entry">
+          <div class="te-icon">🎤</div>
+          <div class="te-name">魔音工坊</div>
+          <div class="te-desc">国内专业配音，方言+多音色</div>
+          <div class="te-tags"><span class="te-tag tag-china">国产</span><span class="te-tag tag-free">部分免费</span></div>
+        </a>
+        <a href="suno.html" class="tool-entry">
+          <div class="te-icon">🎵</div>
+          <div class="te-name">Suno</div>
+          <div class="te-desc">AI音乐生成，一句话出歌</div>
+          <div class="te-tags"><span class="te-tag tag-free">部分免费</span></div>
+        </a>
+        <a href="udio.html" class="tool-entry">
+          <div class="te-icon">🎶</div>
+          <div class="te-name">Udio</div>
+          <div class="te-desc">高品质AI音乐，音质出色</div>
+          <div class="te-tags"><span class="te-tag tag-free">部分免费</span></div>
+        </a>
+      </div>
+    </div>
+
+    <div class="quote-card">
+      <span class="quote-mark">"</span>
+      <p class="quote-text">声音是视频的灵魂——画面吸引眼睛，声音打动心灵。</p>
+      <p class="quote-author">—— 好的配音让内容直击人心</p>
+    </div>
+
+    <div class="cta-box">
+      <h3>🔊 准备给你的视频配上专业声音了吗？</h3>
+      <p>选择一个工具，开始创作</p>
+      <a href="../../form.html" class="cta-btn">📋 填写摸底表</a>
+    </div>
+
+    <div class="nav-buttons">
+      <a href="../video/comfyui.html" class="nav-btn">◀ 上一步：视频</a>
+      <a href="../edit/index.html" class="nav-btn next">下一步：AI剪辑 ▶</a>
+    </div>
+
+    <div class="contact-bar">
+      <p class="contact-label">📩 深度带教 · 一对一指导</p>
+      <p class="contact-wx">微信：16500234000</p>
+      <p class="contact-hint">添加备注"AI学习"，优先通过</p>
+    </div>
+    <div class="footer">© 2024 张大业 · AI视频变现 · 微信 16500234000</div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('starsCanvas');
+    const ctx = canvas.getContext('2d');
+    let width, height, particles = [];
+    function resize() { width = window.innerWidth; height = window.innerHeight; canvas.width = width; canvas.height = height; }
+    resize(); window.addEventListener('resize', resize);
+    class Particle {
+      constructor() { this.reset(); }
+      reset() { this.x = Math.random() * width; this.y = Math.random() * height; this.size = Math.random() * 1.5 + 0.5; this.speedX = (Math.random() - 0.5) * 0.3; this.speedY = (Math.random() - 0.5) * 0.3; this.opacity = Math.random() * 0.6 + 0.2; this.fadeSpeed = Math.random() * 0.005 + 0.002; this.fading = Math.random() > 0.5; }
+      update() { this.x += this.speedX; this.y += this.speedY; if (this.fading) { this.opacity -= this.fadeSpeed; if (this.opacity <= 0.1) this.fading = false; } else { this.opacity += this.fadeSpeed; if (this.opacity >= 0.7) this.fading = true; } if (this.x < -10 || this.x > width + 10 || this.y < -10 || this.y > height + 10) { this.reset(); this.opacity = Math.random() * 0.5; } }
+      draw() { ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fillStyle = `rgba(6, 182, 212, ${this.opacity})`; ctx.fill(); }
+    }
+    for (let i = 0; i < 150; i++) particles.push(new Particle());
+    function animate() {
+      ctx.clearRect(0, 0, width, height);
+      particles.forEach(p => { p.update(); p.draw(); });
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x; const dy = particles[i].y - particles[j].y; const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 80) { ctx.beginPath(); ctx.moveTo(particles[i].x, particles[i].y); ctx.lineTo(particles[j].x, particles[j].y); ctx.strokeStyle = `rgba(6, 182, 212, ${0.06 * (1 - dist / 80)})`; ctx.lineWidth = 0.5; ctx.stroke(); }
+        }
+      }
+      requestAnimationFrame(animate);
+    }
+    animate();
+  </script>
+</body>
+</html>

@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>剪辑工作流 · AI剪辑 · 张大业AI视频变现</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #000;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      min-height: 100vh; overflow-x: hidden; color: #e2e8f0; line-height: 1.8;
+    }
+    .stars { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
+
+    .navbar {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(0,0,0,0.85); backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(251,146,60,0.2); padding: 0 10px;
+    }
+    .navbar-inner {
+      max-width: 680px; margin: 0 auto;
+      display: flex; align-items: center; height: 50px; gap: 6px;
+      overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none;
+    }
+    .navbar-inner::-webkit-scrollbar { display: none; }
+    .nav-home {
+      flex-shrink: 0; text-decoration: none; color: #fb923c; font-weight: 700;
+      font-size: 15px; padding: 6px 12px; border: 1px solid rgba(251,146,60,0.3);
+      border-radius: 20px; white-space: nowrap; margin-right: 4px;
+    }
+    .nav-home:active { background: rgba(251,146,60,0.15); }
+    .nav-link {
+      flex-shrink: 0; text-decoration: none; color: #94a3b8; font-size: 12px;
+      padding: 6px 10px; border-radius: 14px; white-space: nowrap; border: 1px solid transparent;
+    }
+    .nav-link:hover { color: #fb923c; }
+    .nav-link.active { color: #fb923c; border-color: rgba(251,146,60,0.3); background: rgba(251,146,60,0.08); }
+    .nav-divider { width: 1px; height: 16px; background: rgba(255,255,255,0.1); flex-shrink: 0; margin: 0 2px; }
+
+    .sub-navbar {
+      position: sticky; top: 50px; z-index: 99;
+      background: rgba(0,0,0,0.8); backdrop-filter: blur(15px);
+      border-bottom: 1px solid rgba(251,146,60,0.15); padding: 0 10px;
+    }
+    .sub-navbar-inner {
+      max-width: 680px; margin: 0 auto;
+      display: flex; align-items: center; height: 44px; gap: 4px;
+      overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none;
+    }
+    .sub-navbar-inner::-webkit-scrollbar { display: none; }
+    .sub-nav-link {
+      flex-shrink: 0; text-decoration: none; color: #94a3b8; font-size: 12px;
+      padding: 6px 14px; border-radius: 18px; white-space: nowrap;
+      border: 1px solid rgba(251,146,60,0.2); font-weight: 600; letter-spacing: 0.5px;
+    }
+    .sub-nav-link:hover { color: #fff; border-color: rgba(251,146,60,0.5); background: rgba(251,146,60,0.1); }
+    .sub-nav-link.active { color: #fff; background: linear-gradient(135deg, #f97316, #fb923c); border-color: transparent; }
+
+    .third-navbar {
+      position: sticky; top: 94px; z-index: 98;
+      background: rgba(0,0,0,0.75); backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(251,146,60,0.1); padding: 0 10px;
+    }
+    .third-navbar-inner {
+      max-width: 680px; margin: 0 auto;
+      display: flex; align-items: center; height: 38px; gap: 3px;
+      overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none;
+    }
+    .third-navbar-inner::-webkit-scrollbar { display: none; }
+    .third-nav-link {
+      flex-shrink: 0; text-decoration: none; color: #94a3b8; font-size: 11px;
+      padding: 4px 10px; border-radius: 12px; white-space: nowrap;
+      border: 1px solid rgba(251,146,60,0.15); font-weight: 500;
+    }
+    .third-nav-link:hover { color: #fb923c; border-color: rgba(251,146,60,0.4); background: rgba(251,146,60,0.08); }
+    .third-nav-link.active { color: #fb923c; border-color: rgba(251,146,60,0.4); background: rgba(251,146,60,0.12); }
+
+    .container { max-width: 680px; margin: 0 auto; padding: 20px 15px 60px; position: relative; z-index: 1; }
+    .page-header { text-align: center; padding: 20px 10px 10px; }
+    .page-header .module-icon {
+      font-size: 56px; display: block; margin-bottom: 12px;
+      filter: drop-shadow(0 0 20px rgba(168,85,247,0.5)); animation: float 3s ease-in-out infinite;
+    }
+    @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+    .page-header h1 {
+      font-size: 26px; font-weight: 900;
+      background: linear-gradient(135deg, #a78bfa, #7c3aed, #4f46e5);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; letter-spacing: 2px;
+    }
+    .page-header .step-badge {
+      display: inline-block; background: linear-gradient(135deg, #a78bfa, #7c3aed);
+      color: #fff; padding: 4px 16px; border-radius: 20px; font-size: 12px; font-weight: 700; letter-spacing: 2px; margin-bottom: 8px;
+    }
+    .page-header .sub { color: #94a3b8; font-size: 14px; margin-top: 8px; }
+    .neon-line {
+      width: 50%; height: 2px; margin: 16px auto 24px;
+      background: linear-gradient(90deg, transparent, #a78bfa, #7c3aed, #a78bfa, transparent);
+    }
+
+    .content-card {
+      background: rgba(15,23,42,0.7); border: 1px solid rgba(168,85,247,0.15);
+      border-radius: 20px; padding: 24px 20px; margin-bottom: 16px; backdrop-filter: blur(10px);
+    }
+    .content-card h3 { font-size: 18px; font-weight: 700; color: #a78bfa; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+    .content-card h3 .icon { font-size: 22px; }
+    .content-card p { color: #cbd5e1; font-size: 14px; margin-bottom: 8px; }
+    .content-card ul { list-style: none; padding: 0; }
+    .content-card ul li { padding: 6px 0 6px 20px; position: relative; color: #94a3b8; font-size: 14px; }
+    .content-card ul li::before { content: "▸"; position: absolute; left: 0; color: #a78bfa; }
+
+    .flow-step {
+      display: flex; gap: 12px; align-items: flex-start; margin-bottom: 10px;
+      background: rgba(15,23,42,0.5); border-radius: 14px; padding: 16px;
+      border: 1px solid rgba(168,85,247,0.15);
+    }
+    .flow-num {
+      width: 36px; height: 36px; background: linear-gradient(135deg, #7c3aed, #a78bfa);
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      font-weight: 900; font-size: 16px; color: #fff; flex-shrink: 0;
+    }
+    .flow-content h4 { font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 4px; }
+    .flow-content p { font-size: 13px; color: #94a3b8; margin: 0; }
+    .flow-content .tool-tag {
+      display: inline-block; padding: 1px 8px; border-radius: 8px;
+      font-size: 10px; font-weight: 700; margin-top: 4px;
+      background: rgba(168,85,247,0.2); color: #a78bfa;
+    }
+
+    .speed-compare {
+      display: flex; gap: 10px; margin: 12px 0;
+    }
+    .speed-box {
+      flex: 1; background: rgba(15,23,42,0.6); border-radius: 16px;
+      padding: 16px 10px; text-align: center; border: 1px solid rgba(255,255,255,0.06);
+    }
+    .speed-box.old { border-color: rgba(239,68,68,0.3); }
+    .speed-box.new { border-color: rgba(16,185,129,0.3); }
+    .speed-box .s-label { font-size: 12px; color: #94a3b8; margin-bottom: 4px; }
+    .speed-box .s-value { font-size: 28px; font-weight: 900; }
+    .speed-box.old .s-value { color: #ef4444; }
+    .speed-box.new .s-value { color: #10b981; }
+    .speed-box .s-unit { font-size: 12px; color: #64748b; }
+
+    .quote-card {
+      background: linear-gradient(135deg, rgba(168,85,247,0.1), rgba(124,58,237,0.08));
+      border: 1px solid rgba(168,85,247,0.3); border-radius: 18px; padding: 20px;
+      margin: 24px 0; text-align: center; position: relative;
+    }
+    .quote-card .quote-mark { font-size: 48px; color: #a78bfa; opacity: 0.5; position: absolute; top: 6px; left: 16px; }
+    .quote-card .quote-text { font-size: 18px; font-weight: 700; color: #a78bfa; margin: 10px 0 6px; }
+    .quote-card .quote-author { color: #94a3b8; font-size: 13px; }
+    .cta-box {
+      background: linear-gradient(135deg, rgba(168,85,247,0.3), rgba(124,58,237,0.15));
+      border: 2px solid rgba(168,85,247,0.4); border-radius: 20px; padding: 20px; text-align: center; margin-top: 24px;
+    }
+    .cta-box h3 { font-size: 19px; font-weight: 800; color: #fff; margin-bottom: 6px; }
+    .cta-box p { color: #94a3b8; font-size: 13px; margin-bottom: 16px; }
+    .cta-box .cta-btn {
+      display: inline-block; background: linear-gradient(135deg, #7c3aed, #a78bfa); color: #fff;
+      padding: 12px 28px; border-radius: 30px; text-decoration: none; font-weight: 700; font-size: 16px;
+    }
+    .contact-bar {
+      margin-top: 32px; background: rgba(15,23,42,0.9); border: 1px solid rgba(0,240,255,0.2);
+      border-radius: 18px; padding: 18px 20px; text-align: center; backdrop-filter: blur(10px);
+    }
+    .contact-bar .contact-label { color: #94a3b8; font-size: 13px; margin-bottom: 6px; letter-spacing: 1px; }
+    .contact-bar .contact-wx {
+      font-size: 20px; font-weight: 900;
+      background: linear-gradient(135deg, #00f0ff, #fbbf24);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; letter-spacing: 2px;
+    }
+    .contact-bar .contact-hint { color: #64748b; font-size: 11px; margin-top: 6px; }
+    .footer { text-align: center; color: #334155; font-size: 11px; margin-top: 20px; letter-spacing: 1px; }
+    .nav-buttons { display: flex; gap: 10px; margin-top: 24px; }
+    .nav-btn {
+      flex: 1; text-align: center; padding: 12px; border-radius: 14px; text-decoration: none;
+      font-weight: 700; font-size: 14px; border: 1px solid rgba(168,85,247,0.3); color: #a78bfa; background: rgba(168,85,247,0.05);
+    }
+    .nav-btn.next { background: linear-gradient(135deg, rgba(168,85,247,0.5), rgba(124,58,237,0.2)); color: #fff; }
+
+    @media (max-width: 400px) {
+      .page-header h1 { font-size: 22px; }
+      .page-header .module-icon { font-size: 44px; }
+      .sub-nav-link { font-size: 11px; padding: 5px 10px; }
+      .sub-navbar-inner { height: 40px; }
+      .third-nav-link { font-size: 10px; padding: 3px 8px; }
+      .third-navbar-inner { height: 34px; }
+      .content-card { padding: 18px 14px; }
+      .flow-step { padding: 14px 10px; }
+    }
+    @media (min-width: 769px) { .content-card { padding: 28px 24px; } }
+  </style>
+</head>
+<body>
+  <canvas class="stars" id="starsCanvas"></canvas>
+
+  <nav class="navbar">
+    <div class="navbar-inner">
+      <a href="../../index.html" class="nav-home">🏠 主页</a>
+      <span class="nav-divider"></span>
+      <a href="../../business-thinking.html" class="nav-link">💰商业思维</a>
+      <a href="../../human-nature.html" class="nav-link">🧠人性弱点</a>
+      <a href="../../algorithm.html" class="nav-link">📐规则算法</a>
+      <a href="../../product-selection.html" class="nav-link">🛒带货选品</a>
+      <a href="../../ai-video.html" class="nav-link active">🤖AI视频</a>
+      <a href="../../video-analysis.html" class="nav-link">📊视频分析</a>
+      <a href="../../trend.html" class="nav-link">📈发展趋势</a>
+      <a href="../../creative.html" class="nav-link">💡商业创意</a>
+    </div>
+  </nav>
+
+  <nav class="sub-navbar">
+    <div class="sub-navbar-inner">
+      <a href="../../ai-video.html" class="sub-nav-link">📋 总览</a>
+      <a href="../text/" class="sub-nav-link">📝 文字</a>
+      <a href="../image/" class="sub-nav-link">🎨 图片</a>
+      <a href="../video/" class="sub-nav-link">🎬 视频</a>
+      <a href="../audio/" class="sub-nav-link">🔊 声音</a>
+      <a href="../edit/" class="sub-nav-link active">✂️ 剪辑</a>
+      <a href="../publish/" class="sub-nav-link">🚀 发布</a>
+    </div>
+  </nav>
+
+  <nav class="third-navbar">
+    <div class="third-navbar-inner">
+      <a href="index.html" class="third-nav-link">📋 总览</a>
+      <a href="jianying.html" class="third-nav-link">✂️ 剪映专业版</a>
+      <a href="capcut.html" class="third-nav-link">🎞️ CapCut</a>
+      <a href="subtitle.html" class="third-nav-link">💬 自动字幕</a>
+      <a href="workflow.html" class="third-nav-link active">🧩 剪辑工作流</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="page-header">
+      <span class="module-icon">🧩</span>
+      <span class="step-badge">剪辑 · 工作流</span>
+      <h1>AI剪辑工作流</h1>
+      <p class="sub">全流程串联：文字→图片→视频→配音→BGM→字幕→包装</p>
+    </div>
+    <div class="neon-line"></div>
+
+    <!-- 效率对比 -->
+    <div class="content-card">
+      <h3><span class="icon">⚡</span> 传统剪辑 vs AI工作流</h3>
+      <div class="speed-compare">
+        <div class="speed-box old">
+          <div class="s-label">❌ 传统方式</div>
+          <div class="s-value">2-3</div>
+          <div class="s-unit">小时/条</div>
+        </div>
+        <div class="speed-box new">
+          <div class="s-label">✅ AI工作流</div>
+          <div class="s-value">5-10</div>
+          <div class="s-unit">分钟/条</div>
+        </div>
+      </div>
+      <p>全流程AI化后，效率提升<strong style="color:#10b981;">20-30倍</strong>。一条视频从创意到成品，只需要原来1/20的时间。</p>
+    </div>
+
+    <!-- 全流程串联 -->
+    <div class="content-card">
+      <h3><span class="icon">🔄</span> AI视频制作全流程（从0到成品）</h3>
+      <p>以下是一条AI视频的<strong style="color:#a78bfa;">完整生产流程</strong>，每个步骤都有对应的AI工具：</p>
+    </div>
+
+    <div class="flow-step">
+      <div class="flow-num">1</div>
+      <div class="flow-content">
+        <h4>📝 文字创作</h4>
+        <p>用AI写脚本、标题、文案、评论话术</p>
+        <span class="tool-tag">ChatGPT / 豆包 / DeepSeek</span>
+      </div>
+    </div>
+
+    <div class="flow-step">
+      <div class="flow-num">2</div>
+      <div class="flow-content">
+        <h4>🎨 生成素材图</h4>
+        <p>用AI生成视频所需的所有图片素材和封面</p>
+        <span class="tool-tag">Midjourney / SD / Seedream / 可灵</span>
+      </div>
+    </div>
+
+    <div class="flow-step">
+      <div class="flow-num">3</div>
+      <div class="flow-content">
+        <h4>🎬 生成视频片段</h4>
+        <p>把静态素材图变成动态视频片段</p>
+        <span class="tool-tag">可灵 / Runway / ComfyUI(WAN2.2/LTX2.3)</span>
+      </div>
+    </div>
+
+    <div class="flow-step">
+      <div class="flow-num">4</div>
+      <div class="flow-content">
+        <h4>🔊 生成配音</h4>
+        <p>用AI为脚本生成配音</p>
+        <span class="tool-tag">剪映AI / ElevenLabs / 魔音工坊</span>
+      </div>
+    </div>
+
+    <div class="flow-step">
+      <div class="flow-num">5</div>
+      <div class="flow-content">
+        <h4>🎵 生成BGM</h4>
+        <p>用AI生成背景音乐</p>
+        <span class="tool-tag">Suno / Udio</span>
+      </div>
+    </div>
+
+    <div class="flow-step">
+      <div class="flow-num">6</div>
+      <div class="flow-content">
+        <h4>✂️ 剪辑合成</h4>
+        <p>把视频片段+配音+BGM导入剪映，AI图文成片或手动剪辑</p>
+        <span class="tool-tag">剪映专业版 / CapCut</span>
+      </div>
+    </div>
+
+    <div class="flow-step">
+      <div class="flow-num">7</div>
+      <div class="flow-content">
+        <h4>💬 添加字幕</h4>
+        <p>AI自动识别配音生成字幕，添加双语字幕</p>
+        <span class="tool-tag">剪映智能字幕</span>
+      </div>
+    </div>
+
+    <div class="flow-step">
+      <div class="flow-num">8</div>
+      <div class="flow-content">
+        <h4>🚀 发布</h4>
+        <p>导出视频，一键发布到各平台</p>
+        <span class="tool-tag">抖音 / 视频号 / 小红书 / 快手</span>
+      </div>
+    </div>
+
+    <!-- 模板化批量生产 -->
+    <div class="content-card">
+      <h3><span class="icon">🏭</span> 模板化批量生产策略</h3>
+      <p>要实现<strong style="color:#a78bfa;">日产100条视频</strong>，关键是"模板化"：</p>
+      <ul>
+        <li><strong style="color:#a78bfa;">① 建立素材模板库：</strong>把常用的片头、片尾、转场、字幕样式保存为模板</li>
+        <li><strong style="color:#7c3aed;">② 脚本模板化：</strong>同一个产品写5种不同开头的脚本，批量套用</li>
+        <li><strong style="color:#4f46e5;">③ AI批量生成：</strong>用AI一次生成10条脚本→10组素材图→10条配音→批量剪辑</li>
+        <li><strong style="color:#a78bfa;">④ 流水线作业：</strong>上午写脚本生成素材，下午批量剪辑，晚上定时发布</li>
+        <li><strong style="color:#7c3aed;">⑤ 数据反馈优化：</strong>发布后看数据，表现好的模板保留，差的淘汰</li>
+      </ul>
+    </div>
+
+    <!-- 时间分配建议 -->
+    <div class="content-card">
+      <h3><span class="icon">⏰</span> 日产100条视频的时间分配建议</h3>
+      <ul>
+        <li><strong style="color:#a78bfa;">上午（2小时）：</strong>AI批量生成20条脚本+标题+封面提示词</li>
+        <li><strong style="color:#7c3aed;">上午（1小时）：</strong>AI批量生成对应的素材图和视频片段</li>
+        <li><strong style="color:#4f46e5;">下午（1小时）：</strong>AI批量生成配音和BGM</li>
+        <li><strong style="color:#a78bfa;">下午（2小时）：</strong>在剪映中用"图文成片"批量生成视频</li>
+        <li><strong style="color:#7c3aed;">晚上（1小时）：</strong>审核+微调+批量导出</li>
+        <li><strong style="color:#4f46e5;">晚上（30分钟）：</strong>定时发布到各平台</li>
+      </ul>
+      <p style="margin-top:8px;text-align:center;color:#a78bfa;font-weight:700;">一天7.5小时，一个人+AI = 日产100条视频</p>
+    </div>
+
+    <div class="quote-card">
+      <span class="quote-mark">"</span>
+      <p class="quote-text">流水线不是限制创意，而是把重复劳动交给AI，你只做最有价值的决策。</p>
+      <p class="quote-author">—— 建立工作流，从"做视频"升级为"管理视频生产"</p>
+    </div>
+
+    <div class="cta-box">
+      <h3>🧩 准备好搭建你的AI视频生产线了吗？</h3>
+      <p>按照这个流程，今天就开始产出第一条AI视频</p>
+      <a href="../../form.html" class="cta-btn">📋 填写摸底表</a>
+    </div>
+
+    <div class="nav-buttons">
+      <a href="subtitle.html" class="nav-btn">◀ 上一工具：自动字幕</a>
+      <a href="../publish/index.html" class="nav-btn next">下一步：发布 ▶</a>
+    </div>
+
+    <div class="contact-bar">
+      <p class="contact-label">📩 深度带教 · 一对一指导</p>
+      <p class="contact-wx">微信：16500234000</p>
+      <p class="contact-hint">添加备注"AI学习"，优先通过</p>
+    </div>
+    <div class="footer">© 2024 张大业 · AI视频变现 · 微信 16500234000</div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('starsCanvas');
+    const ctx = canvas.getContext('2d');
+    let width, height, particles = [];
+    function resize() { width = window.innerWidth; height = window.innerHeight; canvas.width = width; canvas.height = height; }
+    resize(); window.addEventListener('resize', resize);
+    class Particle {
+      constructor() { this.reset(); }
+      reset() { this.x = Math.random() * width; this.y = Math.random() * height; this.size = Math.random() * 1.5 + 0.5; this.speedX = (Math.random() - 0.5) * 0.3; this.speedY = (Math.random() - 0.5) * 0.3; this.opacity = Math.random() * 0.6 + 0.2; this.fadeSpeed = Math.random() * 0.005 + 0.002; this.fading = Math.random() > 0.5; }
+      update() { this.x += this.speedX; this.y += this.speedY; if (this.fading) { this.opacity -= this.fadeSpeed; if (this.opacity <= 0.1) this.fading = false; } else { this.opacity += this.fadeSpeed; if (this.opacity >= 0.7) this.fading = true; } if (this.x < -10 || this.x > width + 10 || this.y < -10 || this.y > height + 10) { this.reset(); this.opacity = Math.random() * 0.5; } }
+      draw() { ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fillStyle = `rgba(168, 85, 247, ${this.opacity})`; ctx.fill(); }
+    }
+    for (let i = 0; i < 150; i++) particles.push(new Particle());
+    function animate() {
+      ctx.clearRect(0, 0, width, height);
+      particles.forEach(p => { p.update(); p.draw(); });
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x; const dy = particles[i].y - particles[j].y; const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 80) { ctx.beginPath(); ctx.moveTo(particles[i].x, particles[i].y); ctx.lineTo(particles[j].x, particles[j].y); ctx.strokeStyle = `rgba(168, 85, 247, ${0.06 * (1 - dist / 80)})`; ctx.lineWidth = 0.5; ctx.stroke(); }
+        }
+      }
+      requestAnimationFrame(animate);
+    }
+    animate();
+  </script>
+</body>
+</html>

@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>分镜 · AI文字创作 · 张大业AI视频变现</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #000;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      min-height: 100vh; overflow-x: hidden; color: #e2e8f0; line-height: 1.8;
+    }
+    .stars { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
+
+    .navbar {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(0,0,0,0.85); backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(168,85,247,0.2); padding: 0 10px;
+    }
+    .navbar-inner {
+      max-width: 680px; margin: 0 auto;
+      display: flex; align-items: center; height: 50px; gap: 6px;
+      overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none;
+    }
+    .navbar-inner::-webkit-scrollbar { display: none; }
+    .nav-home {
+      flex-shrink: 0; text-decoration: none; color: #a78bfa; font-weight: 700;
+      font-size: 15px; padding: 6px 12px; border: 1px solid rgba(168,85,247,0.3);
+      border-radius: 20px; white-space: nowrap; margin-right: 4px;
+    }
+    .nav-home:active { background: rgba(168,85,247,0.15); }
+    .nav-link {
+      flex-shrink: 0; text-decoration: none; color: #94a3b8; font-size: 12px;
+      padding: 6px 10px; border-radius: 14px; white-space: nowrap; border: 1px solid transparent;
+    }
+    .nav-link:hover { color: #a78bfa; }
+    .nav-link.active { color: #a78bfa; border-color: rgba(168,85,247,0.3); background: rgba(168,85,247,0.08); }
+    .nav-divider { width: 1px; height: 16px; background: rgba(255,255,255,0.1); flex-shrink: 0; margin: 0 2px; }
+
+    .sub-navbar {
+      position: sticky; top: 50px; z-index: 99;
+      background: rgba(0,0,0,0.8); backdrop-filter: blur(15px);
+      border-bottom: 1px solid rgba(168,85,247,0.15); padding: 0 10px;
+    }
+    .sub-navbar-inner {
+      max-width: 680px; margin: 0 auto;
+      display: flex; align-items: center; height: 44px; gap: 4px;
+      overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none;
+    }
+    .sub-navbar-inner::-webkit-scrollbar { display: none; }
+    .sub-nav-link {
+      flex-shrink: 0; text-decoration: none; color: #94a3b8; font-size: 12px;
+      padding: 6px 14px; border-radius: 18px; white-space: nowrap;
+      border: 1px solid rgba(168,85,247,0.2); font-weight: 600; letter-spacing: 0.5px;
+    }
+    .sub-nav-link:hover { color: #fff; border-color: rgba(168,85,247,0.5); background: rgba(168,85,247,0.1); }
+    .sub-nav-link.active { color: #fff; background: linear-gradient(135deg, #7c3aed, #a78bfa); border-color: transparent; }
+
+    .third-navbar {
+      position: sticky; top: 94px; z-index: 98;
+      background: rgba(0,0,0,0.75); backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(168,85,247,0.1); padding: 0 10px;
+    }
+    .third-navbar-inner {
+      max-width: 680px; margin: 0 auto;
+      display: flex; align-items: center; height: 38px; gap: 3px;
+      overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none;
+    }
+    .third-navbar-inner::-webkit-scrollbar { display: none; }
+    .third-nav-link {
+      flex-shrink: 0; text-decoration: none; color: #94a3b8; font-size: 11px;
+      padding: 4px 10px; border-radius: 12px; white-space: nowrap;
+      border: 1px solid rgba(168,85,247,0.15); font-weight: 500;
+    }
+    .third-nav-link:hover { color: #c084fc; border-color: rgba(168,85,247,0.4); background: rgba(168,85,247,0.08); }
+    .third-nav-link.active { color: #c084fc; border-color: rgba(168,85,247,0.4); background: rgba(168,85,247,0.12); }
+
+    .container { max-width: 680px; margin: 0 auto; padding: 20px 15px 60px; position: relative; z-index: 1; }
+    .page-header { text-align: center; padding: 20px 10px 10px; }
+    .page-header .module-icon {
+      font-size: 56px; display: block; margin-bottom: 12px;
+      filter: drop-shadow(0 0 20px rgba(59,130,246,0.5)); animation: float 3s ease-in-out infinite;
+    }
+    @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+    .page-header h1 {
+      font-size: 26px; font-weight: 900;
+      background: linear-gradient(135deg, #3b82f6, #60a5fa, #93c5fd);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; letter-spacing: 2px;
+    }
+    .page-header .step-badge {
+      display: inline-block; background: linear-gradient(135deg, #3b82f6, #2563eb);
+      color: #fff; padding: 4px 16px; border-radius: 20px; font-size: 12px; font-weight: 700; letter-spacing: 2px; margin-bottom: 8px;
+    }
+    .page-header .sub { color: #94a3b8; font-size: 14px; margin-top: 8px; }
+    .neon-line {
+      width: 50%; height: 2px; margin: 16px auto 24px;
+      background: linear-gradient(90deg, transparent, #3b82f6, #60a5fa, #3b82f6, transparent);
+    }
+
+    .content-card {
+      background: rgba(15,23,42,0.7); border: 1px solid rgba(59,130,246,0.15);
+      border-radius: 20px; padding: 24px 20px; margin-bottom: 16px; backdrop-filter: blur(10px);
+    }
+    .content-card h3 { font-size: 18px; font-weight: 700; color: #60a5fa; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+    .content-card h3 .icon { font-size: 22px; }
+    .content-card p { color: #cbd5e1; font-size: 14px; margin-bottom: 8px; }
+    .content-card ul { list-style: none; padding: 0; }
+    .content-card ul li { padding: 6px 0 6px 20px; position: relative; color: #94a3b8; font-size: 14px; }
+    .content-card ul li::before { content: "▸"; position: absolute; left: 0; color: #3b82f6; }
+
+    .storyboard-example {
+      background: rgba(0,0,0,0.5); border: 1px solid rgba(59,130,246,0.3);
+      border-radius: 14px; padding: 20px; margin: 12px 0;
+      font-family: "Courier New", monospace; font-size: 13px;
+      white-space: pre-wrap; word-break: break-word; line-height: 1.8;
+    }
+    .storyboard-example .shot-num { color: #60a5fa; font-weight: 900; font-size: 16px; }
+    .storyboard-example .shot-time { color: #93c5fd; font-weight: 700; }
+    .storyboard-example .shot-scene { color: #fbbf24; }
+    .storyboard-example .shot-action { color: #f472b6; }
+    .storyboard-example .shot-camera { color: #34d399; }
+    .storyboard-example .shot-note { color: #94a3b8; font-style: italic; }
+    .storyboard-example .divider { color: #3b82f6; }
+
+    .prompt-box {
+      background: rgba(0,0,0,0.5); border: 1px solid rgba(59,130,246,0.3);
+      border-radius: 14px; padding: 16px; margin: 12px 0;
+      font-family: "Courier New", monospace; font-size: 13px; color: #93c5fd;
+      white-space: pre-wrap; word-break: break-word; line-height: 1.6; position: relative;
+    }
+    .prompt-box .prompt-label {
+      position: absolute; top: -10px; left: 16px;
+      background: #3b82f6; color: #fff; font-size: 10px; padding: 2px 10px;
+      border-radius: 10px; font-weight: 700; letter-spacing: 1px; font-family: -apple-system, sans-serif;
+    }
+    .copy-btn {
+      position: absolute; top: 8px; right: 12px;
+      background: rgba(59,130,246,0.3); border: none; color: #fff;
+      padding: 4px 12px; border-radius: 12px; font-size: 11px; cursor: pointer;
+      font-family: -apple-system, sans-serif;
+    }
+    .copy-btn:hover { background: rgba(59,130,246,0.6); }
+
+    .shot-grid {
+      display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin: 16px 0;
+    }
+    .shot-card {
+      background: rgba(15,23,42,0.6); border: 1px solid rgba(59,130,246,0.2);
+      border-radius: 16px; padding: 14px 10px; text-align: center; transition: all 0.3s;
+    }
+    .shot-card:hover { border-color: rgba(59,130,246,0.5); box-shadow: 0 0 15px rgba(59,130,246,0.1); }
+    .shot-card .sh-icon { font-size: 28px; margin-bottom: 6px; }
+    .shot-card .sh-name { font-size: 13px; font-weight: 700; color: #60a5fa; margin-bottom: 3px; }
+    .shot-card .sh-desc { font-size: 10px; color: #94a3b8; }
+
+    .quote-card {
+      background: linear-gradient(135deg, rgba(59,130,246,0.1), rgba(96,165,250,0.08));
+      border: 1px solid rgba(59,130,246,0.3); border-radius: 18px; padding: 20px;
+      margin: 24px 0; text-align: center; position: relative;
+    }
+    .quote-card .quote-mark { font-size: 48px; color: #60a5fa; opacity: 0.5; position: absolute; top: 6px; left: 16px; }
+    .quote-card .quote-text { font-size: 18px; font-weight: 700; color: #60a5fa; margin: 10px 0 6px; letter-spacing: 1px; }
+    .quote-card .quote-author { color: #94a3b8; font-size: 13px; }
+    .cta-box {
+      background: linear-gradient(135deg, rgba(59,130,246,0.3), rgba(37,99,235,0.15));
+      border: 2px solid rgba(59,130,246,0.4); border-radius: 20px; padding: 20px; text-align: center; margin-top: 24px;
+    }
+    .cta-box h3 { font-size: 19px; font-weight: 800; color: #fff; margin-bottom: 6px; }
+    .cta-box p { color: #94a3b8; font-size: 13px; margin-bottom: 16px; }
+    .cta-box .cta-btn {
+      display: inline-block; background: linear-gradient(135deg, #3b82f6, #2563eb); color: #fff;
+      padding: 12px 28px; border-radius: 30px; text-decoration: none; font-weight: 700; font-size: 16px;
+    }
+    .contact-bar {
+      margin-top: 32px; background: rgba(15,23,42,0.9); border: 1px solid rgba(0,240,255,0.2);
+      border-radius: 18px; padding: 18px 20px; text-align: center; backdrop-filter: blur(10px);
+    }
+    .contact-bar .contact-label { color: #94a3b8; font-size: 13px; margin-bottom: 6px; letter-spacing: 1px; }
+    .contact-bar .contact-wx {
+      font-size: 20px; font-weight: 900;
+      background: linear-gradient(135deg, #00f0ff, #fbbf24);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; letter-spacing: 2px;
+    }
+    .contact-bar .contact-hint { color: #64748b; font-size: 11px; margin-top: 6px; }
+    .footer { text-align: center; color: #334155; font-size: 11px; margin-top: 20px; letter-spacing: 1px; }
+    .nav-buttons { display: flex; gap: 10px; margin-top: 24px; }
+    .nav-btn {
+      flex: 1; text-align: center; padding: 12px; border-radius: 14px; text-decoration: none;
+      font-weight: 700; font-size: 14px; border: 1px solid rgba(59,130,246,0.3); color: #60a5fa; background: rgba(59,130,246,0.05);
+    }
+    .nav-btn.next { background: linear-gradient(135deg, rgba(59,130,246,0.5), rgba(37,99,235,0.2)); color: #fff; }
+
+    @media (max-width: 400px) {
+      .page-header h1 { font-size: 22px; }
+      .page-header .module-icon { font-size: 44px; }
+      .sub-nav-link { font-size: 11px; padding: 5px 10px; }
+      .sub-navbar-inner { height: 40px; }
+      .third-nav-link { font-size: 10px; padding: 3px 8px; }
+      .third-navbar-inner { height: 34px; }
+      .content-card { padding: 18px 14px; }
+      .storyboard-example { font-size: 11px; }
+      .shot-grid { gap: 6px; }
+      .shot-card { padding: 10px 6px; }
+    }
+    @media (min-width: 769px) { .content-card { padding: 28px 24px; } }
+  </style>
+</head>
+<body>
+  <canvas class="stars" id="starsCanvas"></canvas>
+
+  <nav class="navbar">
+    <div class="navbar-inner">
+      <a href="../../index.html" class="nav-home">🏠 主页</a>
+      <span class="nav-divider"></span>
+      <a href="../../business-thinking.html" class="nav-link">💰商业思维</a>
+      <a href="../../human-nature.html" class="nav-link">🧠人性弱点</a>
+      <a href="../../algorithm.html" class="nav-link">📐规则算法</a>
+      <a href="../../product-selection.html" class="nav-link">🛒带货选品</a>
+      <a href="../../ai-video.html" class="nav-link active">🤖AI视频</a>
+      <a href="../../video-analysis.html" class="nav-link">📊视频分析</a>
+      <a href="../../trend.html" class="nav-link">📈发展趋势</a>
+      <a href="../../creative.html" class="nav-link">💡商业创意</a>
+    </div>
+  </nav>
+
+  <nav class="sub-navbar">
+    <div class="sub-navbar-inner">
+      <a href="../../ai-video.html" class="sub-nav-link">📋 总览</a>
+      <a href="../text/" class="sub-nav-link active">📝 文字</a>
+      <a href="../image/" class="sub-nav-link">🎨 图片</a>
+      <a href="../video/" class="sub-nav-link">🎬 视频</a>
+      <a href="../audio/" class="sub-nav-link">🔊 声音</a>
+      <a href="../edit/" class="sub-nav-link">✂️ 剪辑</a>
+      <a href="../publish/" class="sub-nav-link">🚀 发布</a>
+    </div>
+  </nav>
+
+  <nav class="third-navbar">
+    <div class="third-navbar-inner">
+      <a href="index.html" class="third-nav-link">📝 总览</a>
+      <a href="script.html" class="third-nav-link">🎭 剧本</a>
+      <a href="jiaoben.html" class="third-nav-link">📜 脚本</a>
+      <a href="storyboard.html" class="third-nav-link active">🎬 分镜</a>
+      <a href="prompt.html" class="third-nav-link">💬 提示词</a>
+      <a href="title.html" class="third-nav-link">🔖 标题</a>
+      <a href="copywriting.html" class="third-nav-link">✍️ 文案</a>
+      <a href="comment.html" class="third-nav-link">💭 评论</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="page-header">
+      <span class="module-icon">🎬</span>
+      <span class="step-badge">文字 · 分镜</span>
+      <h1>AI写分镜</h1>
+      <p class="sub">用AI把脚本转化成详细的镜头语言</p>
+    </div>
+    <div class="neon-line"></div>
+
+    <div class="content-card">
+      <h3><span class="icon">🎯</span> 分镜是连接"文字"和"画面"的桥梁</h3>
+      <p>脚本告诉你要<strong style="color:#60a5fa;">说什么</strong>，分镜告诉你要<strong style="color:#3b82f6;">怎么拍</strong>。</p>
+      <ul>
+        <li><strong style="color:#60a5fa;">镜头编号</strong></li>
+        <li><strong style="color:#3b82f6;">时长精确</strong></li>
+        <li><strong style="color:#93c5fd;">画面描述</strong></li>
+        <li><strong style="color:#60a5fa;">运镜方式</strong></li>
+        <li><strong style="color:#3b82f6;">转场效果</strong></li>
+      </ul>
+    </div>
+
+    <div class="content-card">
+      <h3><span class="icon">📋</span> 完整分镜表示例（30秒视频）</h3>
+      <div class="storyboard-example">
+<span class="divider">═══════════════════════════════════════</span>
+<span class="shot-scene">【视频】：智能保温杯带货 | 总时长：30秒</span>
+<span class="divider">═══════════════════════════════════════</span>
+
+<span class="shot-num">【镜头1】</span><span class="shot-time">时长：3秒 | 0:00-0:03</span>
+<span class="shot-camera">🔍 景别：特写 | 运镜：固定</span>
+<span class="shot-action">🎨 画面：疲惫的上班族脸部特写，眼袋明显，嘴唇干裂</span>
+<span class="shot-note">📝 AI提示词：Close-up of tired office worker face, dry lips, photorealistic</span>
+
+<span class="shot-num">【镜头2】</span><span class="shot-time">时长：5秒 | 0:03-0:08</span>
+<span class="shot-camera">🔍 景别：中景 | 运镜：快速剪辑</span>
+<span class="shot-action">🎨 画面：办公室快速切换场景，敲键盘、看电脑、揉眼睛</span>
+<span class="shot-note">📝 AI提示词：Fast montage of busy office scenes, realistic</span>
+
+<span class="shot-num">【镜头3】</span><span class="shot-time">时长：7秒 | 0:08-0:15</span>
+<span class="shot-camera">🔍 景别：特写 | 运镜：推近</span>
+<span class="shot-action">🎨 画面：智能保温杯从桌上缓缓升起，LED屏幕亮起</span>
+<span class="shot-note">📝 AI提示词：Smart thermos cup on desk, LED glowing, product photography, 4K</span></div>
+    </div>
+
+    <div class="content-card">
+      <h3><span class="icon">📐</span> 常用镜头类型</h3>
+      <div class="shot-grid">
+        <div class="shot-card"><div class="sh-icon">🔍</div><div class="sh-name">特写</div><div class="sh-desc">突出产品细节</div></div>
+        <div class="shot-card"><div class="sh-icon">👤</div><div class="sh-name">近景</div><div class="sh-desc">人物对话</div></div>
+        <div class="shot-card"><div class="sh-icon">🎬</div><div class="sh-name">中景</div><div class="sh-desc">日常场景</div></div>
+        <div class="shot-card"><div class="sh-icon">🏞️</div><div class="sh-name">全景</div><div class="sh-desc">环境展示</div></div>
+        <div class="shot-card"><div class="sh-icon">🔄</div><div class="sh-name">推近</div><div class="sh-desc">引导注意力</div></div>
+        <div class="shot-card"><div class="sh-icon">📹</div><div class="sh-name">平移</div><div class="sh-desc">展示空间</div></div>
+      </div>
+    </div>
+
+    <div class="content-card">
+      <h3><span class="icon">🤖</span> AI分镜生成提示词模板</h3>
+      <div class="prompt-box">
+        <span class="prompt-label">分镜表生成模板</span>
+        <button class="copy-btn" onclick="copyText('prompt1')">📋 复制</button>
+        <span id="prompt1">你是一个专业的分镜师。请根据以下脚本生成详细的分镜表：
+
+【脚本内容】：（粘贴你的脚本）
+
+请按以下格式输出每个镜头：
+- 镜头编号
+- 时长（精确到秒）
+- 景别（特写/近景/中景/全景）
+- 运镜方式（固定/推近/拉远/平移/旋转）
+- 画面描述（中文，详细具体）
+- AI绘图提示词（英文，适合Midjourney/Stable Diffusion）
+- 转场方式（硬切/淡入淡出/滑动）</span>
+      </div>
+    </div>
+
+    <div class="quote-card">
+      <span class="quote-mark">"</span>
+      <p class="quote-text">分镜是创意的可视化，好的分镜让AI看懂你想要的画面。</p>
+      <p class="quote-author">—— 把模糊的想法，变成精确的指令</p>
+    </div>
+
+    <div class="cta-box">
+      <h3>🎬 准备好用AI生成分镜表了吗？</h3>
+      <p>复制上面的模板，把脚本变成分镜</p>
+      <a href="../../form.html" class="cta-btn">📋 填写摸底表</a>
+    </div>
+
+    <div class="nav-buttons">
+      <a href="jiaoben.html" class="nav-btn">◀ 上一页：脚本</a>
+      <a href="prompt.html" class="nav-btn next">下一页：提示词 ▶</a>
+    </div>
+
+    <div class="contact-bar">
+      <p class="contact-label">📩 深度带教 · 一对一指导</p>
+      <p class="contact-wx">微信：16500234000</p>
+      <p class="contact-hint">添加备注"AI学习"，优先通过</p>
+    </div>
+    <div class="footer">© 2024 张大业 · AI视频变现 · 微信 16500234000</div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('starsCanvas');
+    const ctx = canvas.getContext('2d');
+    let width, height, particles = [];
+    function resize() { width = window.innerWidth; height = window.innerHeight; canvas.width = width; canvas.height = height; }
+    resize(); window.addEventListener('resize', resize);
+    class Particle {
+      constructor() { this.reset(); }
+      reset() { this.x = Math.random() * width; this.y = Math.random() * height; this.size = Math.random() * 1.5 + 0.5; this.speedX = (Math.random() - 0.5) * 0.3; this.speedY = (Math.random() - 0.5) * 0.3; this.opacity = Math.random() * 0.6 + 0.2; this.fadeSpeed = Math.random() * 0.005 + 0.002; this.fading = Math.random() > 0.5; }
+      update() { this.x += this.speedX; this.y += this.speedY; if (this.fading) { this.opacity -= this.fadeSpeed; if (this.opacity <= 0.1) this.fading = false; } else { this.opacity += this.fadeSpeed; if (this.opacity >= 0.7) this.fading = true; } if (this.x < -10 || this.x > width + 10 || this.y < -10 || this.y > height + 10) { this.reset(); this.opacity = Math.random() * 0.5; } }
+      draw() { ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fillStyle = `rgba(59, 130, 246, ${this.opacity})`; ctx.fill(); }
+    }
+    for (let i = 0; i < 150; i++) particles.push(new Particle());
+    function animate() {
+      ctx.clearRect(0, 0, width, height);
+      particles.forEach(p => { p.update(); p.draw(); });
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x; const dy = particles[i].y - particles[j].y; const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 80) { ctx.beginPath(); ctx.moveTo(particles[i].x, particles[i].y); ctx.lineTo(particles[j].x, particles[j].y); ctx.strokeStyle = `rgba(59, 130, 246, ${0.06 * (1 - dist / 80)})`; ctx.lineWidth = 0.5; ctx.stroke(); }
+        }
+      }
+      requestAnimationFrame(animate);
+    }
+    animate();
+    function copyText(id) {
+      const text = document.getElementById(id).textContent;
+      navigator.clipboard.writeText(text).then(() => { alert('✅ 已复制！'); });
+    }
+  </script>
+</body>
+</html>

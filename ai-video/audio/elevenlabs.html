@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>ElevenLabs · AI声音 · 张大业AI视频变现</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #000;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      min-height: 100vh; overflow-x: hidden; color: #e2e8f0; line-height: 1.8;
+    }
+    .stars { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
+
+    .navbar {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(0,0,0,0.85); backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(6,182,212,0.2); padding: 0 10px;
+    }
+    .navbar-inner {
+      max-width: 680px; margin: 0 auto;
+      display: flex; align-items: center; height: 50px; gap: 6px;
+      overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none;
+    }
+    .navbar-inner::-webkit-scrollbar { display: none; }
+    .nav-home {
+      flex-shrink: 0; text-decoration: none; color: #06b6d4; font-weight: 700;
+      font-size: 15px; padding: 6px 12px; border: 1px solid rgba(6,182,212,0.3);
+      border-radius: 20px; white-space: nowrap; margin-right: 4px;
+    }
+    .nav-home:active { background: rgba(6,182,212,0.15); }
+    .nav-link {
+      flex-shrink: 0; text-decoration: none; color: #94a3b8; font-size: 12px;
+      padding: 6px 10px; border-radius: 14px; white-space: nowrap; border: 1px solid transparent;
+    }
+    .nav-link:hover { color: #06b6d4; }
+    .nav-link.active { color: #06b6d4; border-color: rgba(6,182,212,0.3); background: rgba(6,182,212,0.08); }
+    .nav-divider { width: 1px; height: 16px; background: rgba(255,255,255,0.1); flex-shrink: 0; margin: 0 2px; }
+
+    .sub-navbar {
+      position: sticky; top: 50px; z-index: 99;
+      background: rgba(0,0,0,0.8); backdrop-filter: blur(15px);
+      border-bottom: 1px solid rgba(6,182,212,0.15); padding: 0 10px;
+    }
+    .sub-navbar-inner {
+      max-width: 680px; margin: 0 auto;
+      display: flex; align-items: center; height: 44px; gap: 4px;
+      overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none;
+    }
+    .sub-navbar-inner::-webkit-scrollbar { display: none; }
+    .sub-nav-link {
+      flex-shrink: 0; text-decoration: none; color: #94a3b8; font-size: 12px;
+      padding: 6px 14px; border-radius: 18px; white-space: nowrap;
+      border: 1px solid rgba(6,182,212,0.2); font-weight: 600; letter-spacing: 0.5px;
+    }
+    .sub-nav-link:hover { color: #fff; border-color: rgba(6,182,212,0.5); background: rgba(6,182,212,0.1); }
+    .sub-nav-link.active { color: #fff; background: linear-gradient(135deg, #0891b2, #06b6d4); border-color: transparent; }
+
+    .third-navbar {
+      position: sticky; top: 94px; z-index: 98;
+      background: rgba(0,0,0,0.75); backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(6,182,212,0.1); padding: 0 10px;
+    }
+    .third-navbar-inner {
+      max-width: 680px; margin: 0 auto;
+      display: flex; align-items: center; height: 38px; gap: 3px;
+      overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none;
+    }
+    .third-navbar-inner::-webkit-scrollbar { display: none; }
+    .third-nav-link {
+      flex-shrink: 0; text-decoration: none; color: #94a3b8; font-size: 11px;
+      padding: 4px 10px; border-radius: 12px; white-space: nowrap;
+      border: 1px solid rgba(6,182,212,0.15); font-weight: 500;
+    }
+    .third-nav-link:hover { color: #06b6d4; border-color: rgba(6,182,212,0.4); background: rgba(6,182,212,0.08); }
+    .third-nav-link.active { color: #06b6d4; border-color: rgba(6,182,212,0.4); background: rgba(6,182,212,0.12); }
+
+    .container { max-width: 680px; margin: 0 auto; padding: 20px 15px 60px; position: relative; z-index: 1; }
+    .page-header { text-align: center; padding: 20px 10px 10px; }
+    .page-header .module-icon {
+      font-size: 56px; display: block; margin-bottom: 12px;
+      filter: drop-shadow(0 0 20px rgba(6,182,212,0.5)); animation: float 3s ease-in-out infinite;
+    }
+    @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+    .page-header h1 {
+      font-size: 26px; font-weight: 900;
+      background: linear-gradient(135deg, #8b5cf6, #6366f1, #4f46e5);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; letter-spacing: 2px;
+    }
+    .page-header .step-badge {
+      display: inline-block; background: linear-gradient(135deg, #8b5cf6, #6366f1);
+      color: #fff; padding: 4px 16px; border-radius: 20px; font-size: 12px; font-weight: 700; letter-spacing: 2px; margin-bottom: 8px;
+    }
+    .page-header .sub { color: #94a3b8; font-size: 14px; margin-top: 8px; }
+    .neon-line {
+      width: 50%; height: 2px; margin: 16px auto 24px;
+      background: linear-gradient(90deg, transparent, #8b5cf6, #6366f1, #8b5cf6, transparent);
+    }
+
+    .content-card {
+      background: rgba(15,23,42,0.7); border: 1px solid rgba(139,92,246,0.15);
+      border-radius: 20px; padding: 24px 20px; margin-bottom: 16px; backdrop-filter: blur(10px);
+    }
+    .content-card h3 { font-size: 18px; font-weight: 700; color: #8b5cf6; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+    .content-card h3 .icon { font-size: 22px; }
+    .content-card p { color: #cbd5e1; font-size: 14px; margin-bottom: 8px; }
+    .content-card ul { list-style: none; padding: 0; }
+    .content-card ul li { padding: 6px 0 6px 20px; position: relative; color: #94a3b8; font-size: 14px; }
+    .content-card ul li::before { content: "▸"; position: absolute; left: 0; color: #8b5cf6; }
+
+    .feature-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 16px 0;
+    }
+    .feature-card {
+      background: rgba(15,23,42,0.6); border: 1px solid rgba(139,92,246,0.2);
+      border-radius: 14px; padding: 16px 12px; text-align: center; transition: all 0.3s;
+    }
+    .feature-card:hover { border-color: rgba(139,92,246,0.5); box-shadow: 0 0 15px rgba(139,92,246,0.1); }
+    .feature-card .fc-icon { font-size: 28px; margin-bottom: 6px; }
+    .feature-card .fc-name { font-size: 14px; font-weight: 700; color: #8b5cf6; margin-bottom: 4px; }
+    .feature-card .fc-desc { font-size: 11px; color: #94a3b8; line-height: 1.4; }
+
+    .quote-card {
+      background: linear-gradient(135deg, rgba(139,92,246,0.1), rgba(99,102,241,0.08));
+      border: 1px solid rgba(139,92,246,0.3); border-radius: 18px; padding: 20px;
+      margin: 24px 0; text-align: center; position: relative;
+    }
+    .quote-card .quote-mark { font-size: 48px; color: #8b5cf6; opacity: 0.5; position: absolute; top: 6px; left: 16px; }
+    .quote-card .quote-text { font-size: 18px; font-weight: 700; color: #8b5cf6; margin: 10px 0 6px; }
+    .quote-card .quote-author { color: #94a3b8; font-size: 13px; }
+    .cta-box {
+      background: linear-gradient(135deg, rgba(139,92,246,0.3), rgba(99,102,241,0.15));
+      border: 2px solid rgba(139,92,246,0.4); border-radius: 20px; padding: 20px; text-align: center; margin-top: 24px;
+    }
+    .cta-box h3 { font-size: 19px; font-weight: 800; color: #fff; margin-bottom: 6px; }
+    .cta-box p { color: #94a3b8; font-size: 13px; margin-bottom: 16px; }
+    .cta-box .cta-btn {
+      display: inline-block; background: linear-gradient(135deg, #8b5cf6, #6366f1); color: #fff;
+      padding: 12px 28px; border-radius: 30px; text-decoration: none; font-weight: 700; font-size: 16px;
+    }
+    .contact-bar {
+      margin-top: 32px; background: rgba(15,23,42,0.9); border: 1px solid rgba(0,240,255,0.2);
+      border-radius: 18px; padding: 18px 20px; text-align: center; backdrop-filter: blur(10px);
+    }
+    .contact-bar .contact-label { color: #94a3b8; font-size: 13px; margin-bottom: 6px; letter-spacing: 1px; }
+    .contact-bar .contact-wx {
+      font-size: 20px; font-weight: 900;
+      background: linear-gradient(135deg, #00f0ff, #fbbf24);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; letter-spacing: 2px;
+    }
+    .contact-bar .contact-hint { color: #64748b; font-size: 11px; margin-top: 6px; }
+    .footer { text-align: center; color: #334155; font-size: 11px; margin-top: 20px; letter-spacing: 1px; }
+    .nav-buttons { display: flex; gap: 10px; margin-top: 24px; }
+    .nav-btn {
+      flex: 1; text-align: center; padding: 12px; border-radius: 14px; text-decoration: none;
+      font-weight: 700; font-size: 14px; border: 1px solid rgba(139,92,246,0.3); color: #8b5cf6; background: rgba(139,92,246,0.05);
+    }
+    .nav-btn.next { background: linear-gradient(135deg, rgba(139,92,246,0.5), rgba(99,102,241,0.2)); color: #fff; }
+
+    @media (max-width: 400px) {
+      .page-header h1 { font-size: 22px; }
+      .page-header .module-icon { font-size: 44px; }
+      .sub-nav-link { font-size: 11px; padding: 5px 10px; }
+      .sub-navbar-inner { height: 40px; }
+      .third-nav-link { font-size: 10px; padding: 3px 8px; }
+      .third-navbar-inner { height: 34px; }
+      .content-card { padding: 18px 14px; }
+      .feature-grid { gap: 8px; }
+      .feature-card { padding: 12px 8px; }
+    }
+    @media (min-width: 769px) { .content-card { padding: 28px 24px; } }
+  </style>
+</head>
+<body>
+  <canvas class="stars" id="starsCanvas"></canvas>
+
+  <nav class="navbar">
+    <div class="navbar-inner">
+      <a href="../../index.html" class="nav-home">🏠 主页</a>
+      <span class="nav-divider"></span>
+      <a href="../../business-thinking.html" class="nav-link">💰商业思维</a>
+      <a href="../../human-nature.html" class="nav-link">🧠人性弱点</a>
+      <a href="../../algorithm.html" class="nav-link">📐规则算法</a>
+      <a href="../../product-selection.html" class="nav-link">🛒带货选品</a>
+      <a href="../../ai-video.html" class="nav-link active">🤖AI视频</a>
+      <a href="../../video-analysis.html" class="nav-link">📊视频分析</a>
+      <a href="../../trend.html" class="nav-link">📈发展趋势</a>
+      <a href="../../creative.html" class="nav-link">💡商业创意</a>
+    </div>
+  </nav>
+
+  <nav class="sub-navbar">
+    <div class="sub-navbar-inner">
+      <a href="../../ai-video.html" class="sub-nav-link">📋 总览</a>
+      <a href="../text/" class="sub-nav-link">📝 文字</a>
+      <a href="../image/" class="sub-nav-link">🎨 图片</a>
+      <a href="../video/" class="sub-nav-link">🎬 视频</a>
+      <a href="../audio/" class="sub-nav-link active">🔊 声音</a>
+      <a href="../edit/" class="sub-nav-link">✂️ 剪辑</a>
+      <a href="../publish/" class="sub-nav-link">🚀 发布</a>
+    </div>
+  </nav>
+
+  <nav class="third-navbar">
+    <div class="third-navbar-inner">
+      <a href="index.html" class="third-nav-link">📋 总览</a>
+      <a href="jianyinai.html" class="third-nav-link">🎙️ 剪映AI</a>
+      <a href="elevenlabs.html" class="third-nav-link active">🗣️ ElevenLabs</a>
+      <a href="moyin.html" class="third-nav-link">🎤 魔音工坊</a>
+      <a href="suno.html" class="third-nav-link">🎵 Suno</a>
+      <a href="udio.html" class="third-nav-link">🎶 Udio</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="page-header">
+      <span class="module-icon">🗣️</span>
+      <span class="step-badge">声音 · ElevenLabs</span>
+      <h1>ElevenLabs</h1>
+      <p class="sub">全球最强AI配音工具，声音克隆+情感精准控制</p>
+    </div>
+    <div class="neon-line"></div>
+
+    <div class="content-card">
+      <h3><span class="icon">🌟</span> 为什么选ElevenLabs？</h3>
+      <p>ElevenLabs是<strong style="color:#8b5cf6;">目前全球最强的AI语音合成平台</strong>。如果你的视频需要高品质配音、需要声音克隆、需要精准的情感控制，它是目前最好的选择。</p>
+      <ul>
+        <li><strong style="color:#8b5cf6;">声音克隆：</strong>上传1分钟音频，AI完美复制你的声音</li>
+        <li><strong style="color:#6366f1;">情感控制：</strong>可以精确控制配音的情感、语气、情绪变化</li>
+        <li><strong style="color:#4f46e5;">29种语言：</strong>支持中文、英文、日文等29种语言，跨语言配音</li>
+        <li><strong style="color:#8b5cf6;">音色库丰富：</strong>上千种社区共享音色，也可以定制专属音色</li>
+        <li><strong style="color:#6366f1;">商用版权：</strong>付费版生成的配音拥有完整商用版权</li>
+      </ul>
+    </div>
+
+    <div class="content-card">
+      <h3><span class="icon">🎯</span> 核心功能</h3>
+      <div class="feature-grid">
+        <div class="feature-card">
+          <div class="fc-icon">🧬</div>
+          <div class="fc-name">声音克隆</div>
+          <div class="fc-desc">上传1分钟音频，AI完美复制音色，克隆你的专属声音</div>
+        </div>
+        <div class="feature-card">
+          <div class="fc-icon">🎭</div>
+          <div class="fc-name">情感控制</div>
+          <div class="fc-desc">调节兴奋/悲伤/严肃等情绪参数，让声音自带情感</div>
+        </div>
+        <div class="feature-card">
+          <div class="fc-icon">🌍</div>
+          <div class="fc-name">多语言</div>
+          <div class="fc-desc">支持29种语言，用你的声音说任何语言</div>
+        </div>
+        <div class="feature-card">
+          <div class="fc-icon">🎤</div>
+          <div class="fc-name">音色库</div>
+          <div class="fc-desc">上千种社区共享音色，一键调用，无需训练</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="content-card">
+      <h3><span class="icon">🚀</span> 声音克隆教程（5步）</h3>
+      <ul>
+        <li><strong style="color:#8b5cf6;">① 注册账号：</strong>访问 elevenlabs.io，用邮箱注册</li>
+        <li><strong style="color:#6366f1;">② 进入声音克隆：</strong>点击"Voice Lab" → "Add Generative Voice"</li>
+        <li><strong style="color:#4f46e5;">③ 上传音频样本：</strong>上传1-3分钟的清晰人声录音（需本人授权）</li>
+        <li><strong style="color:#8b5cf6;">④ 命名并创建：</strong>给你的克隆声音命名，AI开始训练</li>
+        <li><strong style="color:#6366f1;">⑤ 开始使用：</strong>训练完成后，输入任何文字，AI用你的声音朗读</li>
+      </ul>
+      <p style="margin-top:12px;">⚠️ <strong style="color:#ef4444;">重要提醒：</strong>声音克隆需要声音主人的明确授权。克隆他人声音用于商业用途或诈骗是违法行为。</p>
+    </div>
+
+    <div class="content-card">
+      <h3><span class="icon">🎭</span> 情感与情绪参数设置</h3>
+      <p>ElevenLabs支持<strong style="color:#8b5cf6;">精细的情感参数调节</strong>，让AI配音不再是"机器人念稿"：</p>
+      <ul>
+        <li><strong style="color:#8b5cf6;">Stability（稳定性）：</strong>0-100%，越低声音越有表现力但可能不稳定，越高越平稳但缺少变化</li>
+        <li><strong style="color:#6366f1;">Clarity+Similarity（清晰度+相似度）：</strong>0-100%，越高越清晰但可能失真</li>
+        <li><strong style="color:#4f46e5;">Style Exaggeration（风格夸张度）：</strong>0-100%，越高声音越有戏剧感</li>
+        <li><strong style="color:#8b5cf6;">Speaker Boost（说话人增强）：</strong>开启后声音更像真人</li>
+      </ul>
+      <p style="margin-top:8px;">推荐设置：Stability 50-70 | Clarity 70-85 | Style 20-40 | Speaker Boost 开启</p>
+    </div>
+
+    <div class="content-card">
+      <h3><span class="icon">💰</span> 费用说明</h3>
+      <ul>
+        <li><strong style="color:#8b5cf6;">免费版：</strong>每月10000字符额度，可体验基本功能，不可商用</li>
+        <li><strong style="color:#6366f1;">Starter（$5/月）：</strong>30000字符，声音克隆，可商用</li>
+        <li><strong style="color:#4f46e5;">Creator（$22/月）：</strong>100000字符，高质量声音克隆，专业配音</li>
+        <li><strong style="color:#8b5cf6;">Pro（$99/月）：</strong>500000字符，最高质量，适合批量生产</li>
+      </ul>
+      <p style="margin-top:8px;">建议：先用免费版体验，确认适合后再订阅Creator套餐。</p>
+    </div>
+
+    <div class="quote-card">
+      <span class="quote-mark">"</span>
+      <p class="quote-text">ElevenLabs让每个人的声音都成为独一无二的品牌资产。</p>
+      <p class="quote-author">—— 克隆你的声音，让它替你24小时工作</p>
+    </div>
+
+    <div class="cta-box">
+      <h3>🗣️ 准备用ElevenLabs克隆你的声音了吗？</h3>
+      <p>访问官网，上传你的声音样本</p>
+      <a href="../../form.html" class="cta-btn">📋 填写摸底表</a>
+    </div>
+
+    <div class="nav-buttons">
+      <a href="jianyinai.html" class="nav-btn">◀ 上一工具：剪映AI</a>
+      <a href="moyin.html" class="nav-btn next">下一工具：魔音工坊 ▶</a>
+    </div>
+
+    <div class="contact-bar">
+      <p class="contact-label">📩 深度带教 · 一对一指导</p>
+      <p class="contact-wx">微信：16500234000</p>
+      <p class="contact-hint">添加备注"AI学习"，优先通过</p>
+    </div>
+    <div class="footer">© 2024 张大业 · AI视频变现 · 微信 16500234000</div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('starsCanvas');
+    const ctx = canvas.getContext('2d');
+    let width, height, particles = [];
+    function resize() { width = window.innerWidth; height = window.innerHeight; canvas.width = width; canvas.height = height; }
+    resize(); window.addEventListener('resize', resize);
+    class Particle {
+      constructor() { this.reset(); }
+      reset() { this.x = Math.random() * width; this.y = Math.random() * height; this.size = Math.random() * 1.5 + 0.5; this.speedX = (Math.random() - 0.5) * 0.3; this.speedY = (Math.random() - 0.5) * 0.3; this.opacity = Math.random() * 0.6 + 0.2; this.fadeSpeed = Math.random() * 0.005 + 0.002; this.fading = Math.random() > 0.5; }
+      update() { this.x += this.speedX; this.y += this.speedY; if (this.fading) { this.opacity -= this.fadeSpeed; if (this.opacity <= 0.1) this.fading = false; } else { this.opacity += this.fadeSpeed; if (this.opacity >= 0.7) this.fading = true; } if (this.x < -10 || this.x > width + 10 || this.y < -10 || this.y > height + 10) { this.reset(); this.opacity = Math.random() * 0.5; } }
+      draw() { ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fillStyle = `rgba(139, 92, 246, ${this.opacity})`; ctx.fill(); }
+    }
+    for (let i = 0; i < 150; i++) particles.push(new Particle());
+    function animate() {
+      ctx.clearRect(0, 0, width, height);
+      particles.forEach(p => { p.update(); p.draw(); });
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x; const dy = particles[i].y - particles[j].y; const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 80) { ctx.beginPath(); ctx.moveTo(particles[i].x, particles[i].y); ctx.lineTo(particles[j].x, particles[j].y); ctx.strokeStyle = `rgba(139, 92, 246, ${0.06 * (1 - dist / 80)})`; ctx.lineWidth = 0.5; ctx.stroke(); }
+        }
+      }
+      requestAnimationFrame(animate);
+    }
+    animate();
+  </script>
+</body>
+</html>

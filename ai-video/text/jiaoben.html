@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>脚本 · AI文字创作 · 张大业AI视频变现</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #000;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      min-height: 100vh; overflow-x: hidden; color: #e2e8f0; line-height: 1.8;
+    }
+    .stars { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
+
+    .navbar {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(0,0,0,0.85); backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(168,85,247,0.2); padding: 0 10px;
+    }
+    .navbar-inner {
+      max-width: 680px; margin: 0 auto;
+      display: flex; align-items: center; height: 50px; gap: 6px;
+      overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none;
+    }
+    .navbar-inner::-webkit-scrollbar { display: none; }
+    .nav-home {
+      flex-shrink: 0; text-decoration: none; color: #a78bfa; font-weight: 700;
+      font-size: 15px; padding: 6px 12px; border: 1px solid rgba(168,85,247,0.3);
+      border-radius: 20px; white-space: nowrap; margin-right: 4px;
+    }
+    .nav-home:active { background: rgba(168,85,247,0.15); }
+    .nav-link {
+      flex-shrink: 0; text-decoration: none; color: #94a3b8; font-size: 12px;
+      padding: 6px 10px; border-radius: 14px; white-space: nowrap; border: 1px solid transparent;
+    }
+    .nav-link:hover { color: #a78bfa; }
+    .nav-link.active { color: #a78bfa; border-color: rgba(168,85,247,0.3); background: rgba(168,85,247,0.08); }
+    .nav-divider { width: 1px; height: 16px; background: rgba(255,255,255,0.1); flex-shrink: 0; margin: 0 2px; }
+
+    .sub-navbar {
+      position: sticky; top: 50px; z-index: 99;
+      background: rgba(0,0,0,0.8); backdrop-filter: blur(15px);
+      border-bottom: 1px solid rgba(168,85,247,0.15); padding: 0 10px;
+    }
+    .sub-navbar-inner {
+      max-width: 680px; margin: 0 auto;
+      display: flex; align-items: center; height: 44px; gap: 4px;
+      overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none;
+    }
+    .sub-navbar-inner::-webkit-scrollbar { display: none; }
+    .sub-nav-link {
+      flex-shrink: 0; text-decoration: none; color: #94a3b8; font-size: 12px;
+      padding: 6px 14px; border-radius: 18px; white-space: nowrap;
+      border: 1px solid rgba(168,85,247,0.2); font-weight: 600; letter-spacing: 0.5px;
+    }
+    .sub-nav-link:hover { color: #fff; border-color: rgba(168,85,247,0.5); background: rgba(168,85,247,0.1); }
+    .sub-nav-link.active { color: #fff; background: linear-gradient(135deg, #7c3aed, #a78bfa); border-color: transparent; }
+
+    .third-navbar {
+      position: sticky; top: 94px; z-index: 98;
+      background: rgba(0,0,0,0.75); backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(168,85,247,0.1); padding: 0 10px;
+    }
+    .third-navbar-inner {
+      max-width: 680px; margin: 0 auto;
+      display: flex; align-items: center; height: 38px; gap: 3px;
+      overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none;
+    }
+    .third-navbar-inner::-webkit-scrollbar { display: none; }
+    .third-nav-link {
+      flex-shrink: 0; text-decoration: none; color: #94a3b8; font-size: 11px;
+      padding: 4px 10px; border-radius: 12px; white-space: nowrap;
+      border: 1px solid rgba(168,85,247,0.15); font-weight: 500;
+    }
+    .third-nav-link:hover { color: #c084fc; border-color: rgba(168,85,247,0.4); background: rgba(168,85,247,0.08); }
+    .third-nav-link.active { color: #c084fc; border-color: rgba(168,85,247,0.4); background: rgba(168,85,247,0.12); }
+
+    .container { max-width: 680px; margin: 0 auto; padding: 20px 15px 60px; position: relative; z-index: 1; }
+    .page-header { text-align: center; padding: 20px 10px 10px; }
+    .page-header .module-icon {
+      font-size: 56px; display: block; margin-bottom: 12px;
+      filter: drop-shadow(0 0 20px rgba(16,185,129,0.5)); animation: float 3s ease-in-out infinite;
+    }
+    @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+    .page-header h1 {
+      font-size: 26px; font-weight: 900;
+      background: linear-gradient(135deg, #10b981, #34d399, #6ee7b7);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; letter-spacing: 2px;
+    }
+    .page-header .step-badge {
+      display: inline-block; background: linear-gradient(135deg, #10b981, #059669);
+      color: #fff; padding: 4px 16px; border-radius: 20px; font-size: 12px; font-weight: 700; letter-spacing: 2px; margin-bottom: 8px;
+    }
+    .page-header .sub { color: #94a3b8; font-size: 14px; margin-top: 8px; }
+    .neon-line {
+      width: 50%; height: 2px; margin: 16px auto 24px;
+      background: linear-gradient(90deg, transparent, #10b981, #34d399, #10b981, transparent);
+    }
+
+    .content-card {
+      background: rgba(15,23,42,0.7); border: 1px solid rgba(16,185,129,0.15);
+      border-radius: 20px; padding: 24px 20px; margin-bottom: 16px; backdrop-filter: blur(10px);
+    }
+    .content-card h3 { font-size: 18px; font-weight: 700; color: #34d399; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+    .content-card h3 .icon { font-size: 22px; }
+    .content-card p { color: #cbd5e1; font-size: 14px; margin-bottom: 8px; }
+    .content-card ul { list-style: none; padding: 0; }
+    .content-card ul li { padding: 6px 0 6px 20px; position: relative; color: #94a3b8; font-size: 14px; }
+    .content-card ul li::before { content: "▸"; position: absolute; left: 0; color: #10b981; }
+
+    .script-example {
+      background: rgba(0,0,0,0.5); border: 1px solid rgba(16,185,129,0.3);
+      border-radius: 14px; padding: 20px; margin: 12px 0;
+      font-family: "Courier New", monospace; font-size: 13px;
+      white-space: pre-wrap; word-break: break-word; line-height: 1.8;
+    }
+    .script-example .time { color: #34d399; font-weight: 700; }
+    .script-example .scene { color: #fbbf24; }
+    .script-example .narration { color: #94a3b8; }
+    .script-example .action { color: #f472b6; }
+
+    .prompt-box {
+      background: rgba(0,0,0,0.5); border: 1px solid rgba(16,185,129,0.3);
+      border-radius: 14px; padding: 16px; margin: 12px 0;
+      font-family: "Courier New", monospace; font-size: 13px; color: #6ee7b7;
+      white-space: pre-wrap; word-break: break-word; line-height: 1.6; position: relative;
+    }
+    .prompt-box .prompt-label {
+      position: absolute; top: -10px; left: 16px;
+      background: #10b981; color: #fff; font-size: 10px; padding: 2px 10px;
+      border-radius: 10px; font-weight: 700; letter-spacing: 1px; font-family: -apple-system, sans-serif;
+    }
+    .copy-btn {
+      position: absolute; top: 8px; right: 12px;
+      background: rgba(16,185,129,0.3); border: none; color: #fff;
+      padding: 4px 12px; border-radius: 12px; font-size: 11px; cursor: pointer;
+      font-family: -apple-system, sans-serif;
+    }
+    .copy-btn:hover { background: rgba(16,185,129,0.6); }
+
+    .type-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 16px 0;
+    }
+    .type-card {
+      background: rgba(15,23,42,0.6); border: 1px solid rgba(16,185,129,0.2);
+      border-radius: 16px; padding: 16px 12px; text-align: center; transition: all 0.3s;
+    }
+    .type-card:hover { border-color: rgba(16,185,129,0.5); box-shadow: 0 0 15px rgba(16,185,129,0.1); }
+    .type-card .tp-icon { font-size: 30px; margin-bottom: 6px; }
+    .type-card .tp-name { font-size: 14px; font-weight: 700; color: #34d399; margin-bottom: 4px; }
+    .type-card .tp-desc { font-size: 11px; color: #94a3b8; line-height: 1.4; }
+
+    .quote-card {
+      background: linear-gradient(135deg, rgba(16,185,129,0.1), rgba(52,211,153,0.08));
+      border: 1px solid rgba(16,185,129,0.3); border-radius: 18px; padding: 20px;
+      margin: 24px 0; text-align: center; position: relative;
+    }
+    .quote-card .quote-mark { font-size: 48px; color: #34d399; opacity: 0.5; position: absolute; top: 6px; left: 16px; }
+    .quote-card .quote-text { font-size: 18px; font-weight: 700; color: #34d399; margin: 10px 0 6px; letter-spacing: 1px; }
+    .quote-card .quote-author { color: #94a3b8; font-size: 13px; }
+    .cta-box {
+      background: linear-gradient(135deg, rgba(16,185,129,0.3), rgba(5,150,105,0.15));
+      border: 2px solid rgba(16,185,129,0.4); border-radius: 20px; padding: 20px; text-align: center; margin-top: 24px;
+    }
+    .cta-box h3 { font-size: 19px; font-weight: 800; color: #fff; margin-bottom: 6px; }
+    .cta-box p { color: #94a3b8; font-size: 13px; margin-bottom: 16px; }
+    .cta-box .cta-btn {
+      display: inline-block; background: linear-gradient(135deg, #10b981, #059669); color: #fff;
+      padding: 12px 28px; border-radius: 30px; text-decoration: none; font-weight: 700; font-size: 16px;
+    }
+    .contact-bar {
+      margin-top: 32px; background: rgba(15,23,42,0.9); border: 1px solid rgba(0,240,255,0.2);
+      border-radius: 18px; padding: 18px 20px; text-align: center; backdrop-filter: blur(10px);
+    }
+    .contact-bar .contact-label { color: #94a3b8; font-size: 13px; margin-bottom: 6px; letter-spacing: 1px; }
+    .contact-bar .contact-wx {
+      font-size: 20px; font-weight: 900;
+      background: linear-gradient(135deg, #00f0ff, #fbbf24);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; letter-spacing: 2px;
+    }
+    .contact-bar .contact-hint { color: #64748b; font-size: 11px; margin-top: 6px; }
+    .footer { text-align: center; color: #334155; font-size: 11px; margin-top: 20px; letter-spacing: 1px; }
+    .nav-buttons { display: flex; gap: 10px; margin-top: 24px; }
+    .nav-btn {
+      flex: 1; text-align: center; padding: 12px; border-radius: 14px; text-decoration: none;
+      font-weight: 700; font-size: 14px; border: 1px solid rgba(16,185,129,0.3); color: #34d399; background: rgba(16,185,129,0.05);
+    }
+    .nav-btn.next { background: linear-gradient(135deg, rgba(16,185,129,0.5), rgba(5,150,105,0.2)); color: #fff; }
+
+    @media (max-width: 400px) {
+      .page-header h1 { font-size: 22px; }
+      .page-header .module-icon { font-size: 44px; }
+      .sub-nav-link { font-size: 11px; padding: 5px 10px; }
+      .sub-navbar-inner { height: 40px; }
+      .third-nav-link { font-size: 10px; padding: 3px 8px; }
+      .third-navbar-inner { height: 34px; }
+      .content-card { padding: 18px 14px; }
+      .script-example { font-size: 11px; }
+      .type-grid { gap: 8px; }
+      .type-card { padding: 12px 8px; }
+    }
+    @media (min-width: 769px) { .content-card { padding: 28px 24px; } }
+  </style>
+</head>
+<body>
+  <canvas class="stars" id="starsCanvas"></canvas>
+
+  <nav class="navbar">
+    <div class="navbar-inner">
+      <a href="../../index.html" class="nav-home">🏠 主页</a>
+      <span class="nav-divider"></span>
+      <a href="../../business-thinking.html" class="nav-link">💰商业思维</a>
+      <a href="../../human-nature.html" class="nav-link">🧠人性弱点</a>
+      <a href="../../algorithm.html" class="nav-link">📐规则算法</a>
+      <a href="../../product-selection.html" class="nav-link">🛒带货选品</a>
+      <a href="../../ai-video.html" class="nav-link active">🤖AI视频</a>
+      <a href="../../video-analysis.html" class="nav-link">📊视频分析</a>
+      <a href="../../trend.html" class="nav-link">📈发展趋势</a>
+      <a href="../../creative.html" class="nav-link">💡商业创意</a>
+    </div>
+  </nav>
+
+  <nav class="sub-navbar">
+    <div class="sub-navbar-inner">
+      <a href="../../ai-video.html" class="sub-nav-link">📋 总览</a>
+      <a href="../text/" class="sub-nav-link active">📝 文字</a>
+      <a href="../image/" class="sub-nav-link">🎨 图片</a>
+      <a href="../video/" class="sub-nav-link">🎬 视频</a>
+      <a href="../audio/" class="sub-nav-link">🔊 声音</a>
+      <a href="../edit/" class="sub-nav-link">✂️ 剪辑</a>
+      <a href="../publish/" class="sub-nav-link">🚀 发布</a>
+    </div>
+  </nav>
+
+  <nav class="third-navbar">
+    <div class="third-navbar-inner">
+      <a href="index.html" class="third-nav-link">📝 总览</a>
+      <a href="script.html" class="third-nav-link">🎭 剧本</a>
+      <a href="jiaoben.html" class="third-nav-link active">📜 脚本</a>
+      <a href="storyboard.html" class="third-nav-link">🎬 分镜</a>
+      <a href="prompt.html" class="third-nav-link">💬 提示词</a>
+      <a href="title.html" class="third-nav-link">🔖 标题</a>
+      <a href="copywriting.html" class="third-nav-link">✍️ 文案</a>
+      <a href="comment.html" class="third-nav-link">💭 评论</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="page-header">
+      <span class="module-icon">📜</span>
+      <span class="step-badge">文字 · 脚本</span>
+      <h1>AI写脚本</h1>
+      <p class="sub">用AI生成分秒级的拍摄脚本，直接就能用</p>
+    </div>
+    <div class="neon-line"></div>
+
+    <div class="content-card">
+      <h3><span class="icon">🎯</span> 脚本是拍摄的"施工图"</h3>
+      <p>如果说剧本是建筑设计图，那脚本就是<strong style="color:#34d399;">施工队手里的施工图纸</strong>——精确到每一秒、每一个镜头、每一句台词。</p>
+      <ul>
+        <li><strong style="color:#34d399;">时间精确到秒</strong></li>
+        <li><strong style="color:#10b981;">画面描述具体</strong></li>
+        <li><strong style="color:#6ee7b7;">台词逐字写出</strong></li>
+        <li><strong style="color:#34d399;">标注特效/BGM</strong></li>
+      </ul>
+    </div>
+
+    <div class="content-card">
+      <h3><span class="icon">📋</span> 标准脚本示例（30秒带货视频）</h3>
+      <div class="script-example">
+<span class="scene">═══════════════════════════════════</span>
+<span class="scene">【视频标题】：上班族的喝水救星</span>
+<span class="scene">【总时长】：30秒 | 【类型】：带货</span>
+<span class="scene">═══════════════════════════════════</span>
+
+<span class="time">[00:00-00:03]</span> <span class="action">【镜头：特写，一脸疲惫的上班族】</span>
+<span class="narration">旁白：你是不是经常忙到连水都忘了喝？</span>
+
+<span class="time">[00:03-00:08]</span> <span class="action">【镜头：快速剪辑，办公室各种忙碌场景】</span>
+<span class="narration">旁白：每天加班到10点，嘴唇干裂、皮肤变差……</span>
+
+<span class="time">[00:08-00:15]</span> <span class="action">【镜头：产品特写，智能保温杯亮相】</span>
+<span class="narration">旁白：直到我发现了这个——智能提醒保温杯！</span>
+
+<span class="time">[00:15-00:22]</span> <span class="action">【镜头：展示功能，喝水提醒、温度显示】</span>
+<span class="narration">旁白：每45分钟震动提醒喝水，LED显示水温。</span>
+
+<span class="time">[00:22-00:27]</span> <span class="action">【镜头：使用场景，办公桌、车里、健身房】</span>
+<span class="narration">旁白：放在办公桌上，同事都问我要链接。</span>
+
+<span class="time">[00:27-00:30]</span> <span class="action">【镜头：产品+价格标签弹出】</span>
+<span class="narration">旁白：现在下单立减50，链接在左下角！</span></div>
+    </div>
+
+    <div class="content-card">
+      <h3><span class="icon">🎬</span> AI能生成的脚本类型</h3>
+      <div class="type-grid">
+        <div class="type-card"><div class="tp-icon">🛒</div><div class="tp-name">带货脚本</div><div class="tp-desc">产品展示+痛点+优惠</div></div>
+        <div class="type-card"><div class="tp-icon">🎤</div><div class="tp-name">口播脚本</div><div class="tp-desc">单人出镜，知识分享</div></div>
+        <div class="type-card"><div class="tp-icon">📚</div><div class="tp-name">教程脚本</div><div class="tp-desc">步骤演示+解说</div></div>
+        <div class="type-card"><div class="tp-icon">🎭</div><div class="tp-name">剧情脚本</div><div class="tp-desc">多角色对话</div></div>
+        <div class="type-card"><div class="tp-icon">📊</div><div class="tp-name">数据脚本</div><div class="tp-desc">图表+数据展示</div></div>
+        <div class="type-card"><div class="tp-icon">🔍</div><div class="tp-name">测评脚本</div><div class="tp-desc">对比测试评测</div></div>
+      </div>
+    </div>
+
+    <div class="content-card">
+      <h3><span class="icon">🤖</span> AI脚本生成提示词模板</h3>
+      <div class="prompt-box">
+        <span class="prompt-label">带货脚本生成模板</span>
+        <button class="copy-btn" onclick="copyText('prompt1')">📋 复制</button>
+        <span id="prompt1">你是一个顶级的短视频带货脚本专家。请帮我写一条完整的拍摄脚本：
+
+【产品】：智能保温杯
+【目标人群】：25-40岁上班族
+【视频时长】：30秒
+【风格】：痛点型开头，轻松幽默
+【平台】：抖音
+
+请按以下格式输出完整脚本：
+- 视频标题（3个备选）
+- 每段时间轴（精确到秒）
+- 画面描述（镜头角度、人物动作、场景）
+- 旁白/台词（逐字写出）
+- 特效和BGM标注
+- 结尾引导话术</span>
+      </div>
+    </div>
+
+    <div class="quote-card">
+      <span class="quote-mark">"</span>
+      <p class="quote-text">一个好的脚本，能让普通人拍出专业级的效果。</p>
+      <p class="quote-author">—— 把创意交给AI，把执行交给脚本</p>
+    </div>
+
+    <div class="cta-box">
+      <h3>📜 准备好用AI批量生成脚本了吗？</h3>
+      <p>复制上面的模板，现在就试试</p>
+      <a href="../../form.html" class="cta-btn">📋 填写摸底表</a>
+    </div>
+
+    <div class="nav-buttons">
+      <a href="script.html" class="nav-btn">◀ 上一页：剧本</a>
+      <a href="storyboard.html" class="nav-btn next">下一页：分镜 ▶</a>
+    </div>
+
+    <div class="contact-bar">
+      <p class="contact-label">📩 深度带教 · 一对一指导</p>
+      <p class="contact-wx">微信：16500234000</p>
+      <p class="contact-hint">添加备注"AI学习"，优先通过</p>
+    </div>
+    <div class="footer">© 2024 张大业 · AI视频变现 · 微信 16500234000</div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('starsCanvas');
+    const ctx = canvas.getContext('2d');
+    let width, height, particles = [];
+    function resize() { width = window.innerWidth; height = window.innerHeight; canvas.width = width; canvas.height = height; }
+    resize(); window.addEventListener('resize', resize);
+    class Particle {
+      constructor() { this.reset(); }
+      reset() { this.x = Math.random() * width; this.y = Math.random() * height; this.size = Math.random() * 1.5 + 0.5; this.speedX = (Math.random() - 0.5) * 0.3; this.speedY = (Math.random() - 0.5) * 0.3; this.opacity = Math.random() * 0.6 + 0.2; this.fadeSpeed = Math.random() * 0.005 + 0.002; this.fading = Math.random() > 0.5; }
+      update() { this.x += this.speedX; this.y += this.speedY; if (this.fading) { this.opacity -= this.fadeSpeed; if (this.opacity <= 0.1) this.fading = false; } else { this.opacity += this.fadeSpeed; if (this.opacity >= 0.7) this.fading = true; } if (this.x < -10 || this.x > width + 10 || this.y < -10 || this.y > height + 10) { this.reset(); this.opacity = Math.random() * 0.5; } }
+      draw() { ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fillStyle = `rgba(16, 185, 129, ${this.opacity})`; ctx.fill(); }
+    }
+    for (let i = 0; i < 150; i++) particles.push(new Particle());
+    function animate() {
+      ctx.clearRect(0, 0, width, height);
+      particles.forEach(p => { p.update(); p.draw(); });
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x; const dy = particles[i].y - particles[j].y; const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 80) { ctx.beginPath(); ctx.moveTo(particles[i].x, particles[i].y); ctx.lineTo(particles[j].x, particles[j].y); ctx.strokeStyle = `rgba(16, 185, 129, ${0.06 * (1 - dist / 80)})`; ctx.lineWidth = 0.5; ctx.stroke(); }
+        }
+      }
+      requestAnimationFrame(animate);
+    }
+    animate();
+    function copyText(id) {
+      const text = document.getElementById(id).textContent;
+      navigator.clipboard.writeText(text).then(() => { alert('✅ 已复制！'); });
+    }
+  </script>
+</body>
+</html>

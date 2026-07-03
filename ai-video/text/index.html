@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>文字·AI写脚本 · 张大业AI视频变现</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #000;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      min-height: 100vh; overflow-x: hidden; color: #e2e8f0; line-height: 1.8;
+    }
+    .stars { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
+
+    .navbar {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(0,0,0,0.85); backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(168,85,247,0.2); padding: 0 10px;
+    }
+    .navbar-inner {
+      max-width: 680px; margin: 0 auto;
+      display: flex; align-items: center; height: 50px; gap: 6px;
+      overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none;
+    }
+    .navbar-inner::-webkit-scrollbar { display: none; }
+    .nav-home {
+      flex-shrink: 0; text-decoration: none; color: #a78bfa; font-weight: 700;
+      font-size: 15px; padding: 6px 12px; border: 1px solid rgba(168,85,247,0.3);
+      border-radius: 20px; white-space: nowrap; margin-right: 4px;
+    }
+    .nav-home:active { background: rgba(168,85,247,0.15); }
+    .nav-link {
+      flex-shrink: 0; text-decoration: none; color: #94a3b8; font-size: 12px;
+      padding: 6px 10px; border-radius: 14px; white-space: nowrap; border: 1px solid transparent;
+    }
+    .nav-link:hover { color: #a78bfa; }
+    .nav-link.active { color: #a78bfa; border-color: rgba(168,85,247,0.3); background: rgba(168,85,247,0.08); }
+    .nav-divider { width: 1px; height: 16px; background: rgba(255,255,255,0.1); flex-shrink: 0; margin: 0 2px; }
+
+    .sub-navbar {
+      position: sticky; top: 50px; z-index: 99;
+      background: rgba(0,0,0,0.8); backdrop-filter: blur(15px);
+      border-bottom: 1px solid rgba(168,85,247,0.15); padding: 0 10px;
+    }
+    .sub-navbar-inner {
+      max-width: 680px; margin: 0 auto;
+      display: flex; align-items: center; height: 44px; gap: 4px;
+      overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none;
+    }
+    .sub-navbar-inner::-webkit-scrollbar { display: none; }
+    .sub-nav-link {
+      flex-shrink: 0; text-decoration: none; color: #94a3b8; font-size: 12px;
+      padding: 6px 14px; border-radius: 18px; white-space: nowrap;
+      border: 1px solid rgba(168,85,247,0.2); font-weight: 600; letter-spacing: 0.5px;
+    }
+    .sub-nav-link:hover { color: #fff; border-color: rgba(168,85,247,0.5); background: rgba(168,85,247,0.1); }
+    .sub-nav-link.active { color: #fff; background: linear-gradient(135deg, #7c3aed, #a78bfa); border-color: transparent; }
+
+    .third-navbar {
+      position: sticky; top: 94px; z-index: 98;
+      background: rgba(0,0,0,0.75); backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(168,85,247,0.1); padding: 0 10px;
+    }
+    .third-navbar-inner {
+      max-width: 680px; margin: 0 auto;
+      display: flex; align-items: center; height: 38px; gap: 3px;
+      overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none;
+    }
+    .third-navbar-inner::-webkit-scrollbar { display: none; }
+    .third-nav-link {
+      flex-shrink: 0; text-decoration: none; color: #94a3b8; font-size: 11px;
+      padding: 4px 10px; border-radius: 12px; white-space: nowrap;
+      border: 1px solid rgba(168,85,247,0.15); font-weight: 500;
+    }
+    .third-nav-link:hover { color: #c084fc; border-color: rgba(168,85,247,0.4); background: rgba(168,85,247,0.08); }
+    .third-nav-link.active { color: #c084fc; border-color: rgba(168,85,247,0.4); background: rgba(168,85,247,0.12); }
+
+    .container { max-width: 680px; margin: 0 auto; padding: 20px 15px 60px; position: relative; z-index: 1; }
+    .page-header { text-align: center; padding: 20px 10px 10px; }
+    .page-header .module-icon {
+      font-size: 56px; display: block; margin-bottom: 12px;
+      filter: drop-shadow(0 0 20px rgba(168,85,247,0.5)); animation: float 3s ease-in-out infinite;
+    }
+    @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+    .page-header h1 {
+      font-size: 26px; font-weight: 900;
+      background: linear-gradient(135deg, #a78bfa, #c084fc, #818cf8);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; letter-spacing: 2px;
+    }
+    .page-header .step-badge {
+      display: inline-block; background: linear-gradient(135deg, #7c3aed, #a78bfa);
+      color: #fff; padding: 4px 16px; border-radius: 20px; font-size: 12px; font-weight: 700; letter-spacing: 2px; margin-bottom: 8px;
+    }
+    .page-header .sub { color: #94a3b8; font-size: 14px; margin-top: 8px; }
+    .neon-line {
+      width: 50%; height: 2px; margin: 16px auto 24px;
+      background: linear-gradient(90deg, transparent, #a78bfa, #818cf8, #a78bfa, transparent);
+    }
+
+    .content-card {
+      background: rgba(15,23,42,0.7); border: 1px solid rgba(168,85,247,0.15);
+      border-radius: 20px; padding: 24px 20px; margin-bottom: 16px; backdrop-filter: blur(10px);
+    }
+    .content-card h3 { font-size: 18px; font-weight: 700; color: #a78bfa; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+    .content-card h3 .icon { font-size: 22px; }
+    .content-card p { color: #cbd5e1; font-size: 14px; margin-bottom: 8px; }
+    .content-card ul { list-style: none; padding: 0; }
+    .content-card ul li { padding: 6px 0 6px 20px; position: relative; color: #94a3b8; font-size: 14px; }
+    .content-card ul li::before { content: "▸"; position: absolute; left: 0; color: #a78bfa; }
+
+    .sub-module-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 16px 0;
+    }
+    .sub-module-card {
+      display: block; text-decoration: none;
+      background: rgba(15,23,42,0.6); border: 1px solid rgba(168,85,247,0.2);
+      border-radius: 16px; padding: 16px 12px; text-align: center; transition: all 0.3s;
+    }
+    .sub-module-card:hover {
+      border-color: rgba(168,85,247,0.5); box-shadow: 0 0 15px rgba(168,85,247,0.1); transform: translateY(-2px);
+    }
+    .sub-module-card .sm-icon { font-size: 30px; margin-bottom: 6px; }
+    .sub-module-card .sm-name { font-size: 14px; font-weight: 700; color: #fff; margin-bottom: 3px; }
+    .sub-module-card .sm-desc { font-size: 11px; color: #94a3b8; line-height: 1.4; }
+
+    .prompt-box {
+      background: rgba(0,0,0,0.5); border: 1px solid rgba(168,85,247,0.3);
+      border-radius: 14px; padding: 16px; margin: 12px 0;
+      font-family: "Courier New", monospace; font-size: 13px; color: #34d399;
+      white-space: pre-wrap; word-break: break-word; line-height: 1.6; position: relative;
+    }
+    .prompt-box .prompt-label {
+      position: absolute; top: -10px; left: 16px;
+      background: #7c3aed; color: #fff; font-size: 10px; padding: 2px 10px;
+      border-radius: 10px; font-weight: 700; letter-spacing: 1px; font-family: -apple-system, sans-serif;
+    }
+    .copy-btn {
+      position: absolute; top: 8px; right: 12px;
+      background: rgba(168,85,247,0.3); border: none; color: #fff;
+      padding: 4px 12px; border-radius: 12px; font-size: 11px; cursor: pointer;
+      font-family: -apple-system, sans-serif;
+    }
+    .copy-btn:hover { background: rgba(168,85,247,0.6); }
+
+    .tool-mini-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 16px 0;
+    }
+    .tool-mini {
+      background: rgba(15,23,42,0.6); border: 1px solid rgba(168,85,247,0.2);
+      border-radius: 14px; padding: 16px 12px; text-align: center;
+    }
+    .tool-mini .tm-icon { font-size: 28px; margin-bottom: 6px; }
+    .tool-mini .tm-name { font-size: 13px; font-weight: 700; color: #c084fc; margin-bottom: 4px; }
+    .tool-mini .tm-desc { font-size: 11px; color: #94a3b8; }
+    .tool-mini .tm-tag {
+      display: inline-block; margin-top: 6px; padding: 2px 8px; border-radius: 8px;
+      font-size: 10px; font-weight: 700; background: rgba(16,185,129,0.2); color: #34d399;
+    }
+
+    .quote-card {
+      background: linear-gradient(135deg, rgba(168,85,247,0.1), rgba(129,140,248,0.08));
+      border: 1px solid rgba(168,85,247,0.3); border-radius: 18px; padding: 20px;
+      margin: 24px 0; text-align: center; position: relative;
+    }
+    .quote-card .quote-mark { font-size: 48px; color: #a78bfa; opacity: 0.5; position: absolute; top: 6px; left: 16px; }
+    .quote-card .quote-text { font-size: 18px; font-weight: 700; color: #a78bfa; margin: 10px 0 6px; letter-spacing: 1px; }
+    .quote-card .quote-author { color: #94a3b8; font-size: 13px; }
+    .cta-box {
+      background: linear-gradient(135deg, rgba(124,58,237,0.3), rgba(168,85,247,0.15));
+      border: 2px solid rgba(168,85,247,0.4); border-radius: 20px; padding: 20px; text-align: center; margin-top: 24px;
+    }
+    .cta-box h3 { font-size: 19px; font-weight: 800; color: #fff; margin-bottom: 6px; }
+    .cta-box p { color: #94a3b8; font-size: 13px; margin-bottom: 16px; }
+    .cta-box .cta-btn {
+      display: inline-block; background: linear-gradient(135deg, #7c3aed, #a78bfa); color: #fff;
+      padding: 12px 28px; border-radius: 30px; text-decoration: none; font-weight: 700; font-size: 16px;
+    }
+    .contact-bar {
+      margin-top: 32px; background: rgba(15,23,42,0.9); border: 1px solid rgba(0,240,255,0.2);
+      border-radius: 18px; padding: 18px 20px; text-align: center; backdrop-filter: blur(10px);
+    }
+    .contact-bar .contact-label { color: #94a3b8; font-size: 13px; margin-bottom: 6px; letter-spacing: 1px; }
+    .contact-bar .contact-wx {
+      font-size: 20px; font-weight: 900;
+      background: linear-gradient(135deg, #00f0ff, #fbbf24);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; letter-spacing: 2px;
+    }
+    .contact-bar .contact-hint { color: #64748b; font-size: 11px; margin-top: 6px; }
+    .footer { text-align: center; color: #334155; font-size: 11px; margin-top: 20px; letter-spacing: 1px; }
+    .nav-buttons { display: flex; gap: 10px; margin-top: 24px; }
+    .nav-btn {
+      flex: 1; text-align: center; padding: 12px; border-radius: 14px; text-decoration: none;
+      font-weight: 700; font-size: 14px; border: 1px solid rgba(168,85,247,0.3); color: #a78bfa; background: rgba(168,85,247,0.05);
+    }
+    .nav-btn.next { background: linear-gradient(135deg, rgba(124,58,237,0.5), rgba(168,85,247,0.2)); color: #fff; }
+
+    @media (max-width: 400px) {
+      .page-header h1 { font-size: 22px; }
+      .page-header .module-icon { font-size: 44px; }
+      .sub-nav-link { font-size: 11px; padding: 5px 10px; }
+      .sub-navbar-inner { height: 40px; }
+      .third-nav-link { font-size: 10px; padding: 3px 8px; }
+      .third-navbar-inner { height: 34px; }
+      .content-card { padding: 18px 14px; }
+      .sub-module-grid { gap: 8px; }
+      .sub-module-card { padding: 14px 10px; }
+      .tool-mini-grid { gap: 8px; }
+      .tool-mini { padding: 12px 8px; }
+      .prompt-box { font-size: 11px; }
+    }
+    @media (min-width: 769px) { .content-card { padding: 28px 24px; } }
+  </style>
+</head>
+<body>
+  <canvas class="stars" id="starsCanvas"></canvas>
+
+  <!-- ==================== 一级导航栏 ==================== -->
+  <nav class="navbar">
+    <div class="navbar-inner">
+      <a href="../../index.html" class="nav-home">🏠 主页</a>
+      <span class="nav-divider"></span>
+      <a href="../../business-thinking.html" class="nav-link">💰商业思维</a>
+      <a href="../../human-nature.html" class="nav-link">🧠人性弱点</a>
+      <a href="../../algorithm.html" class="nav-link">📐规则算法</a>
+      <a href="../../product-selection.html" class="nav-link">🛒带货选品</a>
+      <a href="../../ai-video.html" class="nav-link active">🤖AI视频</a>
+      <a href="../../video-analysis.html" class="nav-link">📊视频分析</a>
+      <a href="../../trend.html" class="nav-link">📈发展趋势</a>
+      <a href="../../creative.html" class="nav-link">💡商业创意</a>
+    </div>
+  </nav>
+
+  <!-- ==================== 二级导航栏 ==================== -->
+  <nav class="sub-navbar">
+    <div class="sub-navbar-inner">
+      <a href="../../ai-video.html" class="sub-nav-link">📋 总览</a>
+      <a href="../text/" class="sub-nav-link active">📝 文字</a>
+      <a href="../image/" class="sub-nav-link">🎨 图片</a>
+      <a href="../video/" class="sub-nav-link">🎬 视频</a>
+      <a href="../audio/" class="sub-nav-link">🔊 声音</a>
+      <a href="../edit/" class="sub-nav-link">✂️ 剪辑</a>
+      <a href="../publish/" class="sub-nav-link">🚀 发布</a>
+    </div>
+  </nav>
+
+  <!-- ==================== 三级导航栏 ==================== -->
+  <nav class="third-navbar">
+    <div class="third-navbar-inner">
+      <a href="index.html" class="third-nav-link active">📝 总览</a>
+      <a href="script.html" class="third-nav-link">🎭 剧本</a>
+      <a href="jiaoben.html" class="third-nav-link">📜 脚本</a>
+      <a href="storyboard.html" class="third-nav-link">🎬 分镜</a>
+      <a href="prompt.html" class="third-nav-link">💬 提示词</a>
+      <a href="title.html" class="third-nav-link">🔖 标题</a>
+      <a href="copywriting.html" class="third-nav-link">✍️ 文案</a>
+      <a href="comment.html" class="third-nav-link">💭 评论</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="page-header">
+      <span class="module-icon">📝</span>
+      <span class="step-badge">STEP 1</span>
+      <h1>AI文字创作</h1>
+      <p class="sub">剧本→脚本→分镜→提示词→标题→文案→评论，全流程AI化</p>
+    </div>
+    <div class="neon-line"></div>
+
+    <div class="content-card">
+      <h3><span class="icon">📂</span> 文字创作七个子模块</h3>
+      <p>点击进入每个子模块的详细教程：</p>
+      <div class="sub-module-grid">
+        <a href="script.html" class="sub-module-card">
+          <div class="sm-icon">🎭</div>
+          <div class="sm-name">剧本</div>
+          <div class="sm-desc">完整的视频故事大纲</div>
+        </a>
+        <a href="jiaoben.html" class="sub-module-card">
+          <div class="sm-icon">📜</div>
+          <div class="sm-name">脚本</div>
+          <div class="sm-desc">分秒级的拍摄脚本</div>
+        </a>
+        <a href="storyboard.html" class="sub-module-card">
+          <div class="sm-icon">🎬</div>
+          <div class="sm-name">分镜</div>
+          <div class="sm-desc">每个镜头的画面描述</div>
+        </a>
+        <a href="prompt.html" class="sub-module-card">
+          <div class="sm-icon">💬</div>
+          <div class="sm-name">提示词</div>
+          <div class="sm-desc">AI提示词模板大全</div>
+        </a>
+        <a href="title.html" class="sub-module-card">
+          <div class="sm-icon">🔖</div>
+          <div class="sm-name">标题</div>
+          <div class="sm-desc">爆款标题生成技巧</div>
+        </a>
+        <a href="copywriting.html" class="sub-module-card">
+          <div class="sm-icon">✍️</div>
+          <div class="sm-name">文案</div>
+          <div class="sm-desc">口播文案、带货文案</div>
+        </a>
+        <a href="comment.html" class="sub-module-card">
+          <div class="sm-icon">💭</div>
+          <div class="sm-name">评论</div>
+          <div class="sm-desc">评论区运营话术</div>
+        </a>
+      </div>
+    </div>
+
+    <div class="content-card">
+      <h3><span class="icon">🧰</span> 推荐AI文字工具</h3>
+      <div class="tool-mini-grid">
+        <div class="tool-mini">
+          <div class="tm-icon">💬</div>
+          <div class="tm-name">ChatGPT</div>
+          <div class="tm-desc">最强大的AI写作工具</div>
+          <div class="tm-tag">免费</div>
+        </div>
+        <div class="tool-mini">
+          <div class="tm-icon">🤖</div>
+          <div class="tm-name">Claude</div>
+          <div class="tm-desc">长文案能力出色</div>
+          <div class="tm-tag">免费</div>
+        </div>
+        <div class="tool-mini">
+          <div class="tm-icon">🫘</div>
+          <div class="tm-name">豆包</div>
+          <div class="tm-desc">字节出品，国产优秀</div>
+          <div class="tm-tag">免费</div>
+        </div>
+        <div class="tool-mini">
+          <div class="tm-icon">🔍</div>
+          <div class="tm-name">DeepSeek</div>
+          <div class="tm-desc">深度思考，质量极高</div>
+          <div class="tm-tag">免费</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="content-card">
+      <h3><span class="icon">🎯</span> 万能脚本提示词模板</h3>
+      <div class="prompt-box">
+        <span class="prompt-label">带货视频脚本模板</span>
+        <button class="copy-btn" onclick="copyText('prompt1')">📋 复制</button>
+        <span id="prompt1">你是一个顶级的短视频带货文案专家。请帮我写一条抖音带货视频脚本，要求如下：
+
+【产品名称】：智能保温杯
+【目标人群】：25-40岁上班族
+【视频时长】：30-60秒
+【风格要求】：痛点型开头，强调健康饮水
+【包含元素】：前3秒钩子、产品卖点、使用场景、限时优惠
+
+请生成3个不同开头的版本，每个版本标注完播率预估。</span>
+      </div>
+      <div class="prompt-box" style="margin-top:16px;">
+        <span class="prompt-label">知识科普脚本模板</span>
+        <button class="copy-btn" onclick="copyText('prompt2')">📋 复制</button>
+        <span id="prompt2">你是一个短视频知识博主。请帮我写一条科普类视频脚本，要求如下：
+
+【主题】：AI如何改变短视频行业
+【目标人群】：想做副业的普通人
+【视频时长】：45-60秒
+【风格要求】：反常识开头，用数据说话，结尾引导关注
+【关键信息】：AI视频效率提升50倍、0基础也能做、月入过万案例
+
+请输出完整脚本，包括画面描述和旁白文案。</span>
+      </div>
+    </div>
+
+    <div class="quote-card">
+      <span class="quote-mark">"</span>
+      <p class="quote-text">好的文字不是写出来的，是AI批量生成后筛选出来的。</p>
+      <p class="quote-author">—— 用数量对抗概率，用数据选出最优解</p>
+    </div>
+
+    <div class="cta-box">
+      <h3>📝 准备好用AI批量创作文字内容了吗？</h3>
+      <p>复制上面的模板，现在就试试</p>
+      <a href="../../form.html" class="cta-btn">📋 填写摸底表</a>
+    </div>
+
+    <div class="nav-buttons">
+      <a href="../../ai-video.html" class="nav-btn">◀ 返回AI视频总览</a>
+      <a href="../image/index.html" class="nav-btn next">下一步：AI生成图片 ▶</a>
+    </div>
+
+    <div class="contact-bar">
+      <p class="contact-label">📩 深度带教 · 一对一指导</p>
+      <p class="contact-wx">微信：16500234000</p>
+      <p class="contact-hint">添加备注"AI学习"，优先通过</p>
+    </div>
+    <div class="footer">© 2024 张大业 · AI视频变现 · 微信 16500234000</div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('starsCanvas');
+    const ctx = canvas.getContext('2d');
+    let width, height, particles = [];
+    function resize() { width = window.innerWidth; height = window.innerHeight; canvas.width = width; canvas.height = height; }
+    resize(); window.addEventListener('resize', resize);
+    class Particle {
+      constructor() { this.reset(); }
+      reset() { this.x = Math.random() * width; this.y = Math.random() * height; this.size = Math.random() * 1.5 + 0.5; this.speedX = (Math.random() - 0.5) * 0.3; this.speedY = (Math.random() - 0.5) * 0.3; this.opacity = Math.random() * 0.6 + 0.2; this.fadeSpeed = Math.random() * 0.005 + 0.002; this.fading = Math.random() > 0.5; }
+      update() { this.x += this.speedX; this.y += this.speedY; if (this.fading) { this.opacity -= this.fadeSpeed; if (this.opacity <= 0.1) this.fading = false; } else { this.opacity += this.fadeSpeed; if (this.opacity >= 0.7) this.fading = true; } if (this.x < -10 || this.x > width + 10 || this.y < -10 || this.y > height + 10) { this.reset(); this.opacity = Math.random() * 0.5; } }
+      draw() { ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fillStyle = `rgba(168, 85, 247, ${this.opacity})`; ctx.fill(); }
+    }
+    for (let i = 0; i < 150; i++) particles.push(new Particle());
+    function animate() {
+      ctx.clearRect(0, 0, width, height);
+      particles.forEach(p => { p.update(); p.draw(); });
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x; const dy = particles[i].y - particles[j].y; const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 80) { ctx.beginPath(); ctx.moveTo(particles[i].x, particles[i].y); ctx.lineTo(particles[j].x, particles[j].y); ctx.strokeStyle = `rgba(168, 85, 247, ${0.06 * (1 - dist / 80)})`; ctx.lineWidth = 0.5; ctx.stroke(); }
+        }
+      }
+      requestAnimationFrame(animate);
+    }
+    animate();
+    function copyText(id) {
+      const text = document.getElementById(id).textContent;
+      navigator.clipboard.writeText(text).then(() => { alert('✅ 已复制！'); });
+    }
+  </script>
+</body>
+</html>

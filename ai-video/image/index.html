@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>图片·AI生成素材图 · 张大业AI视频变现</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #000;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      min-height: 100vh; overflow-x: hidden; color: #e2e8f0; line-height: 1.8;
+    }
+    .stars { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
+
+    .navbar {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(0,0,0,0.85); backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(251,146,60,0.2); padding: 0 10px;
+    }
+    .navbar-inner {
+      max-width: 680px; margin: 0 auto;
+      display: flex; align-items: center; height: 50px; gap: 6px;
+      overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none;
+    }
+    .navbar-inner::-webkit-scrollbar { display: none; }
+    .nav-home {
+      flex-shrink: 0; text-decoration: none; color: #fb923c; font-weight: 700;
+      font-size: 15px; padding: 6px 12px; border: 1px solid rgba(251,146,60,0.3);
+      border-radius: 20px; white-space: nowrap; margin-right: 4px;
+    }
+    .nav-home:active { background: rgba(251,146,60,0.15); }
+    .nav-link {
+      flex-shrink: 0; text-decoration: none; color: #94a3b8; font-size: 12px;
+      padding: 6px 10px; border-radius: 14px; white-space: nowrap; border: 1px solid transparent;
+    }
+    .nav-link:hover { color: #fb923c; }
+    .nav-link.active { color: #fb923c; border-color: rgba(251,146,60,0.3); background: rgba(251,146,60,0.08); }
+    .nav-divider { width: 1px; height: 16px; background: rgba(255,255,255,0.1); flex-shrink: 0; margin: 0 2px; }
+
+    .sub-navbar {
+      position: sticky; top: 50px; z-index: 99;
+      background: rgba(0,0,0,0.8); backdrop-filter: blur(15px);
+      border-bottom: 1px solid rgba(251,146,60,0.15); padding: 0 10px;
+    }
+    .sub-navbar-inner {
+      max-width: 680px; margin: 0 auto;
+      display: flex; align-items: center; height: 44px; gap: 4px;
+      overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none;
+    }
+    .sub-navbar-inner::-webkit-scrollbar { display: none; }
+    .sub-nav-link {
+      flex-shrink: 0; text-decoration: none; color: #94a3b8; font-size: 12px;
+      padding: 6px 14px; border-radius: 18px; white-space: nowrap;
+      border: 1px solid rgba(251,146,60,0.2); font-weight: 600; letter-spacing: 0.5px;
+    }
+    .sub-nav-link:hover { color: #fff; border-color: rgba(251,146,60,0.5); background: rgba(251,146,60,0.1); }
+    .sub-nav-link.active { color: #fff; background: linear-gradient(135deg, #f97316, #fb923c); border-color: transparent; }
+
+    .third-navbar {
+      position: sticky; top: 94px; z-index: 98;
+      background: rgba(0,0,0,0.75); backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(251,146,60,0.1); padding: 0 10px;
+    }
+    .third-navbar-inner {
+      max-width: 680px; margin: 0 auto;
+      display: flex; align-items: center; height: 38px; gap: 3px;
+      overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none;
+    }
+    .third-navbar-inner::-webkit-scrollbar { display: none; }
+    .third-nav-link {
+      flex-shrink: 0; text-decoration: none; color: #94a3b8; font-size: 11px;
+      padding: 4px 10px; border-radius: 12px; white-space: nowrap;
+      border: 1px solid rgba(251,146,60,0.15); font-weight: 500;
+    }
+    .third-nav-link:hover { color: #fb923c; border-color: rgba(251,146,60,0.4); background: rgba(251,146,60,0.08); }
+    .third-nav-link.active { color: #fb923c; border-color: rgba(251,146,60,0.4); background: rgba(251,146,60,0.12); }
+
+    .container { max-width: 680px; margin: 0 auto; padding: 20px 15px 60px; position: relative; z-index: 1; }
+    .page-header { text-align: center; padding: 20px 10px 10px; }
+    .page-header .module-icon {
+      font-size: 56px; display: block; margin-bottom: 12px;
+      filter: drop-shadow(0 0 20px rgba(251,146,60,0.5)); animation: float 3s ease-in-out infinite;
+    }
+    @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+    .page-header h1 {
+      font-size: 26px; font-weight: 900;
+      background: linear-gradient(135deg, #fb923c, #f97316, #ef4444);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; letter-spacing: 2px;
+    }
+    .page-header .step-badge {
+      display: inline-block; background: linear-gradient(135deg, #f97316, #fb923c);
+      color: #000; padding: 4px 16px; border-radius: 20px; font-size: 12px; font-weight: 700; letter-spacing: 2px; margin-bottom: 8px;
+    }
+    .page-header .sub { color: #94a3b8; font-size: 14px; margin-top: 8px; }
+    .neon-line {
+      width: 50%; height: 2px; margin: 16px auto 24px;
+      background: linear-gradient(90deg, transparent, #fb923c, #f97316, #fb923c, transparent);
+    }
+
+    .content-card {
+      background: rgba(15,23,42,0.7); border: 1px solid rgba(251,146,60,0.15);
+      border-radius: 20px; padding: 24px 20px; margin-bottom: 16px; backdrop-filter: blur(10px);
+    }
+    .content-card h3 { font-size: 18px; font-weight: 700; color: #fb923c; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+    .content-card h3 .icon { font-size: 22px; }
+    .content-card p { color: #cbd5e1; font-size: 14px; margin-bottom: 8px; }
+    .content-card ul { list-style: none; padding: 0; }
+    .content-card ul li { padding: 6px 0 6px 20px; position: relative; color: #94a3b8; font-size: 14px; }
+    .content-card ul li::before { content: "▸"; position: absolute; left: 0; color: #fb923c; }
+
+    .tool-entry-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 16px 0;
+    }
+    .tool-entry {
+      display: block; text-decoration: none;
+      background: rgba(15,23,42,0.6); border: 1px solid rgba(251,146,60,0.2);
+      border-radius: 16px; padding: 18px 12px; text-align: center; transition: all 0.3s;
+    }
+    .tool-entry:hover {
+      border-color: rgba(251,146,60,0.5); box-shadow: 0 0 15px rgba(251,146,60,0.1); transform: translateY(-2px);
+    }
+    .tool-entry .te-icon { font-size: 32px; margin-bottom: 8px; }
+    .tool-entry .te-name { font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 4px; }
+    .tool-entry .te-desc { font-size: 11px; color: #94a3b8; line-height: 1.4; }
+    .tool-entry .te-tags { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; margin-top: 6px; }
+    .te-tag {
+      display: inline-block; padding: 2px 8px; border-radius: 8px;
+      font-size: 10px; font-weight: 700;
+    }
+    .tag-free { background: rgba(16,185,129,0.2); color: #34d399; }
+    .tag-pay { background: rgba(251,191,36,0.2); color: #fbbf24; }
+    .tag-china { background: rgba(59,130,246,0.2); color: #60a5fa; }
+
+    .compare-table {
+      width: 100%; border-collapse: collapse; font-size: 12px; margin: 12px 0;
+    }
+    .compare-table th {
+      background: rgba(251,146,60,0.2); padding: 10px 8px; text-align: center;
+      color: #fb923c; font-weight: 700; border: 1px solid rgba(251,146,60,0.15);
+    }
+    .compare-table td {
+      padding: 10px 8px; text-align: center; color: #94a3b8;
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    /* ========== 提示词卡片 ========== */
+    .prompt-card {
+      background: rgba(0,0,0,0.5); border: 1px solid rgba(251,146,60,0.3);
+      border-radius: 14px; padding: 16px; margin: 10px 0;
+      position: relative;
+    }
+    .prompt-card .p-label {
+      display: inline-block; background: #fb923c; color: #000;
+      padding: 2px 10px; border-radius: 8px; font-size: 10px; font-weight: 700; margin-bottom: 8px;
+    }
+    .prompt-card .p-text {
+      font-family: "Courier New", monospace; font-size: 12px; color: #fde68a;
+      white-space: pre-wrap; word-break: break-word; line-height: 1.6; margin-bottom: 6px;
+    }
+    .prompt-card .p-note {
+      font-size: 11px; color: #94a3b8; font-style: italic;
+    }
+    .copy-btn {
+      position: absolute; top: 8px; right: 12px;
+      background: rgba(251,146,60,0.3); border: none; color: #fff;
+      padding: 4px 12px; border-radius: 12px; font-size: 11px; cursor: pointer;
+      font-family: -apple-system, sans-serif;
+    }
+    .copy-btn:hover { background: rgba(251,146,60,0.6); }
+
+    .prompt-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 12px 0;
+    }
+    .prompt-tag {
+      display: inline-block; padding: 2px 8px; border-radius: 8px;
+      font-size: 10px; font-weight: 700; margin: 2px;
+    }
+    .pt-scene { background: rgba(59,130,246,0.2); color: #60a5fa; }
+    .pt-character { background: rgba(244,114,182,0.2); color: #f472b6; }
+    .pt-prop { background: rgba(16,185,129,0.2); color: #34d399; }
+    .pt-mood { background: rgba(251,191,36,0.2); color: #fbbf24; }
+    .pt-edit { background: rgba(239,68,68,0.2); color: #f87171; }
+
+    .quote-card {
+      background: linear-gradient(135deg, rgba(251,146,60,0.1), rgba(239,68,68,0.08));
+      border: 1px solid rgba(251,146,60,0.3); border-radius: 18px; padding: 20px;
+      margin: 24px 0; text-align: center; position: relative;
+    }
+    .quote-card .quote-mark { font-size: 48px; color: #fb923c; opacity: 0.5; position: absolute; top: 6px; left: 16px; }
+    .quote-card .quote-text { font-size: 18px; font-weight: 700; color: #fb923c; margin: 10px 0 6px; }
+    .quote-card .quote-author { color: #94a3b8; font-size: 13px; }
+    .cta-box {
+      background: linear-gradient(135deg, rgba(251,146,60,0.3), rgba(239,68,68,0.15));
+      border: 2px solid rgba(251,146,60,0.4); border-radius: 20px; padding: 20px; text-align: center; margin-top: 24px;
+    }
+    .cta-box h3 { font-size: 19px; font-weight: 800; color: #fff; margin-bottom: 6px; }
+    .cta-box p { color: #94a3b8; font-size: 13px; margin-bottom: 16px; }
+    .cta-box .cta-btn {
+      display: inline-block; background: linear-gradient(135deg, #f97316, #fb923c); color: #000;
+      padding: 12px 28px; border-radius: 30px; text-decoration: none; font-weight: 700; font-size: 16px;
+    }
+    .contact-bar {
+      margin-top: 32px; background: rgba(15,23,42,0.9); border: 1px solid rgba(0,240,255,0.2);
+      border-radius: 18px; padding: 18px 20px; text-align: center; backdrop-filter: blur(10px);
+    }
+    .contact-bar .contact-label { color: #94a3b8; font-size: 13px; margin-bottom: 6px; letter-spacing: 1px; }
+    .contact-bar .contact-wx {
+      font-size: 20px; font-weight: 900;
+      background: linear-gradient(135deg, #00f0ff, #fbbf24);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; letter-spacing: 2px;
+    }
+    .contact-bar .contact-hint { color: #64748b; font-size: 11px; margin-top: 6px; }
+    .footer { text-align: center; color: #334155; font-size: 11px; margin-top: 20px; letter-spacing: 1px; }
+    .nav-buttons { display: flex; gap: 10px; margin-top: 24px; }
+    .nav-btn {
+      flex: 1; text-align: center; padding: 12px; border-radius: 14px; text-decoration: none;
+      font-weight: 700; font-size: 14px; border: 1px solid rgba(251,146,60,0.3); color: #fb923c; background: rgba(251,146,60,0.05);
+    }
+    .nav-btn.next { background: linear-gradient(135deg, rgba(251,146,60,0.5), rgba(239,68,68,0.2)); color: #fff; }
+
+    @media (max-width: 400px) {
+      .page-header h1 { font-size: 22px; }
+      .page-header .module-icon { font-size: 44px; }
+      .sub-nav-link { font-size: 11px; padding: 5px 10px; }
+      .sub-navbar-inner { height: 40px; }
+      .third-nav-link { font-size: 10px; padding: 3px 8px; }
+      .third-navbar-inner { height: 34px; }
+      .content-card { padding: 18px 14px; }
+      .tool-entry-grid { gap: 8px; }
+      .tool-entry { padding: 14px 10px; }
+      .compare-table { font-size: 10px; }
+      .prompt-card .p-text { font-size: 10px; }
+    }
+    @media (min-width: 769px) { .content-card { padding: 28px 24px; } }
+  </style>
+</head>
+<body>
+  <canvas class="stars" id="starsCanvas"></canvas>
+
+  <nav class="navbar">
+    <div class="navbar-inner">
+      <a href="../../index.html" class="nav-home">🏠 主页</a>
+      <span class="nav-divider"></span>
+      <a href="../../business-thinking.html" class="nav-link">💰商业思维</a>
+      <a href="../../human-nature.html" class="nav-link">🧠人性弱点</a>
+      <a href="../../algorithm.html" class="nav-link">📐规则算法</a>
+      <a href="../../product-selection.html" class="nav-link">🛒带货选品</a>
+      <a href="../../ai-video.html" class="nav-link active">🤖AI视频</a>
+      <a href="../../video-analysis.html" class="nav-link">📊视频分析</a>
+      <a href="../../trend.html" class="nav-link">📈发展趋势</a>
+      <a href="../../creative.html" class="nav-link">💡商业创意</a>
+    </div>
+  </nav>
+
+  <nav class="sub-navbar">
+    <div class="sub-navbar-inner">
+      <a href="../../ai-video.html" class="sub-nav-link">📋 总览</a>
+      <a href="../text/" class="sub-nav-link">📝 文字</a>
+      <a href="../image/" class="sub-nav-link active">🎨 图片</a>
+      <a href="../video/" class="sub-nav-link">🎬 视频</a>
+      <a href="../audio/" class="sub-nav-link">🔊 声音</a>
+      <a href="../edit/" class="sub-nav-link">✂️ 剪辑</a>
+      <a href="../publish/" class="sub-nav-link">🚀 发布</a>
+    </div>
+  </nav>
+
+  <nav class="third-navbar">
+    <div class="third-navbar-inner">
+      <a href="index.html" class="third-nav-link active">📋 总览</a>
+      <a href="midjourney.html" class="third-nav-link">🎨 Midjourney</a>
+      <a href="stablediffusion.html" class="third-nav-link">🤖 SD</a>
+      <a href="seedream.html" class="third-nav-link">🌱 Seedream</a>
+      <a href="kelin.html" class="third-nav-link">🎬 可灵</a>
+      <a href="jimeng.html" class="third-nav-link">💫 即梦</a>
+      <a href="comfyui.html" class="third-nav-link">⚡ ComfyUI</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="page-header">
+      <span class="module-icon">🎨</span>
+      <span class="step-badge">STEP 2</span>
+      <h1>AI生成图片</h1>
+      <p class="sub">用AI绘画工具批量生成视频素材图 · 含万能提示词库</p>
+    </div>
+    <div class="neon-line"></div>
+
+    <!-- AI图片在视频中的作用 -->
+    <div class="content-card">
+      <h3><span class="icon">🎯</span> AI图片在视频制作中的作用</h3>
+      <p>视频的本质是<strong style="color:#fb923c;">一张张图片连起来</strong>。有了AI绘画，你不需要拍摄、不需要版权图片库，AI可以生成任何你需要的画面。</p>
+      <ul>
+        <li><strong style="color:#fb923c;">视频素材：</strong>生成背景图、场景图、产品展示图</li>
+        <li><strong style="color:#f97316;">封面图：</strong>生成吸引眼球的视频封面，提升点击率</li>
+        <li><strong style="color:#ef4444;">分镜图：</strong>在生成视频前先出分镜效果图确认方向</li>
+      </ul>
+    </div>
+
+    <!-- ==================== 文生图提示词大全 ==================== -->
+    <div class="content-card">
+      <h3><span class="icon">📝</span> 文生图万能提示词库（可直接复制使用）</h3>
+      <p>以下提示词适用于<strong style="color:#fb923c;">Midjourney / SD / Seedream / 可灵 / 即梦</strong>等所有AI绘画工具。</p>
+    </div>
+
+    <!-- 人物定妆照 -->
+    <div class="content-card">
+      <h3><span class="icon">👤</span> 人物定妆照提示词</h3>
+      <span class="prompt-tag pt-character">人物</span>
+      <div class="prompt-card">
+        <span class="p-label">职场女性</span>
+        <button class="copy-btn" onclick="copyText('pp1')">📋 复制</button>
+        <div class="p-text" id="pp1">A young Chinese professional woman in a modern office, wearing a beige blazer, confident smile, natural makeup, soft window lighting, portrait photography, photorealistic, 4K, clean background --ar 3:4</div>
+        <div class="p-note">💡 适用：知识博主形象照、口播视频封面、虚拟人物设定</div>
+      </div>
+      <div class="prompt-card">
+        <span class="p-label">年轻创业者</span>
+        <button class="copy-btn" onclick="copyText('pp2')">📋 复制</button>
+        <div class="p-text" id="pp2">A young male entrepreneur in a casual co-working space, wearing a simple white t-shirt, looking at laptop with focused expression, natural daylight, candid lifestyle photography, photorealistic, 8K --ar 3:4</div>
+        <div class="p-note">💡 适用：创业类账号人设、教学视频讲师形象</div>
+      </div>
+      <div class="prompt-card">
+        <span class="p-label">温馨家庭</span>
+        <button class="copy-btn" onclick="copyText('pp3')">📋 复制</button>
+        <div class="p-text" id="pp3">A happy Chinese family of three in a bright living room, parents and a 5-year-old child playing together, warm sunlight, genuine laughter, lifestyle family photography, photorealistic, 4K --ar 16:9</div>
+        <div class="p-note">💡 适用：家庭教育类视频封面、亲子内容素材</div>
+      </div>
+    </div>
+
+    <!-- 道具定妆照 -->
+    <div class="content-card">
+      <h3><span class="icon">📦</span> 道具/产品定妆照提示词</h3>
+      <span class="prompt-tag pt-prop">道具</span>
+      <div class="prompt-card">
+        <span class="p-label">科技产品</span>
+        <button class="copy-btn" onclick="copyText('pp4')">📋 复制</button>
+        <div class="p-text" id="pp4">A sleek smartwatch floating on a clean white background, screen glowing with blue interface, product photography, commercial lighting, sharp details, minimalist, 4K --ar 1:1</div>
+        <div class="p-note">💡 适用：3C产品带货视频、产品展示封面</div>
+      </div>
+      <div class="prompt-card">
+        <span class="p-label">美妆产品</span>
+        <button class="copy-btn" onclick="copyText('pp5')">📋 复制</button>
+        <div class="p-text" id="pp5">A luxury skincare bottle on a marble surface, surrounded by fresh rose petals, soft golden hour light, elegant product photography, premium beauty brand style, photorealistic, 4K --ar 1:1</div>
+        <div class="p-note">💡 适用：美妆带货视频、小红书封面</div>
+      </div>
+      <div class="prompt-card">
+        <span class="p-label">食品饮品</span>
+        <button class="copy-btn" onclick="copyText('pp6')">📋 复制</button>
+        <div class="p-text" id="pp6">A steaming cup of latte art coffee on a rustic wooden table, morning sunlight from window, cozy cafe atmosphere, food photography, warm tones, photorealistic, 4K --ar 16:9</div>
+        <div class="p-note">💡 适用：美食类视频素材、封面图</div>
+      </div>
+    </div>
+
+    <!-- 场景定妆照 -->
+    <div class="content-card">
+      <h3><span class="icon">🏞️</span> 场景定妆照提示词</h3>
+      <span class="prompt-tag pt-scene">场景</span>
+      <div class="prompt-card">
+        <span class="p-label">现代办公室</span>
+        <button class="copy-btn" onclick="copyText('pp7')">📋 复制</button>
+        <div class="p-text" id="pp7">A modern open-plan office with natural light, minimalist design, green plants, people working on laptops, clean and professional atmosphere, cinematic wide shot, photorealistic, 4K --ar 16:9</div>
+        <div class="p-note">💡 适用：职场类视频背景、教程类视频场景</div>
+      </div>
+      <div class="prompt-card">
+        <span class="p-label">温馨家居</span>
+        <button class="copy-btn" onclick="copyText('pp8')">📋 复制</button>
+        <div class="p-text" id="pp8">A cozy living room with soft beige sofa, warm lighting, bookshelf on the wall, a cat sleeping on the rug, hygge style interior, photorealistic, 4K --ar 16:9</div>
+        <div class="p-note">💡 适用：家居类视频背景、生活方式内容</div>
+      </div>
+      <div class="prompt-card">
+        <span class="p-label">城市夜景</span>
+        <button class="copy-btn" onclick="copyText('pp9')">📋 复制</button>
+        <div class="p-text" id="pp9">A futuristic city skyline at night, neon lights reflecting on wet streets, cyberpunk aesthetic, cinematic wide shot, purple and blue tones, photorealistic, 8K --ar 16:9</div>
+        <div class="p-note">💡 适用：科技类视频背景、开场画面</div>
+      </div>
+    </div>
+
+    <!-- 氛围感提示词 -->
+    <div class="content-card">
+      <h3><span class="icon">✨</span> 氛围感提示词（可叠加到任何画面）</h3>
+      <span class="prompt-tag pt-mood">氛围</span>
+      <p>在已有提示词后面<strong style="color:#fbbf24;">追加以下关键词</strong>，画面立刻提升氛围感：</p>
+      <div class="prompt-card">
+        <span class="p-label">治愈温暖</span>
+        <button class="copy-btn" onclick="copyText('pm1')">📋 复制</button>
+        <div class="p-text" id="pm1">warm golden hour light, soft bokeh background, cozy atmosphere, gentle color palette, healing vibes, dreamy</div>
+      </div>
+      <div class="prompt-card">
+        <span class="p-label">高级冷淡</span>
+        <button class="copy-btn" onclick="copyText('pm2')">📋 复制</button>
+        <div class="p-text" id="pm2">minimalist aesthetic, muted tones, clean composition, sophisticated, luxury feel, studio lighting, high contrast</div>
+      </div>
+      <div class="prompt-card">
+        <span class="p-label">电影感</span>
+        <button class="copy-btn" onclick="copyText('pm3')">📋 复制</button>
+        <div class="p-text" id="pm3">cinematic lighting, anamorphic lens, film grain, dramatic shadows, movie still, wong kar-wai style, moody atmosphere</div>
+      </div>
+      <div class="prompt-card">
+        <span class="p-label">清新自然</span>
+        <button class="copy-btn" onclick="copyText('pm4')">📋 复制</button>
+        <div class="p-text" id="pm4">fresh morning light, pastel colors, airy atmosphere, natural greenery, spring vibes, soft focus, ethereal</div>
+      </div>
+      <div class="prompt-card">
+        <span class="p-label">赛博朋克</span>
+        <button class="copy-btn" onclick="copyText('pm5')">📋 复制</button>
+        <div class="p-text" id="pm5">cyberpunk, neon lights, rain-slicked streets, futuristic city, purple and cyan tones, blade runner style, high tech low life</div>
+      </div>
+      <div class="prompt-card">
+        <span class="p-label">复古胶片</span>
+        <button class="copy-btn" onclick="copyText('pm6')">📋 复制</button>
+        <div class="p-text" id="pm6">vintage film photography, light leak, warm grain, 1980s aesthetic, nostalgic, kodak portra 400 style, retro vibes</div>
+      </div>
+    </div>
+
+    <!-- ==================== 图片编辑修改提示词 ==================== -->
+    <div class="content-card">
+      <h3><span class="icon">✏️</span> 图片编辑与修改提示词</h3>
+      <span class="prompt-tag pt-edit">编辑</span>
+      <p>用于<strong style="color:#f87171;">图生图模式</strong>，上传原图+以下提示词，AI帮你修改图片：</p>
+    </div>
+
+    <div class="content-card">
+      <h3><span class="icon">🔄</span> 图片修改常用指令</h3>
+      <div class="prompt-card">
+        <span class="p-label">更换背景</span>
+        <button class="copy-btn" onclick="copyText('pe1')">📋 复制</button>
+        <div class="p-text" id="pe1">change the background to a modern office with natural lighting, keep the subject unchanged</div>
+        <div class="p-note">💡 上传人物照 → AI保留人物，换成办公室背景</div>
+      </div>
+      <div class="prompt-card">
+        <span class="p-label">更换服装</span>
+        <button class="copy-btn" onclick="copyText('pe2')">📋 复制</button>
+        <div class="p-text" id="pe2">change the outfit to a professional black suit, keep the same pose and face, realistic fabric texture</div>
+        <div class="p-note">💡 适用于给虚拟人物换装、产品图换配色</div>
+      </div>
+      <div class="prompt-card">
+        <span class="p-label">调整光线</span>
+        <button class="copy-btn" onclick="copyText('pe3')">📋 复制</button>
+        <div class="p-text" id="pe3">make the lighting warm and golden, like sunset, add soft shadows, enhance the atmosphere</div>
+        <div class="p-note">💡 把室内冷光照片变成温暖落日感</div>
+      </div>
+      <div class="prompt-card">
+        <span class="p-label">风格转换</span>
+        <button class="copy-btn" onclick="copyText('pe4')">📋 复制</button>
+        <div class="p-text" id="pe4">transform this into anime style, studio ghibli inspired, keep the composition and colors</div>
+        <div class="p-note">💡 把照片转成宫崎骏动画风格</div>
+      </div>
+      <div class="prompt-card">
+        <span class="p-label">面部修复</span>
+        <button class="copy-btn" onclick="copyText('pe5')">📋 复制</button>
+        <div class="p-text" id="pe5">fix the face details, make eyes more expressive, natural skin texture, remove blemishes, enhance facial features</div>
+        <div class="p-note">💡 修复AI生成人物面部细节</div>
+      </div>
+      <div class="prompt-card">
+        <span class="p-label">扩展画面</span>
+        <button class="copy-btn" onclick="copyText('pe6')">📋 复制</button>
+        <div class="p-text" id="pe6">outpainting, extend the image to 16:9 ratio, fill the expanded area with matching background seamlessly</div>
+        <div class="p-note">💡 把方形图扩展成横屏视频素材比例</div>
+      </div>
+    </div>
+
+    <!-- 六大工具对比表 -->
+    <div class="content-card">
+      <h3><span class="icon">📊</span> 六大AI图片工具对比</h3>
+      <div style="overflow-x:auto;">
+        <table class="compare-table">
+          <thead>
+            <tr><th>工具</th><th>价格</th><th>出图质量</th><th>上手难度</th><th>最适合</th></tr>
+          </thead>
+          <tbody>
+            <tr><td style="color:#fff;font-weight:700;">🎨 Midjourney</td><td>付费</td><td>⭐⭐⭐⭐⭐</td><td>⭐⭐</td><td>追求极致画质</td></tr>
+            <tr><td style="color:#fff;font-weight:700;">🤖 SD</td><td>免费</td><td>⭐⭐⭐⭐</td><td>⭐⭐⭐⭐</td><td>需要精准控制</td></tr>
+            <tr><td style="color:#fff;font-weight:700;">🌱 Seedream</td><td>免费</td><td>⭐⭐⭐⭐</td><td>⭐</td><td>新手快速上手</td></tr>
+            <tr><td style="color:#fff;font-weight:700;">🎬 可灵</td><td>免费</td><td>⭐⭐⭐⭐</td><td>⭐</td><td>图片+视频一体</td></tr>
+            <tr><td style="color:#fff;font-weight:700;">💫 即梦</td><td>免费</td><td>⭐⭐⭐</td><td>⭐</td><td>风格多样化</td></tr>
+            <tr><td style="color:#fff;font-weight:700;">⚡ ComfyUI</td><td>免费</td><td>⭐⭐⭐⭐⭐</td><td>⭐⭐⭐⭐⭐</td><td>批量自动化</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 工具入口 -->
+    <div class="content-card">
+      <h3><span class="icon">🧰</span> 点击进入各工具详细教程</h3>
+      <div class="tool-entry-grid">
+        <a href="midjourney.html" class="tool-entry">
+          <div class="te-icon">🎨</div>
+          <div class="te-name">Midjourney</div>
+          <div class="te-desc">最强AI绘画，出图质量天花板</div>
+          <div class="te-tags"><span class="te-tag tag-pay">付费</span></div>
+        </a>
+        <a href="stablediffusion.html" class="tool-entry">
+          <div class="te-icon">🤖</div>
+          <div class="te-name">Stable Diffusion</div>
+          <div class="te-desc">开源免费，可控性最强</div>
+          <div class="te-tags"><span class="te-tag tag-free">免费</span></div>
+        </a>
+        <a href="seedream.html" class="tool-entry">
+          <div class="te-icon">🌱</div>
+          <div class="te-name">Seedream</div>
+          <div class="te-desc">国产AI绘画新秀，免费好用</div>
+          <div class="te-tags"><span class="te-tag tag-free">免费</span></div>
+        </a>
+        <a href="kelin.html" class="tool-entry">
+          <div class="te-icon">🎬</div>
+          <div class="te-name">可灵</div>
+          <div class="te-desc">图片+视频生成一体化</div>
+          <div class="te-tags"><span class="te-tag tag-china">国产</span></div>
+        </a>
+        <a href="jimeng.html" class="tool-entry">
+          <div class="te-icon">💫</div>
+          <div class="te-name">即梦</div>
+          <div class="te-desc">字节出品，风格多样</div>
+          <div class="te-tags"><span class="te-tag tag-china">国产</span></div>
+        </a>
+        <a href="comfyui.html" class="tool-entry">
+          <div class="te-icon">⚡</div>
+          <div class="te-name">ComfyUI</div>
+          <div class="te-desc">节点式工作流，批量自动化</div>
+          <div class="te-tags"><span class="te-tag tag-free">免费</span></div>
+        </a>
+      </div>
+    </div>
+
+    <div class="quote-card">
+      <span class="quote-mark">"</span>
+      <p class="quote-text">一张好图胜过千言万语，AI让你的视频从不缺素材。</p>
+      <p class="quote-author">—— 把想象力变成像素，只需一句提示词</p>
+    </div>
+
+    <div class="cta-box">
+      <h3>🎨 准备开始用AI生成素材图了吗？</h3>
+      <p>选择一个工具，复制提示词，马上出图</p>
+      <a href="../../form.html" class="cta-btn">📋 填写摸底表</a>
+    </div>
+
+    <div class="nav-buttons">
+      <a href="../text/comment.html" class="nav-btn">◀ 上一步：文字</a>
+      <a href="../video/index.html" class="nav-btn next">下一步：AI生成视频 ▶</a>
+    </div>
+
+    <div class="contact-bar">
+      <p class="contact-label">📩 深度带教 · 一对一指导</p>
+      <p class="contact-wx">微信：16500234000</p>
+      <p class="contact-hint">添加备注"AI学习"，优先通过</p>
+    </div>
+    <div class="footer">© 2024 张大业 · AI视频变现 · 微信 16500234000</div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('starsCanvas');
+    const ctx = canvas.getContext('2d');
+    let width, height, particles = [];
+    function resize() { width = window.innerWidth; height = window.innerHeight; canvas.width = width; canvas.height = height; }
+    resize(); window.addEventListener('resize', resize);
+    class Particle {
+      constructor() { this.reset(); }
+      reset() { this.x = Math.random() * width; this.y = Math.random() * height; this.size = Math.random() * 1.5 + 0.5; this.speedX = (Math.random() - 0.5) * 0.3; this.speedY = (Math.random() - 0.5) * 0.3; this.opacity = Math.random() * 0.6 + 0.2; this.fadeSpeed = Math.random() * 0.005 + 0.002; this.fading = Math.random() > 0.5; }
+      update() { this.x += this.speedX; this.y += this.speedY; if (this.fading) { this.opacity -= this.fadeSpeed; if (this.opacity <= 0.1) this.fading = false; } else { this.opacity += this.fadeSpeed; if (this.opacity >= 0.7) this.fading = true; } if (this.x < -10 || this.x > width + 10 || this.y < -10 || this.y > height + 10) { this.reset(); this.opacity = Math.random() * 0.5; } }
+      draw() { ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fillStyle = `rgba(251, 146, 60, ${this.opacity})`; ctx.fill(); }
+    }
+    for (let i = 0; i < 150; i++) particles.push(new Particle());
+    function animate() {
+      ctx.clearRect(0, 0, width, height);
+      particles.forEach(p => { p.update(); p.draw(); });
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x; const dy = particles[i].y - particles[j].y; const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 80) { ctx.beginPath(); ctx.moveTo(particles[i].x, particles[i].y); ctx.lineTo(particles[j].x, particles[j].y); ctx.strokeStyle = `rgba(251, 146, 60, ${0.06 * (1 - dist / 80)})`; ctx.lineWidth = 0.5; ctx.stroke(); }
+        }
+      }
+      requestAnimationFrame(animate);
+    }
+    animate();
+    function copyText(id) {
+      const text = document.getElementById(id).textContent;
+      navigator.clipboard.writeText(text).then(() => { alert('✅ 已复制！'); });
+    }
+  </script>
+</body>
+</html>

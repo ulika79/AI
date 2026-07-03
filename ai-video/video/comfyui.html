@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>ComfyUI · AI视频生成 · 张大业AI视频变现</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #000;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      min-height: 100vh; overflow-x: hidden; color: #e2e8f0; line-height: 1.8;
+    }
+    .stars { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
+
+    .navbar {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(0,0,0,0.85); backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(168,85,247,0.2); padding: 0 10px;
+    }
+    .navbar-inner {
+      max-width: 680px; margin: 0 auto;
+      display: flex; align-items: center; height: 50px; gap: 6px;
+      overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none;
+    }
+    .navbar-inner::-webkit-scrollbar { display: none; }
+    .nav-home {
+      flex-shrink: 0; text-decoration: none; color: #a78bfa; font-weight: 700;
+      font-size: 15px; padding: 6px 12px; border: 1px solid rgba(168,85,247,0.3);
+      border-radius: 20px; white-space: nowrap; margin-right: 4px;
+    }
+    .nav-home:active { background: rgba(168,85,247,0.15); }
+    .nav-link {
+      flex-shrink: 0; text-decoration: none; color: #94a3b8; font-size: 12px;
+      padding: 6px 10px; border-radius: 14px; white-space: nowrap; border: 1px solid transparent;
+    }
+    .nav-link:hover { color: #a78bfa; }
+    .nav-link.active { color: #a78bfa; border-color: rgba(168,85,247,0.3); background: rgba(168,85,247,0.08); }
+    .nav-divider { width: 1px; height: 16px; background: rgba(255,255,255,0.1); flex-shrink: 0; margin: 0 2px; }
+
+    .sub-navbar {
+      position: sticky; top: 50px; z-index: 99;
+      background: rgba(0,0,0,0.8); backdrop-filter: blur(15px);
+      border-bottom: 1px solid rgba(168,85,247,0.15); padding: 0 10px;
+    }
+    .sub-navbar-inner {
+      max-width: 680px; margin: 0 auto;
+      display: flex; align-items: center; height: 44px; gap: 4px;
+      overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none;
+    }
+    .sub-navbar-inner::-webkit-scrollbar { display: none; }
+    .sub-nav-link {
+      flex-shrink: 0; text-decoration: none; color: #94a3b8; font-size: 12px;
+      padding: 6px 14px; border-radius: 18px; white-space: nowrap;
+      border: 1px solid rgba(168,85,247,0.2); font-weight: 600; letter-spacing: 0.5px;
+    }
+    .sub-nav-link:hover { color: #fff; border-color: rgba(168,85,247,0.5); background: rgba(168,85,247,0.1); }
+    .sub-nav-link.active { color: #fff; background: linear-gradient(135deg, #7c3aed, #a78bfa); border-color: transparent; }
+
+    .third-navbar {
+      position: sticky; top: 94px; z-index: 98;
+      background: rgba(0,0,0,0.75); backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(168,85,247,0.1); padding: 0 10px;
+    }
+    .third-navbar-inner {
+      max-width: 680px; margin: 0 auto;
+      display: flex; align-items: center; height: 38px; gap: 3px;
+      overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none;
+    }
+    .third-navbar-inner::-webkit-scrollbar { display: none; }
+    .third-nav-link {
+      flex-shrink: 0; text-decoration: none; color: #94a3b8; font-size: 11px;
+      padding: 4px 10px; border-radius: 12px; white-space: nowrap;
+      border: 1px solid rgba(168,85,247,0.15); font-weight: 500;
+    }
+    .third-nav-link:hover { color: #a78bfa; border-color: rgba(168,85,247,0.4); background: rgba(168,85,247,0.08); }
+    .third-nav-link.active { color: #a78bfa; border-color: rgba(168,85,247,0.4); background: rgba(168,85,247,0.12); }
+
+    .container { max-width: 680px; margin: 0 auto; padding: 20px 15px 60px; position: relative; z-index: 1; }
+    .page-header { text-align: center; padding: 20px 10px 10px; }
+    .page-header .module-icon {
+      font-size: 56px; display: block; margin-bottom: 12px;
+      filter: drop-shadow(0 0 20px rgba(168,85,247,0.5)); animation: float 3s ease-in-out infinite;
+    }
+    @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+    .page-header h1 {
+      font-size: 26px; font-weight: 900;
+      background: linear-gradient(135deg, #a78bfa, #7c3aed, #4f46e5);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; letter-spacing: 2px;
+    }
+    .page-header .step-badge {
+      display: inline-block; background: linear-gradient(135deg, #a78bfa, #7c3aed);
+      color: #fff; padding: 4px 16px; border-radius: 20px; font-size: 12px; font-weight: 700; letter-spacing: 2px; margin-bottom: 8px;
+    }
+    .page-header .sub { color: #94a3b8; font-size: 14px; margin-top: 8px; }
+    .neon-line {
+      width: 50%; height: 2px; margin: 16px auto 24px;
+      background: linear-gradient(90deg, transparent, #a78bfa, #7c3aed, #a78bfa, transparent);
+    }
+
+    .content-card {
+      background: rgba(15,23,42,0.7); border: 1px solid rgba(168,85,247,0.15);
+      border-radius: 20px; padding: 24px 20px; margin-bottom: 16px; backdrop-filter: blur(10px);
+    }
+    .content-card h3 { font-size: 18px; font-weight: 700; color: #a78bfa; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+    .content-card h3 .icon { font-size: 22px; }
+    .content-card p { color: #cbd5e1; font-size: 14px; margin-bottom: 8px; }
+    .content-card ul { list-style: none; padding: 0; }
+    .content-card ul li { padding: 6px 0 6px 20px; position: relative; color: #94a3b8; font-size: 14px; }
+    .content-card ul li::before { content: "▸"; position: absolute; left: 0; color: #a78bfa; }
+
+    .model-compare {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 16px 0;
+    }
+    .model-card {
+      background: rgba(15,23,42,0.6); border: 1px solid rgba(168,85,247,0.2);
+      border-radius: 16px; padding: 20px 14px; text-align: center; transition: all 0.3s;
+    }
+    .model-card:hover { border-color: rgba(168,85,247,0.5); box-shadow: 0 0 20px rgba(168,85,247,0.15); }
+    .model-card .mc-icon { font-size: 34px; margin-bottom: 8px; }
+    .model-card .mc-name { font-size: 18px; font-weight: 900; color: #a78bfa; margin-bottom: 6px; }
+    .model-card .mc-version { font-size: 12px; color: #7c3aed; margin-bottom: 8px; letter-spacing: 1px; }
+    .model-card .mc-desc { font-size: 12px; color: #94a3b8; line-height: 1.6; }
+
+    .workflow-step {
+      display: flex; gap: 12px; align-items: flex-start; margin-bottom: 10px;
+      background: rgba(15,23,42,0.5); border-radius: 14px; padding: 16px;
+      border: 1px solid rgba(168,85,247,0.15);
+    }
+    .workflow-num {
+      width: 36px; height: 36px; background: linear-gradient(135deg, #7c3aed, #a78bfa);
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      font-weight: 900; font-size: 16px; color: #fff; flex-shrink: 0;
+    }
+    .workflow-content h4 { font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 4px; }
+    .workflow-content p { font-size: 13px; color: #94a3b8; margin: 0; }
+
+    .warning-box {
+      background: linear-gradient(135deg, rgba(239,68,68,0.15), rgba(248,113,113,0.1));
+      border: 2px solid rgba(239,68,68,0.5); border-radius: 16px;
+      padding: 20px; margin: 20px 0; text-align: center;
+    }
+    .warning-box .warn-icon { font-size: 40px; margin-bottom: 8px; }
+    .warning-box .warn-title { font-size: 18px; font-weight: 900; color: #f87171; margin-bottom: 8px; }
+    .warning-box .warn-text { font-size: 13px; color: #fca5a5; line-height: 1.8; }
+    .warning-box .warn-red { color: #ef4444; font-weight: 700; }
+
+    .compare-table {
+      width: 100%; border-collapse: collapse; font-size: 12px; margin: 12px 0;
+    }
+    .compare-table th {
+      background: rgba(168,85,247,0.2); padding: 10px 8px; text-align: center;
+      color: #a78bfa; font-weight: 700; border: 1px solid rgba(168,85,247,0.15);
+    }
+    .compare-table td {
+      padding: 10px 8px; text-align: center; color: #94a3b8;
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .quote-card {
+      background: linear-gradient(135deg, rgba(168,85,247,0.1), rgba(124,58,237,0.08));
+      border: 1px solid rgba(168,85,247,0.3); border-radius: 18px; padding: 20px;
+      margin: 24px 0; text-align: center; position: relative;
+    }
+    .quote-card .quote-mark { font-size: 48px; color: #a78bfa; opacity: 0.5; position: absolute; top: 6px; left: 16px; }
+    .quote-card .quote-text { font-size: 18px; font-weight: 700; color: #a78bfa; margin: 10px 0 6px; }
+    .quote-card .quote-author { color: #94a3b8; font-size: 13px; }
+    .cta-box {
+      background: linear-gradient(135deg, rgba(168,85,247,0.3), rgba(124,58,237,0.15));
+      border: 2px solid rgba(168,85,247,0.4); border-radius: 20px; padding: 20px; text-align: center; margin-top: 24px;
+    }
+    .cta-box h3 { font-size: 19px; font-weight: 800; color: #fff; margin-bottom: 6px; }
+    .cta-box p { color: #94a3b8; font-size: 13px; margin-bottom: 16px; }
+    .cta-box .cta-btn {
+      display: inline-block; background: linear-gradient(135deg, #7c3aed, #a78bfa); color: #fff;
+      padding: 12px 28px; border-radius: 30px; text-decoration: none; font-weight: 700; font-size: 16px;
+    }
+    .contact-bar {
+      margin-top: 32px; background: rgba(15,23,42,0.9); border: 1px solid rgba(0,240,255,0.2);
+      border-radius: 18px; padding: 18px 20px; text-align: center; backdrop-filter: blur(10px);
+    }
+    .contact-bar .contact-label { color: #94a3b8; font-size: 13px; margin-bottom: 6px; letter-spacing: 1px; }
+    .contact-bar .contact-wx {
+      font-size: 20px; font-weight: 900;
+      background: linear-gradient(135deg, #00f0ff, #fbbf24);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; letter-spacing: 2px;
+    }
+    .contact-bar .contact-hint { color: #64748b; font-size: 11px; margin-top: 6px; }
+    .footer { text-align: center; color: #334155; font-size: 11px; margin-top: 20px; letter-spacing: 1px; }
+    .nav-buttons { display: flex; gap: 10px; margin-top: 24px; }
+    .nav-btn {
+      flex: 1; text-align: center; padding: 12px; border-radius: 14px; text-decoration: none;
+      font-weight: 700; font-size: 14px; border: 1px solid rgba(168,85,247,0.3); color: #a78bfa; background: rgba(168,85,247,0.05);
+    }
+    .nav-btn.next { background: linear-gradient(135deg, rgba(168,85,247,0.5), rgba(124,58,237,0.2)); color: #fff; }
+
+    @media (max-width: 400px) {
+      .page-header h1 { font-size: 22px; }
+      .page-header .module-icon { font-size: 44px; }
+      .sub-nav-link { font-size: 11px; padding: 5px 10px; }
+      .sub-navbar-inner { height: 40px; }
+      .third-nav-link { font-size: 10px; padding: 3px 8px; }
+      .third-navbar-inner { height: 34px; }
+      .content-card { padding: 18px 14px; }
+      .model-compare { gap: 8px; }
+      .model-card { padding: 16px 10px; }
+      .compare-table { font-size: 10px; }
+      .compare-table th, .compare-table td { padding: 8px 4px; }
+    }
+    @media (min-width: 769px) { .content-card { padding: 28px 24px; } }
+  </style>
+</head>
+<body>
+  <canvas class="stars" id="starsCanvas"></canvas>
+
+  <nav class="navbar">
+    <div class="navbar-inner">
+      <a href="../../../index.html" class="nav-home">🏠 主页</a>
+      <span class="nav-divider"></span>
+      <a href="../../../business-thinking.html" class="nav-link">💰商业思维</a>
+      <a href="../../../human-nature.html" class="nav-link">🧠人性弱点</a>
+      <a href="../../../algorithm.html" class="nav-link">📐规则算法</a>
+      <a href="../../../product-selection.html" class="nav-link">🛒带货选品</a>
+      <a href="../../../ai-video.html" class="nav-link active">🤖AI视频</a>
+      <a href="../../../video-analysis.html" class="nav-link">📊视频分析</a>
+      <a href="../../../trend.html" class="nav-link">📈发展趋势</a>
+      <a href="../../../creative.html" class="nav-link">💡商业创意</a>
+    </div>
+  </nav>
+
+  <nav class="sub-navbar">
+    <div class="sub-navbar-inner">
+      <a href="../../../ai-video.html" class="sub-nav-link">📋 总览</a>
+      <a href="../text/" class="sub-nav-link">📝 文字</a>
+      <a href="../image/" class="sub-nav-link">🎨 图片</a>
+      <a href="../video/" class="sub-nav-link active">🎬 视频</a>
+      <a href="../audio/" class="sub-nav-link">🔊 声音</a>
+      <a href="../edit/" class="sub-nav-link">✂️ 剪辑</a>
+      <a href="../publish/" class="sub-nav-link">🚀 发布</a>
+    </div>
+  </nav>
+
+  <nav class="third-navbar">
+    <div class="third-navbar-inner">
+      <a href="index.html" class="third-nav-link">📋 总览</a>
+      <a href="kelin.html" class="third-nav-link">🎬 可灵</a>
+      <a href="jimeng.html" class="third-nav-link">💫 即梦</a>
+      <a href="runway.html" class="third-nav-link">🎥 Runway</a>
+      <a href="pika.html" class="third-nav-link">🎯 Pika</a>
+      <a href="happyhorse.html" class="third-nav-link">🐴 Happy Horse</a>
+      <a href="comfyui.html" class="third-nav-link active">⚡ ComfyUI</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="page-header">
+      <span class="module-icon">⚡</span>
+      <span class="step-badge">视频 · ComfyUI</span>
+      <h1>ComfyUI</h1>
+      <p class="sub">开源AI工作流引擎 · WAN2.2 + LTX2.3 · 5-30秒视频生成</p>
+    </div>
+    <div class="neon-line"></div>
+
+    <!-- 核心认知 -->
+    <div class="content-card">
+      <h3><span class="icon">🌟</span> 为什么选ComfyUI？</h3>
+      <p>ComfyUI是<strong style="color:#a78bfa;">目前最强大的开源AI工作流引擎</strong>。它不是单一的"视频生成工具"，而是一个可以自由搭建各种AI工作流的<strong style="color:#7c3aed;">可视化节点平台</strong>。从文生图到视频生成，从声音克隆到动作迁移，全都可以在一个界面里完成。</p>
+      <ul>
+        <li><strong style="color:#a78bfa;">完全开源免费：</strong>没有任何费用，不需要订阅</li>
+        <li><strong style="color:#7c3aed;">节点式可视化：</strong>像搭积木一样拖拽节点，搭建自己的AI生产线</li>
+        <li><strong style="color:#4f46e5;">支持所有开源模型：</strong>WAN2.2、LTX2.3、SD全系列、ControlNet等</li>
+        <li><strong style="color:#a78bfa;">工作流可复用：</strong>保存工作流模板，一键加载，重复使用</li>
+        <li><strong style="color:#7c3aed;">批量自动化：</strong>设置好之后可以24小时不间断生产内容</li>
+      </ul>
+    </div>
+
+    <!-- 两大核心开源模型 -->
+    <div class="content-card">
+      <h3><span class="icon">🧠</span> 两大核心开源视频模型</h3>
+      <p>ComfyUI视频生成目前最强的两个开源模型：</p>
+      <div class="model-compare">
+        <div class="model-card">
+          <div class="mc-icon">🌊</div>
+          <div class="mc-name">WAN2.2</div>
+          <div class="mc-version">最新版本</div>
+          <div class="mc-desc">
+            国产开源视频生成模型<br>
+            支持文生视频+图生视频<br>
+            生成质量接近商业闭源模型<br>
+            运动平滑度优秀<br>
+            <strong>最长5-10秒</strong>
+          </div>
+        </div>
+        <div class="model-card">
+          <div class="mc-icon">⚡</div>
+          <div class="mc-name">LTX2.3</div>
+          <div class="mc-version">最新版本</div>
+          <div class="mc-desc">
+            高效视频生成模型<br>
+            生成速度极快<br>
+            支持高分辨率输出<br>
+            显存占用优化好<br>
+            <strong>最长5-30秒</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 本地部署 vs 租用算力 -->
+    <div class="content-card">
+      <h3><span class="icon">💻</span> 本地部署 vs 租用算力服务器</h3>
+      <div style="overflow-x:auto;">
+        <table class="compare-table">
+          <thead>
+            <tr><th>维度</th><th>🖥️ 本地部署</th><th>☁️ 租用算力</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="color:#fff;font-weight:700;">硬件要求</td>
+              <td>NVIDIA显卡12G+显存</td>
+              <td style="color:#34d399;">无需高配电脑</td>
+            </tr>
+            <tr>
+              <td style="color:#fff;font-weight:700;">前期投入</td>
+              <td>显卡成本（几千到上万）</td>
+              <td style="color:#34d399;">按小时付费（几元/时）</td>
+            </tr>
+            <tr>
+              <td style="color:#fff;font-weight:700;">长期成本</td>
+              <td style="color:#34d399;">一次性投入，后续免费</td>
+              <td>长期使用总成本高</td>
+            </tr>
+            <tr>
+              <td style="color:#fff;font-weight:700;">使用限制</td>
+              <td style="color:#34d399;">无限生成，不受限</td>
+              <td>按时长计费，有成本压力</td>
+            </tr>
+            <tr>
+              <td style="color:#fff;font-weight:700;">隐私安全</td>
+              <td style="color:#34d399;">数据完全在本地</td>
+              <td>数据在云端服务器</td>
+            </tr>
+            <tr>
+              <td style="color:#fff;font-weight:700;">适合人群</td>
+              <td>有显卡的创作者</td>
+              <td style="color:#34d399;">笔记本用户/新手体验</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="margin-top:12px;"><strong style="color:#a78bfa;">建议：</strong>新手先用租用算力体验，确定方向后再考虑买显卡本地部署。常用的算力平台：AutoDL、恒源云、矩池云。</p>
+    </div>
+
+    <!-- 优劣分析 -->
+    <div class="content-card">
+      <h3><span class="icon">⚖️</span> ComfyUI的优劣势</h3>
+      <p><strong style="color:#34d399;">✅ 优势：</strong></p>
+      <ul>
+        <li><strong style="color:#34d399;">完全免费开源：</strong>零成本使用，不被任何公司绑定</li>
+        <li><strong style="color:#34d399;">无内容审核限制：</strong>开源模型部署在本地，没有平台审核机制（见下方重要声明）</li>
+        <li><strong style="color:#34d399;">工作流极致灵活：</strong>可以组合出任何你想要的AI生产流程</li>
+        <li><strong style="color:#34d399;">社区生态丰富：</strong>海量插件、节点、工作流模板可以下载使用</li>
+        <li><strong style="color:#34d399;">批量自动化：</strong>设置一次，自动生成几百条视频</li>
+      </ul>
+      <p style="margin-top:12px;"><strong style="color:#ef4444;">❌ 劣势：</strong></p>
+      <ul>
+        <li><strong style="color:#ef4444;">学习曲线极陡：</strong>需要理解节点、参数、模型等概念，新手入门困难</li>
+        <li><strong style="color:#ef4444;">需要高性能硬件：</strong>显卡显存至少12G，最好24G+</li>
+        <li><strong style="color:#ef4444;">需要动手能力：</strong>安装、配置、下载模型、调试工作流都需要技术基础</li>
+        <li><strong style="color:#ef4444;">没有官方支持：</strong>遇到问题只能靠社区和自学</li>
+      </ul>
+    </div>
+
+    <!-- 六大工作流 -->
+    <div class="content-card">
+      <h3><span class="icon">🔄</span> 六大核心工作流详解</h3>
+      <p>以下是ComfyUI中最常用的<strong style="color:#a78bfa;">六种工作流</strong>，理解它们的原理，就能自由组合出任何AI生产流程：</p>
+    </div>
+
+    <!-- 文生图 -->
+    <div class="content-card">
+      <h3><span class="icon">🎨</span> 工作流①：文生图（Text to Image）</h3>
+      <p><strong style="color:#a78bfa;">核心原理：</strong>输入一段文字描述 → AI模型理解语义 → 生成对应画面</p>
+      <div class="workflow-step">
+        <div class="workflow-num">1</div>
+        <div class="workflow-content">
+          <h4>📝 文本编码器（CLIP）</h4>
+          <p>把你输入的文字（提示词）转化成AI能理解的向量数字。正面提示词=你要什么，负面提示词=你不要什么。</p>
+        </div>
+      </div>
+      <div class="workflow-step">
+        <div class="workflow-num">2</div>
+        <div class="workflow-content">
+          <h4>🎲 潜空间初始化</h4>
+          <p>创建一个随机噪声图像（类似电视雪花屏），这是AI创作的"画布"。</p>
+        </div>
+      </div>
+      <div class="workflow-step">
+        <div class="workflow-num">3</div>
+        <div class="workflow-content">
+          <h4>🧠 采样器（Sampler）</h4>
+          <p>核心去噪过程。AI模型根据提示词一步步去除噪声，每一步都让画面更接近你描述的样子。步数(Steps)越多越精细但越慢。</p>
+        </div>
+      </div>
+      <div class="workflow-step">
+        <div class="workflow-num">4</div>
+        <div class="workflow-content">
+          <h4>🖼️ 解码输出（VAE Decode）</h4>
+          <p>把AI内部的潜空间图像转换成肉眼可见的图片，保存到本地。</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 图片编辑 -->
+    <div class="content-card">
+      <h3><span class="icon">✏️</span> 工作流②：图片编辑（Image to Image + Inpaint）</h3>
+      <p><strong style="color:#a78bfa;">核心原理：</strong>上传一张现有图片 → AI在此基础上修改/局部重绘</p>
+      <div class="workflow-step">
+        <div class="workflow-num">1</div>
+        <div class="workflow-content">
+          <h4>📷 加载原图</h4>
+          <p>上传你想修改的图片，AI将这张图作为"基础画布"。</p>
+        </div>
+      </div>
+      <div class="workflow-step">
+        <div class="workflow-num">2</div>
+        <div class="workflow-content">
+          <h4>🖌️ 局部标记（Inpaint Mask）</h4>
+          <p>用画笔标记图片中需要修改的区域，AI只修改标记部分，其他区域保持不变。</p>
+        </div>
+      </div>
+      <div class="workflow-step">
+        <div class="workflow-num">3</div>
+        <div class="workflow-content">
+          <h4>🎨 降噪强度（Denoise）</h4>
+          <p>控制修改程度。低强度=微调细节，高强度=大幅改变画面。</p>
+        </div>
+      </div>
+      <div class="workflow-step">
+        <div class="workflow-num">4</div>
+        <div class="workflow-content">
+          <h4>🖼️ 输出合成</h4>
+          <p>AI将修改部分和原图融合，生成自然过渡的最终图片。</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 图文生视频 -->
+    <div class="content-card">
+      <h3><span class="icon">🎬</span> 工作流③：图文生视频（Text/Image to Video）</h3>
+      <p><strong style="color:#a78bfa;">核心原理：</strong>输入文字/图片 → WAN2.2或LTX2.3模型 → 生成连续动态视频帧</p>
+      <div class="workflow-step">
+        <div class="workflow-num">1</div>
+        <div class="workflow-content">
+          <h4>📝 输入条件</h4>
+          <p>文生视频：输入文字描述。图生视频：上传一张参考图作为首帧画面。</p>
+        </div>
+      </div>
+      <div class="workflow-step">
+        <div class="workflow-num">2</div>
+        <div class="workflow-content">
+          <h4>🎬 视频模型加载</h4>
+          <p>加载WAN2.2或LTX2.3模型。模型决定了生成视频的质量、风格和运动方式。</p>
+        </div>
+      </div>
+      <div class="workflow-step">
+        <div class="workflow-num">3</div>
+        <div class="workflow-content">
+          <h4>⏱️ 时序采样</h4>
+          <p>不同于静态图，视频需要生成连续的多帧画面。AI同时考虑空间（画面内容）和时间（运动连贯性）两个维度。</p>
+        </div>
+      </div>
+      <div class="workflow-step">
+        <div class="workflow-num">4</div>
+        <div class="workflow-content">
+          <h4>🎞️ 帧合成输出</h4>
+          <p>AI将生成的连续帧合成为一个完整的视频文件（MP4），包含帧率和时长信息。</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 声音克隆 -->
+    <div class="content-card">
+      <h3><span class="icon">🎙️</span> 工作流④：声音克隆（Voice Clone + TTS）</h3>
+      <p><strong style="color:#a78bfa;">核心原理：</strong>上传一段音频样本 → AI学习音色特征 → 用这个声音朗读任何文本</p>
+      <div class="workflow-step">
+        <div class="workflow-num">1</div>
+        <div class="workflow-content">
+          <h4>🎵 音频样本上传</h4>
+          <p>上传10-30秒的清晰人声样本。AI分析这个声音的音色、语调、语速特征。</p>
+        </div>
+      </div>
+      <div class="workflow-step">
+        <div class="workflow-num">2</div>
+        <div class="workflow-content">
+          <h4>🧠 声音特征提取</h4>
+          <p>AI提取样本的声学特征向量——这相当于声音的"指纹"，包含了说话人的所有音色信息。</p>
+        </div>
+      </div>
+      <div class="workflow-step">
+        <div class="workflow-num">3</div>
+        <div class="workflow-content">
+          <h4>📝 文本输入</h4>
+          <p>输入你想让这个声音朗读的文字内容。</p>
+        </div>
+      </div>
+      <div class="workflow-step">
+        <div class="workflow-num">4</div>
+        <div class="workflow-content">
+          <h4>🔊 语音合成输出</h4>
+          <p>AI将文本和声音特征结合，生成一段用克隆声音朗读的音频文件。</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 动作迁移 -->
+    <div class="content-card">
+      <h3><span class="icon">💃</span> 工作流⑤：动作迁移（Motion Transfer）</h3>
+      <p><strong style="color:#a78bfa;">核心原理：</strong>提取参考视频中的动作 → 将动作映射到目标人物/角色上</p>
+      <div class="workflow-step">
+        <div class="workflow-num">1</div>
+        <div class="workflow-content">
+          <h4>🎬 参考视频输入</h4>
+          <p>上传一段包含你想复制的动作的参考视频（如一段舞蹈、手势演示）。</p>
+        </div>
+      </div>
+      <div class="workflow-step">
+        <div class="workflow-num">2</div>
+        <div class="workflow-content">
+          <h4>🦴 骨骼/姿态提取</h4>
+          <p>AI逐帧分析参考视频中人物的骨骼关键点（头、肩、肘、腕、髋、膝、踝），形成动作序列数据。</p>
+        </div>
+      </div>
+      <div class="workflow-step">
+        <div class="workflow-num">3</div>
+        <div class="workflow-content">
+          <h4>👤 目标人物加载</h4>
+          <p>上传目标人物/角色的图片或视频，AI将提取的动作序列映射到这个人物上。</p>
+        </div>
+      </div>
+      <div class="workflow-step">
+        <div class="workflow-num">4</div>
+        <div class="workflow-content">
+          <h4>🎞️ 逐帧合成</h4>
+          <p>AI逐帧将目标人物按动作序列生成连贯视频，最终输出目标人物做参考动作的完整视频。</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 对口型 -->
+    <div class="content-card">
+      <h3><span class="icon">👄</span> 工作流⑥：对口型（Lip Sync）</h3>
+      <p><strong style="color:#a78bfa;">核心原理：</strong>输入人物图片+音频 → AI分析音频的发音 → 驱动人物嘴巴匹配发音</p>
+      <div class="workflow-step">
+        <div class="workflow-num">1</div>
+        <div class="workflow-content">
+          <h4>👤 人物图片输入</h4>
+          <p>上传一张清晰的人物正面照片（或AI生成的人物图）。</p>
+        </div>
+      </div>
+      <div class="workflow-step">
+        <div class="workflow-num">2</div>
+        <div class="workflow-content">
+          <h4>🎵 音频分析</h4>
+          <p>AI分析音频中的发音信息，提取每个音素（元音、辅音）对应的口型特征。</p>
+        </div>
+      </div>
+      <div class="workflow-step">
+        <div class="workflow-num">3</div>
+        <div class="workflow-content">
+          <h4>👄 口型映射</h4>
+          <p>AI将每个时间点的发音口型精确映射到人物图片的嘴巴区域，同时保持其他面部区域不变。</p>
+        </div>
+      </div>
+      <div class="workflow-step">
+        <div class="workflow-num">4</div>
+        <div class="workflow-content">
+          <h4>🎞️ 视频合成输出</h4>
+          <p>AI逐帧生成口型变化的连续画面，合成为一个完整的人物说话视频。嘴型和声音完全同步。</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 导演台概念 -->
+    <div class="content-card">
+      <h3><span class="icon">🎬</span> "导演台"——把ComfyUI当成你的AI制片厂</h3>
+      <p>理解了上面六种工作流，你就能理解"<strong style="color:#a78bfa;">导演台</strong>"的概念：</p>
+      <ul>
+        <li><strong style="color:#a78bfa;">文生图</strong> = 选演员/定场景</li>
+        <li><strong style="color:#7c3aed;">图片编辑</strong> = 化妆/修图</li>
+        <li><strong style="color:#4f46e5;">图文生视频</strong> = 开机拍摄</li>
+        <li><strong style="color:#a78bfa;">声音克隆</strong> = 配音演员</li>
+        <li><strong style="color:#7c3aed;">动作迁移</strong> = 动作替身</li>
+        <li><strong style="color:#4f46e5;">对口型</strong> = 后期配音同步</li>
+      </ul>
+      <p style="margin-top:12px;">在ComfyUI里，你就是导演。把这些工作流节点串联起来，就是一条完整的<strong style="color:#a78bfa;">AI视频生产线</strong>。脚本→图片→视频→配音→剪辑→发布，全部可以在一个平台上完成。</p>
+    </div>
+
+    <!-- 插件和节点生态 -->
+    <div class="content-card">
+      <h3><span class="icon">🧩</span> 必装插件和节点推荐</h3>
+      <ul>
+        <li><strong style="color:#a78bfa;">ComfyUI Manager：</strong>插件管理器，一键安装各种节点和模型</li>
+        <li><strong style="color:#7c3aed;">WAN2.2 Nodes：</strong>WAN视频生成模型的专用节点，文生视频+图生视频</li>
+        <li><strong style="color:#4f46e5;">LTX-Video Nodes：</strong>LTX2.3视频模型的专用节点，生成速度极快</li>
+        <li><strong style="color:#a78bfa;">ControlNet：</strong>精准控制画面构图、姿态、深度，做分镜的必备工具</li>
+        <li><strong style="color:#7c3aed;">IP-Adapter：</strong>用参考图控制生成风格，保持系列视频风格统一</li>
+        <li><strong style="color:#4f46e5;">AnimateDiff：</strong>让静态图动起来的经典插件，和视频模型互补</li>
+        <li><strong style="color:#a78bfa;">Efficiency Nodes：</strong>效率工具包，简化工作流，减少节点数量</li>
+      </ul>
+    </div>
+
+    <!-- 关键参数 -->
+    <div class="content-card">
+      <h3><span class="icon">⚙️</span> 关键参数说明</h3>
+      <div style="overflow-x:auto;">
+        <table class="compare-table">
+          <thead>
+            <tr><th>参数</th><th>作用</th><th>建议值</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Steps（步数）</td><td>去噪迭代次数，越高越精细</td><td>视频：20-30 | 图片：25-40</td></tr>
+            <tr><td>CFG Scale</td><td>提示词相关性，越高越听话</td><td>视频：4-7 | 图片：5-9</td></tr>
+            <tr><td>Denoise</td><td>图生视频的修改强度</td><td>轻微修改：0.3-0.5 | 大幅变化：0.7-1.0</td></tr>
+            <tr><td>Frame Count</td><td>视频总帧数</td><td>5秒=120帧(24fps) | 10秒=240帧</td></tr>
+            <tr><td>Resolution</td><td>输出分辨率</td><td>短视频：1024x576 | 高清：1920x1080</td></tr>
+            <tr><td>Seed</td><td>随机种子，控制可复现性</td><td>固定=同一结果 | 随机=每次不同</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ⚠️ 重要声明 -->
+    <div class="warning-box">
+      <div class="warn-icon">⚠️</div>
+      <div class="warn-title">⚖️ 重要声明：开源自由与法律责任</div>
+      <div class="warn-text">
+        ComfyUI及其使用的WAN2.2、LTX2.3等均为<strong style="color:#fff;">开源模型</strong>，本身<strong style="color:#fff;">不设内容审核机制</strong>，技术层面可以做任何事情。<br><br>
+        但作为创作者，你<strong class="warn-red">必须遵守以下法律和道德底线</strong>：<br><br>
+        <strong class="warn-red">🚫 严禁生成色情、淫秽内容</strong><br>
+        <strong class="warn-red">🚫 严禁盗用明星、公众人物、他人的肖像制作AI视频</strong><br>
+        <strong class="warn-red">🚫 严禁用于诈骗、虚假宣传、造谣诽谤等违法行为</strong><br>
+        <strong class="warn-red">🚫 严禁侵犯他人知识产权和隐私权</strong><br><br>
+        技术是工具，如何使用取决于人。<strong style="color:#fff;">请合法合规使用AI技术</strong>，对你自己创作的每一条内容负责。违法使用AI技术将面临<strong class="warn-red">法律制裁</strong>。
+      </div>
+    </div>
+
+    <div class="quote-card">
+      <span class="quote-mark">"</span>
+      <p class="quote-text">ComfyUI不是工具，而是一座AI工厂——你设计生产线，它负责生产。</p>
+      <p class="quote-author">—— 学ComfyUI就是学如何建造自己的AI内容帝国</p>
+    </div>
+
+    <div class="cta-box">
+      <h3>⚡ 准备好搭建你的AI视频工厂了吗？</h3>
+      <p>从下载ComfyUI开始，搭建第一条工作流</p>
+      <a href="../../../form.html" class="cta-btn">📋 填写摸底表</a>
+    </div>
+
+    <div class="nav-buttons">
+      <a href="happyhorse.html" class="nav-btn">◀ 上一工具：Happy Horse</a>
+      <a href="../audio/index.html" class="nav-btn next">下一步：AI配音 ▶</a>
+    </div>
+
+    <div class="contact-bar">
+      <p class="contact-label">📩 深度带教 · 一对一指导</p>
+      <p class="contact-wx">微信：16500234000</p>
+      <p class="contact-hint">添加备注"AI学习"，优先通过</p>
+    </div>
+    <div class="footer">© 2024 张大业 · AI视频变现 · 微信 16500234000</div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('starsCanvas');
+    const ctx = canvas.getContext('2d');
+    let width, height, particles = [];
+    function resize() { width = window.innerWidth; height = window.innerHeight; canvas.width = width; canvas.height = height; }
+    resize(); window.addEventListener('resize', resize);
+    class Particle {
+      constructor() { this.reset(); }
+      reset() { this.x = Math.random() * width; this.y = Math.random() * height; this.size = Math.random() * 1.5 + 0.5; this.speedX = (Math.random() - 0.5) * 0.3; this.speedY = (Math.random() - 0.5) * 0.3; this.opacity = Math.random() * 0.6 + 0.2; this.fadeSpeed = Math.random() * 0.005 + 0.002; this.fading = Math.random() > 0.5; }
+      update() { this.x += this.speedX; this.y += this.speedY; if (this.fading) { this.opacity -= this.fadeSpeed; if (this.opacity <= 0.1) this.fading = false; } else { this.opacity += this.fadeSpeed; if (this.opacity >= 0.7) this.fading = true; } if (this.x < -10 || this.x > width + 10 || this.y < -10 || this.y > height + 10) { this.reset(); this.opacity = Math.random() * 0.5; } }
+      draw() { ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fillStyle = `rgba(168, 85, 247, ${this.opacity})`; ctx.fill(); }
+    }
+    for (let i = 0; i < 150; i++) particles.push(new Particle());
+    function animate() {
+      ctx.clearRect(0, 0, width, height);
+      particles.forEach(p => { p.update(); p.draw(); });
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x; const dy = particles[i].y - particles[j].y; const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 80) { ctx.beginPath(); ctx.moveTo(particles[i].x, particles[i].y); ctx.lineTo(particles[j].x, particles[j].y); ctx.strokeStyle = `rgba(168, 85, 247, ${0.06 * (1 - dist / 80)})`; ctx.lineWidth = 0.5; ctx.stroke(); }
+        }
+      }
+      requestAnimationFrame(animate);
+    }
+    animate();
+  </script>
+</body>
+</html>

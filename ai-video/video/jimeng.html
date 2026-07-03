@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>即梦 · AI视频生成 · 张大业AI视频变现</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #000;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      min-height: 100vh; overflow-x: hidden; color: #e2e8f0; line-height: 1.8;
+    }
+    .stars { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
+
+    .navbar {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(0,0,0,0.85); backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(168,85,247,0.2); padding: 0 10px;
+    }
+    .navbar-inner {
+      max-width: 680px; margin: 0 auto;
+      display: flex; align-items: center; height: 50px; gap: 6px;
+      overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none;
+    }
+    .navbar-inner::-webkit-scrollbar { display: none; }
+    .nav-home {
+      flex-shrink: 0; text-decoration: none; color: #a78bfa; font-weight: 700;
+      font-size: 15px; padding: 6px 12px; border: 1px solid rgba(168,85,247,0.3);
+      border-radius: 20px; white-space: nowrap; margin-right: 4px;
+    }
+    .nav-home:active { background: rgba(168,85,247,0.15); }
+    .nav-link {
+      flex-shrink: 0; text-decoration: none; color: #94a3b8; font-size: 12px;
+      padding: 6px 10px; border-radius: 14px; white-space: nowrap; border: 1px solid transparent;
+    }
+    .nav-link:hover { color: #a78bfa; }
+    .nav-link.active { color: #a78bfa; border-color: rgba(168,85,247,0.3); background: rgba(168,85,247,0.08); }
+    .nav-divider { width: 1px; height: 16px; background: rgba(255,255,255,0.1); flex-shrink: 0; margin: 0 2px; }
+
+    .sub-navbar {
+      position: sticky; top: 50px; z-index: 99;
+      background: rgba(0,0,0,0.8); backdrop-filter: blur(15px);
+      border-bottom: 1px solid rgba(168,85,247,0.15); padding: 0 10px;
+    }
+    .sub-navbar-inner {
+      max-width: 680px; margin: 0 auto;
+      display: flex; align-items: center; height: 44px; gap: 4px;
+      overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none;
+    }
+    .sub-navbar-inner::-webkit-scrollbar { display: none; }
+    .sub-nav-link {
+      flex-shrink: 0; text-decoration: none; color: #94a3b8; font-size: 12px;
+      padding: 6px 14px; border-radius: 18px; white-space: nowrap;
+      border: 1px solid rgba(168,85,247,0.2); font-weight: 600; letter-spacing: 0.5px;
+    }
+    .sub-nav-link:hover { color: #fff; border-color: rgba(168,85,247,0.5); background: rgba(168,85,247,0.1); }
+    .sub-nav-link.active { color: #fff; background: linear-gradient(135deg, #7c3aed, #a78bfa); border-color: transparent; }
+
+    .third-navbar {
+      position: sticky; top: 94px; z-index: 98;
+      background: rgba(0,0,0,0.75); backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(168,85,247,0.1); padding: 0 10px;
+    }
+    .third-navbar-inner {
+      max-width: 680px; margin: 0 auto;
+      display: flex; align-items: center; height: 38px; gap: 3px;
+      overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none;
+    }
+    .third-navbar-inner::-webkit-scrollbar { display: none; }
+    .third-nav-link {
+      flex-shrink: 0; text-decoration: none; color: #94a3b8; font-size: 11px;
+      padding: 4px 10px; border-radius: 12px; white-space: nowrap;
+      border: 1px solid rgba(168,85,247,0.15); font-weight: 500;
+    }
+    .third-nav-link:hover { color: #a78bfa; border-color: rgba(168,85,247,0.4); background: rgba(168,85,247,0.08); }
+    .third-nav-link.active { color: #a78bfa; border-color: rgba(168,85,247,0.4); background: rgba(168,85,247,0.12); }
+
+    .container { max-width: 680px; margin: 0 auto; padding: 20px 15px 60px; position: relative; z-index: 1; }
+    .page-header { text-align: center; padding: 20px 10px 10px; }
+    .page-header .module-icon {
+      font-size: 56px; display: block; margin-bottom: 12px;
+      filter: drop-shadow(0 0 20px rgba(244,114,182,0.5)); animation: float 3s ease-in-out infinite;
+    }
+    @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+    .page-header h1 {
+      font-size: 26px; font-weight: 900;
+      background: linear-gradient(135deg, #f472b6, #c084fc, #a78bfa);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; letter-spacing: 2px;
+    }
+    .page-header .step-badge {
+      display: inline-block; background: linear-gradient(135deg, #f472b6, #c084fc);
+      color: #fff; padding: 4px 16px; border-radius: 20px; font-size: 12px; font-weight: 700; letter-spacing: 2px; margin-bottom: 8px;
+    }
+    .page-header .sub { color: #94a3b8; font-size: 14px; margin-top: 8px; }
+    .neon-line {
+      width: 50%; height: 2px; margin: 16px auto 24px;
+      background: linear-gradient(90deg, transparent, #f472b6, #c084fc, #f472b6, transparent);
+    }
+
+    .content-card {
+      background: rgba(15,23,42,0.7); border: 1px solid rgba(244,114,182,0.15);
+      border-radius: 20px; padding: 24px 20px; margin-bottom: 16px; backdrop-filter: blur(10px);
+    }
+    .content-card h3 { font-size: 18px; font-weight: 700; color: #f472b6; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+    .content-card h3 .icon { font-size: 22px; }
+    .content-card p { color: #cbd5e1; font-size: 14px; margin-bottom: 8px; }
+    .content-card ul { list-style: none; padding: 0; }
+    .content-card ul li { padding: 6px 0 6px 20px; position: relative; color: #94a3b8; font-size: 14px; }
+    .content-card ul li::before { content: "▸"; position: absolute; left: 0; color: #f472b6; }
+
+    .prompt-box {
+      background: rgba(0,0,0,0.5); border: 1px solid rgba(244,114,182,0.3);
+      border-radius: 14px; padding: 16px; margin: 12px 0;
+      font-family: "Courier New", monospace; font-size: 13px; color: #fbcfe8;
+      white-space: pre-wrap; word-break: break-word; line-height: 1.6; position: relative;
+    }
+    .prompt-box .prompt-label {
+      position: absolute; top: -10px; left: 16px;
+      background: #f472b6; color: #fff; font-size: 10px; padding: 2px 10px;
+      border-radius: 10px; font-weight: 700; letter-spacing: 1px; font-family: -apple-system, sans-serif;
+    }
+    .copy-btn {
+      position: absolute; top: 8px; right: 12px;
+      background: rgba(244,114,182,0.3); border: none; color: #fff;
+      padding: 4px 12px; border-radius: 12px; font-size: 11px; cursor: pointer;
+      font-family: -apple-system, sans-serif;
+    }
+    .copy-btn:hover { background: rgba(244,114,182,0.6); }
+
+    .style-grid {
+      display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin: 12px 0;
+    }
+    .style-card {
+      background: rgba(15,23,42,0.6); border: 1px solid rgba(244,114,182,0.2);
+      border-radius: 14px; padding: 14px 10px; text-align: center;
+    }
+    .style-card .st-icon { font-size: 26px; margin-bottom: 4px; }
+    .style-card .st-name { font-size: 12px; font-weight: 700; color: #f472b6; }
+
+    .quote-card {
+      background: linear-gradient(135deg, rgba(244,114,182,0.1), rgba(192,132,252,0.08));
+      border: 1px solid rgba(244,114,182,0.3); border-radius: 18px; padding: 20px;
+      margin: 24px 0; text-align: center; position: relative;
+    }
+    .quote-card .quote-mark { font-size: 48px; color: #f472b6; opacity: 0.5; position: absolute; top: 6px; left: 16px; }
+    .quote-card .quote-text { font-size: 18px; font-weight: 700; color: #f472b6; margin: 10px 0 6px; }
+    .quote-card .quote-author { color: #94a3b8; font-size: 13px; }
+    .cta-box {
+      background: linear-gradient(135deg, rgba(244,114,182,0.3), rgba(192,132,252,0.15));
+      border: 2px solid rgba(244,114,182,0.4); border-radius: 20px; padding: 20px; text-align: center; margin-top: 24px;
+    }
+    .cta-box h3 { font-size: 19px; font-weight: 800; color: #fff; margin-bottom: 6px; }
+    .cta-box p { color: #94a3b8; font-size: 13px; margin-bottom: 16px; }
+    .cta-box .cta-btn {
+      display: inline-block; background: linear-gradient(135deg, #f472b6, #c084fc); color: #fff;
+      padding: 12px 28px; border-radius: 30px; text-decoration: none; font-weight: 700; font-size: 16px;
+    }
+    .contact-bar {
+      margin-top: 32px; background: rgba(15,23,42,0.9); border: 1px solid rgba(0,240,255,0.2);
+      border-radius: 18px; padding: 18px 20px; text-align: center; backdrop-filter: blur(10px);
+    }
+    .contact-bar .contact-label { color: #94a3b8; font-size: 13px; margin-bottom: 6px; letter-spacing: 1px; }
+    .contact-bar .contact-wx {
+      font-size: 20px; font-weight: 900;
+      background: linear-gradient(135deg, #00f0ff, #fbbf24);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; letter-spacing: 2px;
+    }
+    .contact-bar .contact-hint { color: #64748b; font-size: 11px; margin-top: 6px; }
+    .footer { text-align: center; color: #334155; font-size: 11px; margin-top: 20px; letter-spacing: 1px; }
+    .nav-buttons { display: flex; gap: 10px; margin-top: 24px; }
+    .nav-btn {
+      flex: 1; text-align: center; padding: 12px; border-radius: 14px; text-decoration: none;
+      font-weight: 700; font-size: 14px; border: 1px solid rgba(244,114,182,0.3); color: #f472b6; background: rgba(244,114,182,0.05);
+    }
+    .nav-btn.next { background: linear-gradient(135deg, rgba(244,114,182,0.5), rgba(192,132,252,0.2)); color: #fff; }
+
+    @media (max-width: 400px) {
+      .page-header h1 { font-size: 22px; }
+      .page-header .module-icon { font-size: 44px; }
+      .sub-nav-link { font-size: 11px; padding: 5px 10px; }
+      .sub-navbar-inner { height: 40px; }
+      .third-nav-link { font-size: 10px; padding: 3px 8px; }
+      .third-navbar-inner { height: 34px; }
+      .content-card { padding: 18px 14px; }
+      .style-grid { gap: 6px; }
+      .style-card { padding: 10px 6px; }
+    }
+    @media (min-width: 769px) { .content-card { padding: 28px 24px; } }
+  </style>
+</head>
+<body>
+  <canvas class="stars" id="starsCanvas"></canvas>
+
+  <nav class="navbar">
+    <div class="navbar-inner">
+      <a href="../../../index.html" class="nav-home">🏠 主页</a>
+      <span class="nav-divider"></span>
+      <a href="../../../business-thinking.html" class="nav-link">💰商业思维</a>
+      <a href="../../../human-nature.html" class="nav-link">🧠人性弱点</a>
+      <a href="../../../algorithm.html" class="nav-link">📐规则算法</a>
+      <a href="../../../product-selection.html" class="nav-link">🛒带货选品</a>
+      <a href="../../../ai-video.html" class="nav-link active">🤖AI视频</a>
+      <a href="../../../video-analysis.html" class="nav-link">📊视频分析</a>
+      <a href="../../../trend.html" class="nav-link">📈发展趋势</a>
+      <a href="../../../creative.html" class="nav-link">💡商业创意</a>
+    </div>
+  </nav>
+
+  <nav class="sub-navbar">
+    <div class="sub-navbar-inner">
+      <a href="../../../ai-video.html" class="sub-nav-link">📋 总览</a>
+      <a href="../text/" class="sub-nav-link">📝 文字</a>
+      <a href="../image/" class="sub-nav-link">🎨 图片</a>
+      <a href="../video/" class="sub-nav-link active">🎬 视频</a>
+      <a href="../audio/" class="sub-nav-link">🔊 声音</a>
+      <a href="../edit/" class="sub-nav-link">✂️ 剪辑</a>
+      <a href="../publish/" class="sub-nav-link">🚀 发布</a>
+    </div>
+  </nav>
+
+  <nav class="third-navbar">
+    <div class="third-navbar-inner">
+      <a href="index.html" class="third-nav-link">📋 总览</a>
+      <a href="kelin.html" class="third-nav-link">🎬 可灵</a>
+      <a href="jimeng.html" class="third-nav-link active">💫 即梦</a>
+      <a href="runway.html" class="third-nav-link">🎥 Runway</a>
+      <a href="pika.html" class="third-nav-link">🎯 Pika</a>
+      <a href="happyhorse.html" class="third-nav-link">🐴 Happy Horse</a>
+      <a href="comfyui.html" class="third-nav-link">⚡ ComfyUI</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="page-header">
+      <span class="module-icon">💫</span>
+      <span class="step-badge">视频 · 即梦</span>
+      <h1>即梦</h1>
+      <p class="sub">字节跳动出品，风格化视频生成，最长15秒</p>
+    </div>
+    <div class="neon-line"></div>
+
+    <div class="content-card">
+      <h3><span class="icon">🌟</span> 为什么选即梦？</h3>
+      <p>即梦是<strong style="color:#f472b6;">字节跳动旗下的AI内容平台</strong>，和可灵不同，即梦更侧重风格化和创意表达。如果你的视频需要独特的视觉风格，即梦是最佳选择。</p>
+      <ul>
+        <li><strong style="color:#f472b6;">风格化突出：</strong>支持几十种艺术风格，每条视频都可以有不同的视觉特色</li>
+        <li><strong style="color:#c084fc;">最长15秒：</strong>和可灵一样支持较长视频，足够做完整片段</li>
+        <li><strong style="color:#a78bfa;">图生视频+文生视频：</strong>两种模式都支持</li>
+        <li><strong style="color:#f472b6;">与豆包生态打通：</strong>和Seedream同属字节系，图片素材可直接流转</li>
+      </ul>
+    </div>
+
+    <div class="content-card">
+      <h3><span class="icon">🎨</span> 即梦支持的视频风格</h3>
+      <div class="style-grid">
+        <div class="style-card"><div class="st-icon">📷</div><div class="st-name">写实风</div></div>
+        <div class="style-card"><div class="st-icon">🎨</div><div class="st-name">油画风</div></div>
+        <div class="style-card"><div class="st-icon">✏️</div><div class="st-name">动漫风</div></div>
+        <div class="style-card"><div class="st-icon">🏮</div><div class="st-name">中国风</div></div>
+        <div class="style-card"><div class="st-icon">🌆</div><div class="st-name">赛博朋克</div></div>
+        <div class="style-card"><div class="st-icon">🎬</div><div class="st-name">3D渲染</div></div>
+        <div class="style-card"><div class="st-icon">🖼️</div><div class="st-name">水彩风</div></div>
+        <div class="style-card"><div class="st-icon">📽️</div><div class="st-name">复古胶片</div></div>
+        <div class="style-card"><div class="st-icon">✨</div><div class="st-name">梦幻唯美</div></div>
+      </div>
+    </div>
+
+    <div class="content-card">
+      <h3><span class="icon">🚀</span> 快速上手</h3>
+      <ul>
+        <li><strong style="color:#f472b6;">① 访问官网：</strong>浏览器打开即梦官网，抖音账号直接登录</li>
+        <li><strong style="color:#c084fc;">② 选择"视频生成"：</strong>进入创作页面，切换到视频模式</li>
+        <li><strong style="color:#a78bfa;">③ 选择风格：</strong>从几十种风格中选择你想要的视觉效果</li>
+        <li><strong style="color:#f472b6;">④ 上传图片或输入描述：</strong>图生视频或文生视频任选</li>
+        <li><strong style="color:#c084fc;">⑤ 设置时长和参数：</strong>选择生成时长，调整风格强度</li>
+        <li><strong style="color:#a78bfa;">⑥ 生成下载：</strong>等待生成完成，下载视频素材</li>
+      </ul>
+    </div>
+
+    <div class="content-card">
+      <h3><span class="icon">💡</span> 风格化视频提示词示例</h3>
+
+      <div class="prompt-box">
+        <span class="prompt-label">赛博朋克风格</span>
+        <button class="copy-btn" onclick="copyText('p1')">📋 复制</button>
+        <span id="p1">画面描述：一个未来城市夜景，霓虹灯闪烁，雨后的街道反射着彩色灯光，行人撑着透明雨伞走过
+风格：赛博朋克
+时长：8秒
+运镜：缓慢平移
+色调：蓝紫霓虹调</span>
+      </div>
+
+      <div class="prompt-box" style="margin-top:12px;">
+        <span class="prompt-label">国风视频</span>
+        <button class="copy-btn" onclick="copyText('p2')">📋 复制</button>
+        <span id="p2">画面描述：中国山水画风格，云雾在山间飘动，松树在风中轻轻摇曳，一只仙鹤飞过瀑布
+风格：中国水墨风
+时长：10秒
+运镜：缓慢推近
+色调：水墨黑白</span>
+      </div>
+
+      <div class="prompt-box" style="margin-top:12px;">
+        <span class="prompt-label">治愈系视频</span>
+        <button class="copy-btn" onclick="copyText('p3')">📋 复制</button>
+        <span id="p3">画面描述：宫崎骏动画风格，一片草原上小房子冒着炊烟，风车慢慢转动，天空飘着大朵白云
+风格：动漫治愈风
+时长：8秒
+运镜：固定机位
+色调：温暖柔和</span>
+      </div>
+    </div>
+
+    <div class="content-card">
+      <h3><span class="icon">💰</span> 费用说明</h3>
+      <p>即梦目前为<strong style="color:#fbbf24;">付费服务</strong>，价格和可灵相近。建议：</p>
+      <ul>
+        <li><strong style="color:#f472b6;">新用户福利：</strong>通常有免费体验额度，先试效果</li>
+        <li><strong style="color:#c084fc;">按需选择：</strong>需要风格化内容时用即梦，日常素材用免费工具</li>
+        <li><strong style="color:#a78bfa;">与可灵互补：</strong>可灵做写实视频，即梦做风格化视频，两工具搭配使用</li>
+      </ul>
+    </div>
+
+    <div class="quote-card">
+      <span class="quote-mark">"</span>
+      <p class="quote-text">即梦让每种风格都变成可能——你的视频不需要千篇一律，找到属于自己的视觉语言。</p>
+      <p class="quote-author">—— 风格即品牌，风格即流量</p>
+    </div>
+
+    <div class="cta-box">
+      <h3>💫 准备用即梦生成风格化视频了吗？</h3>
+      <p>去官网体验一下不同风格的视频效果</p>
+      <a href="../../../form.html" class="cta-btn">📋 填写摸底表</a>
+    </div>
+
+    <div class="nav-buttons">
+      <a href="kelin.html" class="nav-btn">◀ 上一工具：可灵</a>
+      <a href="runway.html" class="nav-btn next">下一工具：Runway ▶</a>
+    </div>
+
+    <div class="contact-bar">
+      <p class="contact-label">📩 深度带教 · 一对一指导</p>
+      <p class="contact-wx">微信：16500234000</p>
+      <p class="contact-hint">添加备注"AI学习"，优先通过</p>
+    </div>
+    <div class="footer">© 2024 张大业 · AI视频变现 · 微信 16500234000</div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('starsCanvas');
+    const ctx = canvas.getContext('2d');
+    let width, height, particles = [];
+    function resize() { width = window.innerWidth; height = window.innerHeight; canvas.width = width; canvas.height = height; }
+    resize(); window.addEventListener('resize', resize);
+    class Particle {
+      constructor() { this.reset(); }
+      reset() { this.x = Math.random() * width; this.y = Math.random() * height; this.size = Math.random() * 1.5 + 0.5; this.speedX = (Math.random() - 0.5) * 0.3; this.speedY = (Math.random() - 0.5) * 0.3; this.opacity = Math.random() * 0.6 + 0.2; this.fadeSpeed = Math.random() * 0.005 + 0.002; this.fading = Math.random() > 0.5; }
+      update() { this.x += this.speedX; this.y += this.speedY; if (this.fading) { this.opacity -= this.fadeSpeed; if (this.opacity <= 0.1) this.fading = false; } else { this.opacity += this.fadeSpeed; if (this.opacity >= 0.7) this.fading = true; } if (this.x < -10 || this.x > width + 10 || this.y < -10 || this.y > height + 10) { this.reset(); this.opacity = Math.random() * 0.5; } }
+      draw() { ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fillStyle = `rgba(244, 114, 182, ${this.opacity})`; ctx.fill(); }
+    }
+    for (let i = 0; i < 150; i++) particles.push(new Particle());
+    function animate() {
+      ctx.clearRect(0, 0, width, height);
+      particles.forEach(p => { p.update(); p.draw(); });
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x; const dy = particles[i].y - particles[j].y; const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 80) { ctx.beginPath(); ctx.moveTo(particles[i].x, particles[i].y); ctx.lineTo(particles[j].x, particles[j].y); ctx.strokeStyle = `rgba(244, 114, 182, ${0.06 * (1 - dist / 80)})`; ctx.lineWidth = 0.5; ctx.stroke(); }
+        }
+      }
+      requestAnimationFrame(animate);
+    }
+    animate();
+    function copyText(id) {
+      const text = document.getElementById(id).textContent;
+      navigator.clipboard.writeText(text).then(() => { alert('✅ 已复制！'); });
+    }
+  </script>
+</body>
+</html>

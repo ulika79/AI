@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>Udio · AI声音 · 张大业AI视频变现</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #000;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      min-height: 100vh; overflow-x: hidden; color: #e2e8f0; line-height: 1.8;
+    }
+    .stars { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
+
+    .navbar {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(0,0,0,0.85); backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(6,182,212,0.2); padding: 0 10px;
+    }
+    .navbar-inner {
+      max-width: 680px; margin: 0 auto;
+      display: flex; align-items: center; height: 50px; gap: 6px;
+      overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none;
+    }
+    .navbar-inner::-webkit-scrollbar { display: none; }
+    .nav-home {
+      flex-shrink: 0; text-decoration: none; color: #06b6d4; font-weight: 700;
+      font-size: 15px; padding: 6px 12px; border: 1px solid rgba(6,182,212,0.3);
+      border-radius: 20px; white-space: nowrap; margin-right: 4px;
+    }
+    .nav-home:active { background: rgba(6,182,212,0.15); }
+    .nav-link {
+      flex-shrink: 0; text-decoration: none; color: #94a3b8; font-size: 12px;
+      padding: 6px 10px; border-radius: 14px; white-space: nowrap; border: 1px solid transparent;
+    }
+    .nav-link:hover { color: #06b6d4; }
+    .nav-link.active { color: #06b6d4; border-color: rgba(6,182,212,0.3); background: rgba(6,182,212,0.08); }
+    .nav-divider { width: 1px; height: 16px; background: rgba(255,255,255,0.1); flex-shrink: 0; margin: 0 2px; }
+
+    .sub-navbar {
+      position: sticky; top: 50px; z-index: 99;
+      background: rgba(0,0,0,0.8); backdrop-filter: blur(15px);
+      border-bottom: 1px solid rgba(6,182,212,0.15); padding: 0 10px;
+    }
+    .sub-navbar-inner {
+      max-width: 680px; margin: 0 auto;
+      display: flex; align-items: center; height: 44px; gap: 4px;
+      overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none;
+    }
+    .sub-navbar-inner::-webkit-scrollbar { display: none; }
+    .sub-nav-link {
+      flex-shrink: 0; text-decoration: none; color: #94a3b8; font-size: 12px;
+      padding: 6px 14px; border-radius: 18px; white-space: nowrap;
+      border: 1px solid rgba(6,182,212,0.2); font-weight: 600; letter-spacing: 0.5px;
+    }
+    .sub-nav-link:hover { color: #fff; border-color: rgba(6,182,212,0.5); background: rgba(6,182,212,0.1); }
+    .sub-nav-link.active { color: #fff; background: linear-gradient(135deg, #0891b2, #06b6d4); border-color: transparent; }
+
+    .third-navbar {
+      position: sticky; top: 94px; z-index: 98;
+      background: rgba(0,0,0,0.75); backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(6,182,212,0.1); padding: 0 10px;
+    }
+    .third-navbar-inner {
+      max-width: 680px; margin: 0 auto;
+      display: flex; align-items: center; height: 38px; gap: 3px;
+      overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none;
+    }
+    .third-navbar-inner::-webkit-scrollbar { display: none; }
+    .third-nav-link {
+      flex-shrink: 0; text-decoration: none; color: #94a3b8; font-size: 11px;
+      padding: 4px 10px; border-radius: 12px; white-space: nowrap;
+      border: 1px solid rgba(6,182,212,0.15); font-weight: 500;
+    }
+    .third-nav-link:hover { color: #06b6d4; border-color: rgba(6,182,212,0.4); background: rgba(6,182,212,0.08); }
+    .third-nav-link.active { color: #06b6d4; border-color: rgba(6,182,212,0.4); background: rgba(6,182,212,0.12); }
+
+    .container { max-width: 680px; margin: 0 auto; padding: 20px 15px 60px; position: relative; z-index: 1; }
+    .page-header { text-align: center; padding: 20px 10px 10px; }
+    .page-header .module-icon {
+      font-size: 56px; display: block; margin-bottom: 12px;
+      filter: drop-shadow(0 0 20px rgba(16,185,129,0.5)); animation: float 3s ease-in-out infinite;
+    }
+    @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+    .page-header h1 {
+      font-size: 26px; font-weight: 900;
+      background: linear-gradient(135deg, #10b981, #34d399, #6ee7b7);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; letter-spacing: 2px;
+    }
+    .page-header .step-badge {
+      display: inline-block; background: linear-gradient(135deg, #10b981, #059669);
+      color: #fff; padding: 4px 16px; border-radius: 20px; font-size: 12px; font-weight: 700; letter-spacing: 2px; margin-bottom: 8px;
+    }
+    .page-header .sub { color: #94a3b8; font-size: 14px; margin-top: 8px; }
+    .neon-line {
+      width: 50%; height: 2px; margin: 16px auto 24px;
+      background: linear-gradient(90deg, transparent, #10b981, #34d399, #10b981, transparent);
+    }
+
+    .content-card {
+      background: rgba(15,23,42,0.7); border: 1px solid rgba(16,185,129,0.15);
+      border-radius: 20px; padding: 24px 20px; margin-bottom: 16px; backdrop-filter: blur(10px);
+    }
+    .content-card h3 { font-size: 18px; font-weight: 700; color: #34d399; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+    .content-card h3 .icon { font-size: 22px; }
+    .content-card p { color: #cbd5e1; font-size: 14px; margin-bottom: 8px; }
+    .content-card ul { list-style: none; padding: 0; }
+    .content-card ul li { padding: 6px 0 6px 20px; position: relative; color: #94a3b8; font-size: 14px; }
+    .content-card ul li::before { content: "▸"; position: absolute; left: 0; color: #10b981; }
+
+    .feature-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 16px 0;
+    }
+    .feature-card {
+      background: rgba(15,23,42,0.6); border: 1px solid rgba(16,185,129,0.2);
+      border-radius: 14px; padding: 16px 12px; text-align: center; transition: all 0.3s;
+    }
+    .feature-card:hover { border-color: rgba(16,185,129,0.5); box-shadow: 0 0 15px rgba(16,185,129,0.1); }
+    .feature-card .fc-icon { font-size: 28px; margin-bottom: 6px; }
+    .feature-card .fc-name { font-size: 14px; font-weight: 700; color: #34d399; margin-bottom: 4px; }
+    .feature-card .fc-desc { font-size: 11px; color: #94a3b8; line-height: 1.4; }
+
+    .compare-table {
+      width: 100%; border-collapse: collapse; font-size: 12px; margin: 12px 0;
+    }
+    .compare-table th {
+      background: rgba(16,185,129,0.2); padding: 10px 8px; text-align: center;
+      color: #34d399; font-weight: 700; border: 1px solid rgba(16,185,129,0.15);
+    }
+    .compare-table td {
+      padding: 10px 8px; text-align: center; color: #94a3b8;
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .prompt-box {
+      background: rgba(0,0,0,0.5); border: 1px solid rgba(16,185,129,0.3);
+      border-radius: 14px; padding: 16px; margin: 12px 0;
+      font-family: "Courier New", monospace; font-size: 13px; color: #6ee7b7;
+      white-space: pre-wrap; word-break: break-word; line-height: 1.6; position: relative;
+    }
+    .prompt-box .prompt-label {
+      position: absolute; top: -10px; left: 16px;
+      background: #10b981; color: #fff; font-size: 10px; padding: 2px 10px;
+      border-radius: 10px; font-weight: 700; letter-spacing: 1px; font-family: -apple-system, sans-serif;
+    }
+    .copy-btn {
+      position: absolute; top: 8px; right: 12px;
+      background: rgba(16,185,129,0.3); border: none; color: #fff;
+      padding: 4px 12px; border-radius: 12px; font-size: 11px; cursor: pointer;
+      font-family: -apple-system, sans-serif;
+    }
+    .copy-btn:hover { background: rgba(16,185,129,0.6); }
+
+    .quote-card {
+      background: linear-gradient(135deg, rgba(16,185,129,0.1), rgba(52,211,153,0.08));
+      border: 1px solid rgba(16,185,129,0.3); border-radius: 18px; padding: 20px;
+      margin: 24px 0; text-align: center; position: relative;
+    }
+    .quote-card .quote-mark { font-size: 48px; color: #34d399; opacity: 0.5; position: absolute; top: 6px; left: 16px; }
+    .quote-card .quote-text { font-size: 18px; font-weight: 700; color: #34d399; margin: 10px 0 6px; }
+    .quote-card .quote-author { color: #94a3b8; font-size: 13px; }
+    .cta-box {
+      background: linear-gradient(135deg, rgba(16,185,129,0.3), rgba(5,150,105,0.15));
+      border: 2px solid rgba(16,185,129,0.4); border-radius: 20px; padding: 20px; text-align: center; margin-top: 24px;
+    }
+    .cta-box h3 { font-size: 19px; font-weight: 800; color: #fff; margin-bottom: 6px; }
+    .cta-box p { color: #94a3b8; font-size: 13px; margin-bottom: 16px; }
+    .cta-box .cta-btn {
+      display: inline-block; background: linear-gradient(135deg, #10b981, #059669); color: #fff;
+      padding: 12px 28px; border-radius: 30px; text-decoration: none; font-weight: 700; font-size: 16px;
+    }
+    .contact-bar {
+      margin-top: 32px; background: rgba(15,23,42,0.9); border: 1px solid rgba(0,240,255,0.2);
+      border-radius: 18px; padding: 18px 20px; text-align: center; backdrop-filter: blur(10px);
+    }
+    .contact-bar .contact-label { color: #94a3b8; font-size: 13px; margin-bottom: 6px; letter-spacing: 1px; }
+    .contact-bar .contact-wx {
+      font-size: 20px; font-weight: 900;
+      background: linear-gradient(135deg, #00f0ff, #fbbf24);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; letter-spacing: 2px;
+    }
+    .contact-bar .contact-hint { color: #64748b; font-size: 11px; margin-top: 6px; }
+    .footer { text-align: center; color: #334155; font-size: 11px; margin-top: 20px; letter-spacing: 1px; }
+    .nav-buttons { display: flex; gap: 10px; margin-top: 24px; }
+    .nav-btn {
+      flex: 1; text-align: center; padding: 12px; border-radius: 14px; text-decoration: none;
+      font-weight: 700; font-size: 14px; border: 1px solid rgba(16,185,129,0.3); color: #34d399; background: rgba(16,185,129,0.05);
+    }
+    .nav-btn.next { background: linear-gradient(135deg, rgba(16,185,129,0.5), rgba(5,150,105,0.2)); color: #fff; }
+
+    @media (max-width: 400px) {
+      .page-header h1 { font-size: 22px; }
+      .page-header .module-icon { font-size: 44px; }
+      .sub-nav-link { font-size: 11px; padding: 5px 10px; }
+      .sub-navbar-inner { height: 40px; }
+      .third-nav-link { font-size: 10px; padding: 3px 8px; }
+      .third-navbar-inner { height: 34px; }
+      .content-card { padding: 18px 14px; }
+      .feature-grid { gap: 8px; }
+      .feature-card { padding: 12px 8px; }
+      .compare-table { font-size: 10px; }
+    }
+    @media (min-width: 769px) { .content-card { padding: 28px 24px; } }
+  </style>
+</head>
+<body>
+  <canvas class="stars" id="starsCanvas"></canvas>
+
+  <nav class="navbar">
+    <div class="navbar-inner">
+      <a href="../../index.html" class="nav-home">🏠 主页</a>
+      <span class="nav-divider"></span>
+      <a href="../../business-thinking.html" class="nav-link">💰商业思维</a>
+      <a href="../../human-nature.html" class="nav-link">🧠人性弱点</a>
+      <a href="../../algorithm.html" class="nav-link">📐规则算法</a>
+      <a href="../../product-selection.html" class="nav-link">🛒带货选品</a>
+      <a href="../../ai-video.html" class="nav-link active">🤖AI视频</a>
+      <a href="../../video-analysis.html" class="nav-link">📊视频分析</a>
+      <a href="../../trend.html" class="nav-link">📈发展趋势</a>
+      <a href="../../creative.html" class="nav-link">💡商业创意</a>
+    </div>
+  </nav>
+
+  <nav class="sub-navbar">
+    <div class="sub-navbar-inner">
+      <a href="../../ai-video.html" class="sub-nav-link">📋 总览</a>
+      <a href="../text/" class="sub-nav-link">📝 文字</a>
+      <a href="../image/" class="sub-nav-link">🎨 图片</a>
+      <a href="../video/" class="sub-nav-link">🎬 视频</a>
+      <a href="../audio/" class="sub-nav-link active">🔊 声音</a>
+      <a href="../edit/" class="sub-nav-link">✂️ 剪辑</a>
+      <a href="../publish/" class="sub-nav-link">🚀 发布</a>
+    </div>
+  </nav>
+
+  <nav class="third-navbar">
+    <div class="third-navbar-inner">
+      <a href="index.html" class="third-nav-link">📋 总览</a>
+      <a href="jianyinai.html" class="third-nav-link">🎙️ 剪映AI</a>
+      <a href="elevenlabs.html" class="third-nav-link">🗣️ ElevenLabs</a>
+      <a href="moyin.html" class="third-nav-link">🎤 魔音工坊</a>
+      <a href="suno.html" class="third-nav-link">🎵 Suno</a>
+      <a href="udio.html" class="third-nav-link active">🎶 Udio</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="page-header">
+      <span class="module-icon">🎶</span>
+      <span class="step-badge">声音 · Udio</span>
+      <h1>Udio AI音乐</h1>
+      <p class="sub">高品质AI音乐生成器，音质出色，细节丰富</p>
+    </div>
+    <div class="neon-line"></div>
+
+    <div class="content-card">
+      <h3><span class="icon">🌟</span> 为什么选Udio？</h3>
+      <p>Udio是<strong style="color:#34d399;">与Suno齐名的AI音乐生成平台</strong>，由前Google DeepMind工程师创建。如果说Suno是"大众爆款机"，Udio就是"品质工作室"——音质更细腻，细节更丰富。</p>
+      <ul>
+        <li><strong style="color:#34d399;">音质极佳：</strong>音频细节丰富，乐器分离度高，接近专业录音室品质</li>
+        <li><strong style="color:#10b981;">人声真实：</strong>AI演唱的人声更加自然，呼吸感和情感表达更好</li>
+        <li><strong style="color:#6ee7b7;">创作灵活：</strong>支持逐段创作，可以精细控制歌曲的每一个部分</li>
+        <li><strong style="color:#34d399;">风格多元：</strong>支持流行、电子、爵士、古典、世界音乐等</li>
+      </ul>
+    </div>
+
+    <div class="content-card">
+      <h3><span class="icon">🎯</span> 核心功能</h3>
+      <div class="feature-grid">
+        <div class="feature-card">
+          <div class="fc-icon">🎵</div>
+          <div class="fc-name">文本生成音乐</div>
+          <div class="fc-desc">输入描述词，AI生成原创音乐+人声</div>
+        </div>
+        <div class="feature-card">
+          <div class="fc-icon">📝</div>
+          <div class="fc-name">自定义歌词</div>
+          <div class="fc-desc">自己写歌词，AI配上旋律和编曲</div>
+        </div>
+        <div class="feature-card">
+          <div class="fc-icon">✂️</div>
+          <div class="fc-name">逐段创作</div>
+          <div class="fc-desc">分段落生成，精细控制每段的结构和风格</div>
+        </div>
+        <div class="feature-card">
+          <div class="fc-icon">🔊</div>
+          <div class="fc-name">高音质输出</div>
+          <div class="fc-desc">音频品质更接近专业录音室水准</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="content-card">
+      <h3><span class="icon">⚖️</span> Suno vs Udio 对比</h3>
+      <div style="overflow-x:auto;">
+        <table class="compare-table">
+          <thead>
+            <tr><th>维度</th><th>🎵 Suno</th><th>🎶 Udio</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>音质</td><td>⭐⭐⭐⭐</td><td style="color:#34d399;">⭐⭐⭐⭐⭐</td></tr>
+            <tr><td>人声自然度</td><td>⭐⭐⭐</td><td style="color:#34d399;">⭐⭐⭐⭐⭐</td></tr>
+            <tr><td>生成速度</td><td style="color:#34d399;">⭐⭐⭐⭐⭐</td><td>⭐⭐⭐⭐</td></tr>
+            <tr><td>风格丰富度</td><td style="color:#34d399;">⭐⭐⭐⭐⭐</td><td>⭐⭐⭐⭐</td></tr>
+            <tr><td>创作自由度</td><td>⭐⭐⭐</td><td style="color:#34d399;">⭐⭐⭐⭐⭐</td></tr>
+            <tr><td>上手难度</td><td style="color:#34d399;">极低</td><td>低</td></tr>
+            <tr><td>免费额度</td><td style="color:#34d399;">较多</td><td>一般</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="margin-top:12px;"><strong style="color:#34d399;">建议：</strong>追求快速出歌用Suno，追求高品质用Udio。两者配合使用效果最佳。</p>
+    </div>
+
+    <div class="content-card">
+      <h3><span class="icon">🚀</span> 快速上手</h3>
+      <ul>
+        <li><strong style="color:#34d399;">① 访问官网：</strong>打开 udio.com，用Google账号登录</li>
+        <li><strong style="color:#10b981;">② 输入描述：</strong>在输入框描述你想要的音乐（风格+主题+情绪）</li>
+        <li><strong style="color:#6ee7b7;">③ 选择模式：</strong>自动生成（快速）或自定义歌词（精细控制）</li>
+        <li><strong style="color:#34d399;">④ 生成音乐：</strong>等待生成，Udio会给出两段32秒的音乐片段</li>
+        <li><strong style="color:#10b981;">⑤ 扩展/混音：</strong>对满意的片段可以继续扩展，或重新混音</li>
+      </ul>
+    </div>
+
+    <div class="content-card">
+      <h3><span class="icon">💡</span> 视频BGM生成提示词示例</h3>
+      <div class="prompt-box">
+        <span class="prompt-label">情感叙事BGM</span>
+        <button class="copy-btn" onclick="copyText('pu1')">📋 复制</button>
+        <span id="pu1">a cinematic orchestral instrumental, emotional and moving, slow build up with strings and piano, hopeful climax, film score quality, 80bpm</span>
+      </div>
+      <div class="prompt-box" style="margin-top:12px;">
+        <span class="prompt-label">轻松日常BGM</span>
+        <button class="copy-btn" onclick="copyText('pu2')">📋 复制</button>
+        <span id="pu2">a light and cheerful acoustic instrumental, ukulele and soft percussion, happy and relaxed, perfect for lifestyle vlog, 100bpm</span>
+      </div>
+      <div class="prompt-box" style="margin-top:12px;">
+        <span class="prompt-label">高级感广告BGM</span>
+        <button class="copy-btn" onclick="copyText('pu3')">📋 复制</button>
+        <span id="pu3">a sophisticated ambient electronic instrumental, minimal and elegant, clean sound design, luxury brand commercial style, 90bpm</span>
+      </div>
+    </div>
+
+    <div class="content-card">
+      <h3><span class="icon">💰</span> 费用说明</h3>
+      <ul>
+        <li><strong style="color:#34d399;">免费版：</strong>每月有一定免费额度，可体验基本功能</li>
+        <li><strong style="color:#10b981;">标准版（$10/月）：</strong>更多生成次数，可商用</li>
+        <li><strong style="color:#6ee7b7;">专业版（$30/月）：</strong>无限生成（合理使用），优先生成队列</li>
+      </ul>
+      <p style="margin-top:8px;">建议：先用免费版体验，如果音质满足需求再订阅。</p>
+    </div>
+
+    <div class="quote-card">
+      <span class="quote-mark">"</span>
+      <p class="quote-text">Suno是量产工厂，Udio是精工工作室——根据你的需求选择，或者两个都要。</p>
+      <p class="quote-author">—— 好的BGM让视频质感提升一个档次</p>
+    </div>
+
+    <div class="cta-box">
+      <h3>🎶 准备用Udio生成高品质BGM了吗？</h3>
+      <p>访问官网，体验专业级AI音乐生成</p>
+      <a href="../../form.html" class="cta-btn">📋 填写摸底表</a>
+    </div>
+
+    <div class="nav-buttons">
+      <a href="suno.html" class="nav-btn">◀ 上一工具：Suno</a>
+      <a href="../edit/index.html" class="nav-btn next">下一步：AI剪辑 ▶</a>
+    </div>
+
+    <div class="contact-bar">
+      <p class="contact-label">📩 深度带教 · 一对一指导</p>
+      <p class="contact-wx">微信：16500234000</p>
+      <p class="contact-hint">添加备注"AI学习"，优先通过</p>
+    </div>
+    <div class="footer">© 2024 张大业 · AI视频变现 · 微信 16500234000</div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('starsCanvas');
+    const ctx = canvas.getContext('2d');
+    let width, height, particles = [];
+    function resize() { width = window.innerWidth; height = window.innerHeight; canvas.width = width; canvas.height = height; }
+    resize(); window.addEventListener('resize', resize);
+    class Particle {
+      constructor() { this.reset(); }
+      reset() { this.x = Math.random() * width; this.y = Math.random() * height; this.size = Math.random() * 1.5 + 0.5; this.speedX = (Math.random() - 0.5) * 0.3; this.speedY = (Math.random() - 0.5) * 0.3; this.opacity = Math.random() * 0.6 + 0.2; this.fadeSpeed = Math.random() * 0.005 + 0.002; this.fading = Math.random() > 0.5; }
+      update() { this.x += this.speedX; this.y += this.speedY; if (this.fading) { this.opacity -= this.fadeSpeed; if (this.opacity <= 0.1) this.fading = false; } else { this.opacity += this.fadeSpeed; if (this.opacity >= 0.7) this.fading = true; } if (this.x < -10 || this.x > width + 10 || this.y < -10 || this.y > height + 10) { this.reset(); this.opacity = Math.random() * 0.5; } }
+      draw() { ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fillStyle = `rgba(16, 185, 129, ${this.opacity})`; ctx.fill(); }
+    }
+    for (let i = 0; i < 150; i++) particles.push(new Particle());
+    function animate() {
+      ctx.clearRect(0, 0, width, height);
+      particles.forEach(p => { p.update(); p.draw(); });
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x; const dy = particles[i].y - particles[j].y; const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 80) { ctx.beginPath(); ctx.moveTo(particles[i].x, particles[i].y); ctx.lineTo(particles[j].x, particles[j].y); ctx.strokeStyle = `rgba(16, 185, 129, ${0.06 * (1 - dist / 80)})`; ctx.lineWidth = 0.5; ctx.stroke(); }
+        }
+      }
+      requestAnimationFrame(animate);
+    }
+    animate();
+    function copyText(id) {
+      const text = document.getElementById(id).textContent;
+      navigator.clipboard.writeText(text).then(() => { alert('✅ 已复制！'); });
+    }
+  </script>
+</body>
+</html>

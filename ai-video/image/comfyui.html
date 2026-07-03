@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>ComfyUI · AI图片生成 · 张大业AI视频变现</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #000;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      min-height: 100vh; overflow-x: hidden; color: #e2e8f0; line-height: 1.8;
+    }
+    .stars { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
+
+    .navbar {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(0,0,0,0.85); backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(251,146,60,0.2); padding: 0 10px;
+    }
+    .navbar-inner {
+      max-width: 680px; margin: 0 auto;
+      display: flex; align-items: center; height: 50px; gap: 6px;
+      overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none;
+    }
+    .navbar-inner::-webkit-scrollbar { display: none; }
+    .nav-home {
+      flex-shrink: 0; text-decoration: none; color: #fb923c; font-weight: 700;
+      font-size: 15px; padding: 6px 12px; border: 1px solid rgba(251,146,60,0.3);
+      border-radius: 20px; white-space: nowrap; margin-right: 4px;
+    }
+    .nav-link {
+      flex-shrink: 0; text-decoration: none; color: #94a3b8; font-size: 12px;
+      padding: 6px 10px; border-radius: 14px; white-space: nowrap; border: 1px solid transparent;
+    }
+    .nav-link:hover { color: #fb923c; }
+    .nav-link.active { color: #fb923c; border-color: rgba(251,146,60,0.3); background: rgba(251,146,60,0.08); }
+    .nav-divider { width: 1px; height: 16px; background: rgba(255,255,255,0.1); flex-shrink: 0; margin: 0 2px; }
+
+    .sub-navbar {
+      position: sticky; top: 50px; z-index: 99;
+      background: rgba(0,0,0,0.8); backdrop-filter: blur(15px);
+      border-bottom: 1px solid rgba(251,146,60,0.15); padding: 0 10px;
+    }
+    .sub-navbar-inner {
+      max-width: 680px; margin: 0 auto;
+      display: flex; align-items: center; height: 44px; gap: 4px;
+      overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none;
+    }
+    .sub-navbar-inner::-webkit-scrollbar { display: none; }
+    .sub-nav-link {
+      flex-shrink: 0; text-decoration: none; color: #94a3b8; font-size: 12px;
+      padding: 6px 14px; border-radius: 18px; white-space: nowrap;
+      border: 1px solid rgba(251,146,60,0.2); font-weight: 600; letter-spacing: 0.5px;
+    }
+    .sub-nav-link:hover { color: #fff; border-color: rgba(251,146,60,0.5); background: rgba(251,146,60,0.1); }
+    .sub-nav-link.active { color: #fff; background: linear-gradient(135deg, #f97316, #fb923c); border-color: transparent; }
+
+    .third-navbar {
+      position: sticky; top: 94px; z-index: 98;
+      background: rgba(0,0,0,0.75); backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(251,146,60,0.1); padding: 0 10px;
+    }
+    .third-navbar-inner {
+      max-width: 680px; margin: 0 auto;
+      display: flex; align-items: center; height: 38px; gap: 3px;
+      overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none;
+    }
+    .third-navbar-inner::-webkit-scrollbar { display: none; }
+    .third-nav-link {
+      flex-shrink: 0; text-decoration: none; color: #94a3b8; font-size: 11px;
+      padding: 4px 10px; border-radius: 12px; white-space: nowrap;
+      border: 1px solid rgba(251,146,60,0.15); font-weight: 500;
+    }
+    .third-nav-link:hover { color: #fb923c; border-color: rgba(251,146,60,0.4); background: rgba(251,146,60,0.08); }
+    .third-nav-link.active { color: #fb923c; border-color: rgba(251,146,60,0.4); background: rgba(251,146,60,0.12); }
+
+    .container { max-width: 680px; margin: 0 auto; padding: 20px 15px 60px; position: relative; z-index: 1; }
+    .page-header { text-align: center; padding: 20px 10px 10px; }
+    .page-header .module-icon {
+      font-size: 56px; display: block; margin-bottom: 12px;
+      filter: drop-shadow(0 0 20px rgba(168,85,247,0.5)); animation: float 3s ease-in-out infinite;
+    }
+    @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+    .page-header h1 {
+      font-size: 26px; font-weight: 900;
+      background: linear-gradient(135deg, #a78bfa, #7c3aed, #4f46e5);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; letter-spacing: 2px;
+    }
+    .page-header .step-badge {
+      display: inline-block; background: linear-gradient(135deg, #a78bfa, #7c3aed);
+      color: #fff; padding: 4px 16px; border-radius: 20px; font-size: 12px; font-weight: 700; letter-spacing: 2px; margin-bottom: 8px;
+    }
+    .page-header .sub { color: #94a3b8; font-size: 14px; margin-top: 8px; }
+    .neon-line {
+      width: 50%; height: 2px; margin: 16px auto 24px;
+      background: linear-gradient(90deg, transparent, #a78bfa, #7c3aed, #a78bfa, transparent);
+    }
+
+    .content-card {
+      background: rgba(15,23,42,0.7); border: 1px solid rgba(168,85,247,0.15);
+      border-radius: 20px; padding: 24px 20px; margin-bottom: 16px; backdrop-filter: blur(10px);
+    }
+    .content-card h3 { font-size: 18px; font-weight: 700; color: #a78bfa; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+    .content-card h3 .icon { font-size: 22px; }
+    .content-card p { color: #cbd5e1; font-size: 14px; margin-bottom: 8px; }
+    .content-card ul { list-style: none; padding: 0; }
+    .content-card ul li { padding: 6px 0 6px 20px; position: relative; color: #94a3b8; font-size: 14px; }
+    .content-card ul li::before { content: "▸"; position: absolute; left: 0; color: #a78bfa; }
+
+    .prompt-box {
+      background: rgba(0,0,0,0.5); border: 1px solid rgba(168,85,247,0.3);
+      border-radius: 14px; padding: 16px; margin: 12px 0;
+      font-family: "Courier New", monospace; font-size: 13px; color: #c4b5fd;
+      white-space: pre-wrap; word-break: break-word; line-height: 1.6; position: relative;
+    }
+    .prompt-box .prompt-label {
+      position: absolute; top: -10px; left: 16px;
+      background: #7c3aed; color: #fff; font-size: 10px; padding: 2px 10px;
+      border-radius: 10px; font-weight: 700; letter-spacing: 1px; font-family: -apple-system, sans-serif;
+    }
+    .copy-btn {
+      position: absolute; top: 8px; right: 12px;
+      background: rgba(124,58,237,0.3); border: none; color: #fff;
+      padding: 4px 12px; border-radius: 12px; font-size: 11px; cursor: pointer;
+      font-family: -apple-system, sans-serif;
+    }
+    .copy-btn:hover { background: rgba(124,58,237,0.6); }
+
+    .workflow-step {
+      display: flex; gap: 10px; align-items: flex-start; margin-bottom: 10px;
+      background: rgba(15,23,42,0.5); border-radius: 14px; padding: 14px;
+      border: 1px solid rgba(168,85,247,0.15);
+    }
+    .workflow-num {
+      width: 32px; height: 32px; background: linear-gradient(135deg, #7c3aed, #a78bfa);
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      font-weight: 900; font-size: 15px; color: #fff; flex-shrink: 0;
+    }
+    .workflow-content h4 { font-size: 14px; font-weight: 700; color: #fff; margin-bottom: 2px; }
+    .workflow-content p { font-size: 12px; color: #94a3b8; margin: 0; }
+
+    .quote-card {
+      background: linear-gradient(135deg, rgba(168,85,247,0.1), rgba(124,58,237,0.08));
+      border: 1px solid rgba(168,85,247,0.3); border-radius: 18px; padding: 20px;
+      margin: 24px 0; text-align: center; position: relative;
+    }
+    .quote-card .quote-mark { font-size: 48px; color: #a78bfa; opacity: 0.5; position: absolute; top: 6px; left: 16px; }
+    .quote-card .quote-text { font-size: 18px; font-weight: 700; color: #a78bfa; margin: 10px 0 6px; }
+    .quote-card .quote-author { color: #94a3b8; font-size: 13px; }
+    .cta-box {
+      background: linear-gradient(135deg, rgba(168,85,247,0.3), rgba(124,58,237,0.15));
+      border: 2px solid rgba(168,85,247,0.4); border-radius: 20px; padding: 20px; text-align: center; margin-top: 24px;
+    }
+    .cta-box h3 { font-size: 19px; font-weight: 800; color: #fff; margin-bottom: 6px; }
+    .cta-box p { color: #94a3b8; font-size: 13px; margin-bottom: 16px; }
+    .cta-box .cta-btn {
+      display: inline-block; background: linear-gradient(135deg, #7c3aed, #a78bfa); color: #fff;
+      padding: 12px 28px; border-radius: 30px; text-decoration: none; font-weight: 700; font-size: 16px;
+    }
+    .contact-bar {
+      margin-top: 32px; background: rgba(15,23,42,0.9); border: 1px solid rgba(0,240,255,0.2);
+      border-radius: 18px; padding: 18px 20px; text-align: center; backdrop-filter: blur(10px);
+    }
+    .contact-bar .contact-label { color: #94a3b8; font-size: 13px; margin-bottom: 6px; letter-spacing: 1px; }
+    .contact-bar .contact-wx {
+      font-size: 20px; font-weight: 900;
+      background: linear-gradient(135deg, #00f0ff, #fbbf24);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; letter-spacing: 2px;
+    }
+    .contact-bar .contact-hint { color: #64748b; font-size: 11px; margin-top: 6px; }
+    .footer { text-align: center; color: #334155; font-size: 11px; margin-top: 20px; letter-spacing: 1px; }
+    .nav-buttons { display: flex; gap: 10px; margin-top: 24px; }
+    .nav-btn {
+      flex: 1; text-align: center; padding: 12px; border-radius: 14px; text-decoration: none;
+      font-weight: 700; font-size: 14px; border: 1px solid rgba(168,85,247,0.3); color: #a78bfa; background: rgba(168,85,247,0.05);
+    }
+    .nav-btn.next { background: linear-gradient(135deg, rgba(168,85,247,0.5), rgba(124,58,237,0.2)); color: #fff; }
+
+    @media (max-width: 400px) {
+      .page-header h1 { font-size: 22px; }
+      .page-header .module-icon { font-size: 44px; }
+      .sub-nav-link { font-size: 11px; padding: 5px 10px; }
+      .sub-navbar-inner { height: 40px; }
+      .third-nav-link { font-size: 10px; padding: 3px 8px; }
+      .third-navbar-inner { height: 34px; }
+      .content-card { padding: 18px 14px; }
+      .workflow-step { padding: 12px 10px; }
+    }
+    @media (min-width: 769px) { .content-card { padding: 28px 24px; } }
+  </style>
+</head>
+<body>
+  <canvas class="stars" id="starsCanvas"></canvas>
+
+  <nav class="navbar">
+    <div class="navbar-inner">
+      <a href="../../../index.html" class="nav-home">🏠 主页</a>
+      <span class="nav-divider"></span>
+      <a href="../../../business-thinking.html" class="nav-link">💰商业思维</a>
+      <a href="../../../human-nature.html" class="nav-link">🧠人性弱点</a>
+      <a href="../../../algorithm.html" class="nav-link">📐规则算法</a>
+      <a href="../../../product-selection.html" class="nav-link">🛒带货选品</a>
+      <a href="../../../ai-video.html" class="nav-link active">🤖AI视频</a>
+      <a href="../../../video-analysis.html" class="nav-link">📊视频分析</a>
+      <a href="../../../trend.html" class="nav-link">📈发展趋势</a>
+      <a href="../../../creative.html" class="nav-link">💡商业创意</a>
+    </div>
+  </nav>
+
+  <nav class="sub-navbar">
+    <div class="sub-navbar-inner">
+      <a href="../../../ai-video.html" class="sub-nav-link">📋 总览</a>
+      <a href="../text/" class="sub-nav-link">📝 文字</a>
+      <a href="../image/" class="sub-nav-link active">🎨 图片</a>
+      <a href="../video/" class="sub-nav-link">🎬 视频</a>
+      <a href="../audio/" class="sub-nav-link">🔊 声音</a>
+      <a href="../edit/" class="sub-nav-link">✂️ 剪辑</a>
+      <a href="../publish/" class="sub-nav-link">🚀 发布</a>
+    </div>
+  </nav>
+
+  <nav class="third-navbar">
+    <div class="third-navbar-inner">
+      <a href="index.html" class="third-nav-link">📋 总览</a>
+      <a href="midjourney.html" class="third-nav-link">🎨 Midjourney</a>
+      <a href="stablediffusion.html" class="third-nav-link">🤖 SD</a>
+      <a href="seedream.html" class="third-nav-link">🌱 Seedream</a>
+      <a href="kelin.html" class="third-nav-link">🎬 可灵</a>
+      <a href="jimeng.html" class="third-nav-link">💫 即梦</a>
+      <a href="comfyui.html" class="third-nav-link active">⚡ ComfyUI</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="page-header">
+      <span class="module-icon">⚡</span>
+      <span class="step-badge">图片 · ComfyUI</span>
+      <h1>ComfyUI</h1>
+      <p class="sub">节点式工作流，批量自动化出图引擎</p>
+    </div>
+    <div class="neon-line"></div>
+
+    <div class="content-card">
+      <h3><span class="icon">🌟</span> 为什么选ComfyUI？</h3>
+      <p>如果说SD WebUI是一台<strong style="color:#a78bfa;">傻瓜相机</strong>，那ComfyUI就是一条<strong style="color:#7c3aed;">全自动生产线</strong>。你可以像搭积木一样搭建出图工作流，设置好之后，它就能24小时不间断批量出图。</p>
+      <ul>
+        <li><strong style="color:#a78bfa;">节点式可视化：</strong>拖拽连接节点，像画流程图一样搭建出图流程</li>
+        <li><strong style="color:#7c3aed;">批量自动化：</strong>一次设置，自动生成成百上千张图</li>
+        <li><strong style="color:#4f46e5;">效率最高：</strong>相同显卡下，比WebUI快30%-50%</li>
+        <li><strong style="color:#a78bfa;">工作流可复用：</strong>保存好工作流模板，下次一键加载使用</li>
+        <li><strong style="color:#7c3aed;">视频制作利器：</strong>尤其适合需要大量素材的矩阵化运营</li>
+      </ul>
+    </div>
+
+    <div class="content-card">
+      <h3><span class="icon">⚖️</span> ComfyUI vs SD WebUI</h3>
+      <p>都是基于Stable Diffusion，但使用体验完全不同：</p>
+      <ul>
+        <li><strong style="color:#a78bfa;">SD WebUI：</strong>传统软件界面，填表式操作，适合新手和快速出图</li>
+        <li><strong style="color:#7c3aed;">ComfyUI：</strong>节点式界面，流程化操作，适合批量生产和复杂工作流</li>
+      </ul>
+      <p style="margin-top:8px;">建议：<strong style="color:#a78bfa;">先用WebUI学会SD的基础操作</strong>，需要批量出图时再转到ComfyUI。</p>
+    </div>
+
+    <div class="content-card">
+      <h3><span class="icon">🔧</span> 视频素材批量生成工作流</h3>
+      <p>一个典型的<strong style="color:#a78bfa;">视频素材批量生产工作流</strong>包含以下节点：</p>
+
+      <div class="workflow-step">
+        <div class="workflow-num">1</div>
+        <div class="workflow-content">
+          <h4>📝 加载提示词列表</h4>
+          <p>把多个提示词写在一个文本文件里，ComfyUI自动逐条读取</p>
+        </div>
+      </div>
+      <div class="workflow-step">
+        <div class="workflow-num">2</div>
+        <div class="workflow-content">
+          <h4>🎨 加载Checkpoint模型</h4>
+          <p>选择适合的底模：写实类选RealisticVision，动漫类选Anything</p>
+        </div>
+      </div>
+      <div class="workflow-step">
+        <div class="workflow-num">3</div>
+        <div class="workflow-content">
+          <h4>⚙️ 设置采样参数</h4>
+          <p>配置步数、CFG、采样器，视频素材推荐DPM++ 2M Karras</p>
+        </div>
+      </div>
+      <div class="workflow-step">
+        <div class="workflow-num">4</div>
+        <div class="workflow-content">
+          <h4>🖼️ 设置输出尺寸</h4>
+          <p>视频素材统一设1280x720（横屏）或720x1280（竖屏）</p>
+        </div>
+      </div>
+      <div class="workflow-step">
+        <div class="workflow-num">5</div>
+        <div class="workflow-content">
+          <h4>💾 自动保存并编号</h4>
+          <p>出图自动保存到指定文件夹，按序号命名，方便后续导入剪辑</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="content-card">
+      <h3><span class="icon">💡</span> ComfyUI批量出图应用场景</h3>
+
+      <div class="prompt-box">
+        <span class="prompt-label">场景1：批量生成视频封面</span>
+        <button class="copy-btn" onclick="copyText('p1')">📋 复制思路</button>
+        <span id="p1">需求：每天发布20条视频，需要20张不同风格的封面图
+方案：准备20条封面提示词 → 加载到ComfyUI → 一键批量生成 → 自动保存到封面文件夹
+效率：人工做20张封面需要2小时，ComfyUI只需5分钟</span>
+      </div>
+
+      <div class="prompt-box" style="margin-top:12px;">
+        <span class="prompt-label">场景2：矩阵号素材生产</span>
+        <button class="copy-btn" onclick="copyText('p2')">📋 复制思路</button>
+        <span id="p2">需求：运营10个带货账号，每天每个号需要10张产品图
+方案：写好100条产品提示词 → 设置好工作流 → 挂机批量出图 → 自动分类到各账号文件夹
+效率：一个人+ComfyUI一天能产出1000+张素材图</span>
+      </div>
+    </div>
+
+    <div class="content-card">
+      <h3><span class="icon">🚀</span> 快速安装上手</h3>
+      <ul>
+        <li><strong style="color:#a78bfa;">① 下载ComfyUI：</strong>GitHub搜索ComfyUI，下载Windows整合包</li>
+        <li><strong style="color:#7c3aed;">② 解压即用：</strong>解压后双击run_nvidia_gpu.bat启动（需要NVIDIA显卡）</li>
+        <li><strong style="color:#4f46e5;">③ 下载模型：</strong>把SD模型文件放到models/checkpoints文件夹</li>
+        <li><strong style="color:#a78bfa;">④ 加载工作流：</strong>拖拽别人分享的工作流JSON文件导入，立即开始批量出图</li>
+      </ul>
+    </div>
+
+    <div class="quote-card">
+      <span class="quote-mark">"</span>
+      <p class="quote-text">ComfyUI是AI出图的终极形态——设置好一次，它就能替你工作到天亮。</p>
+      <p class="quote-author">—— 矩阵化运营的必备武器</p>
+    </div>
+
+    <div class="cta-box">
+      <h3>⚡ 准备好搭建你的出图生产线了吗？</h3>
+      <p>下载ComfyUI，从第一个工作流开始</p>
+      <a href="../../../form.html" class="cta-btn">📋 填写摸底表</a>
+    </div>
+
+    <div class="nav-buttons">
+      <a href="jimeng.html" class="nav-btn">◀ 上一工具：即梦</a>
+      <a href="../video/index.html" class="nav-btn next">下一步：AI生成视频 ▶</a>
+    </div>
+
+    <div class="contact-bar">
+      <p class="contact-label">📩 深度带教 · 一对一指导</p>
+      <p class="contact-wx">微信：16500234000</p>
+      <p class="contact-hint">添加备注"AI学习"，优先通过</p>
+    </div>
+    <div class="footer">© 2024 张大业 · AI视频变现 · 微信 16500234000</div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('starsCanvas');
+    const ctx = canvas.getContext('2d');
+    let width, height, particles = [];
+    function resize() { width = window.innerWidth; height = window.innerHeight; canvas.width = width; canvas.height = height; }
+    resize(); window.addEventListener('resize', resize);
+    class Particle {
+      constructor() { this.reset(); }
+      reset() { this.x = Math.random() * width; this.y = Math.random() * height; this.size = Math.random() * 1.5 + 0.5; this.speedX = (Math.random() - 0.5) * 0.3; this.speedY = (Math.random() - 0.5) * 0.3; this.opacity = Math.random() * 0.6 + 0.2; this.fadeSpeed = Math.random() * 0.005 + 0.002; this.fading = Math.random() > 0.5; }
+      update() { this.x += this.speedX; this.y += this.speedY; if (this.fading) { this.opacity -= this.fadeSpeed; if (this.opacity <= 0.1) this.fading = false; } else { this.opacity += this.fadeSpeed; if (this.opacity >= 0.7) this.fading = true; } if (this.x < -10 || this.x > width + 10 || this.y < -10 || this.y > height + 10) { this.reset(); this.opacity = Math.random() * 0.5; } }
+      draw() { ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fillStyle = `rgba(168, 85, 247, ${this.opacity})`; ctx.fill(); }
+    }
+    for (let i = 0; i < 150; i++) particles.push(new Particle());
+    function animate() {
+      ctx.clearRect(0, 0, width, height);
+      particles.forEach(p => { p.update(); p.draw(); });
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x; const dy = particles[i].y - particles[j].y; const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 80) { ctx.beginPath(); ctx.moveTo(particles[i].x, particles[i].y); ctx.lineTo(particles[j].x, particles[j].y); ctx.strokeStyle = `rgba(168, 85, 247, ${0.06 * (1 - dist / 80)})`; ctx.lineWidth = 0.5; ctx.stroke(); }
+        }
+      }
+      requestAnimationFrame(animate);
+    }
+    animate();
+    function copyText(id) {
+      const text = document.getElementById(id).textContent;
+      navigator.clipboard.writeText(text).then(() => { alert('✅ 已复制！'); });
+    }
+  </script>
+</body>
+</html>

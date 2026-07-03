@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>即梦 · AI图片生成 · 张大业AI视频变现</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #000;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      min-height: 100vh; overflow-x: hidden; color: #e2e8f0; line-height: 1.8;
+    }
+    .stars { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
+
+    .navbar {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(0,0,0,0.85); backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(251,146,60,0.2); padding: 0 10px;
+    }
+    .navbar-inner {
+      max-width: 680px; margin: 0 auto;
+      display: flex; align-items: center; height: 50px; gap: 6px;
+      overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none;
+    }
+    .navbar-inner::-webkit-scrollbar { display: none; }
+    .nav-home {
+      flex-shrink: 0; text-decoration: none; color: #fb923c; font-weight: 700;
+      font-size: 15px; padding: 6px 12px; border: 1px solid rgba(251,146,60,0.3);
+      border-radius: 20px; white-space: nowrap; margin-right: 4px;
+    }
+    .nav-link {
+      flex-shrink: 0; text-decoration: none; color: #94a3b8; font-size: 12px;
+      padding: 6px 10px; border-radius: 14px; white-space: nowrap; border: 1px solid transparent;
+    }
+    .nav-link:hover { color: #fb923c; }
+    .nav-link.active { color: #fb923c; border-color: rgba(251,146,60,0.3); background: rgba(251,146,60,0.08); }
+    .nav-divider { width: 1px; height: 16px; background: rgba(255,255,255,0.1); flex-shrink: 0; margin: 0 2px; }
+
+    .sub-navbar {
+      position: sticky; top: 50px; z-index: 99;
+      background: rgba(0,0,0,0.8); backdrop-filter: blur(15px);
+      border-bottom: 1px solid rgba(251,146,60,0.15); padding: 0 10px;
+    }
+    .sub-navbar-inner {
+      max-width: 680px; margin: 0 auto;
+      display: flex; align-items: center; height: 44px; gap: 4px;
+      overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none;
+    }
+    .sub-navbar-inner::-webkit-scrollbar { display: none; }
+    .sub-nav-link {
+      flex-shrink: 0; text-decoration: none; color: #94a3b8; font-size: 12px;
+      padding: 6px 14px; border-radius: 18px; white-space: nowrap;
+      border: 1px solid rgba(251,146,60,0.2); font-weight: 600; letter-spacing: 0.5px;
+    }
+    .sub-nav-link:hover { color: #fff; border-color: rgba(251,146,60,0.5); background: rgba(251,146,60,0.1); }
+    .sub-nav-link.active { color: #fff; background: linear-gradient(135deg, #f97316, #fb923c); border-color: transparent; }
+
+    .third-navbar {
+      position: sticky; top: 94px; z-index: 98;
+      background: rgba(0,0,0,0.75); backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(251,146,60,0.1); padding: 0 10px;
+    }
+    .third-navbar-inner {
+      max-width: 680px; margin: 0 auto;
+      display: flex; align-items: center; height: 38px; gap: 3px;
+      overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none;
+    }
+    .third-navbar-inner::-webkit-scrollbar { display: none; }
+    .third-nav-link {
+      flex-shrink: 0; text-decoration: none; color: #94a3b8; font-size: 11px;
+      padding: 4px 10px; border-radius: 12px; white-space: nowrap;
+      border: 1px solid rgba(251,146,60,0.15); font-weight: 500;
+    }
+    .third-nav-link:hover { color: #fb923c; border-color: rgba(251,146,60,0.4); background: rgba(251,146,60,0.08); }
+    .third-nav-link.active { color: #fb923c; border-color: rgba(251,146,60,0.4); background: rgba(251,146,60,0.12); }
+
+    .container { max-width: 680px; margin: 0 auto; padding: 20px 15px 60px; position: relative; z-index: 1; }
+    .page-header { text-align: center; padding: 20px 10px 10px; }
+    .page-header .module-icon {
+      font-size: 56px; display: block; margin-bottom: 12px;
+      filter: drop-shadow(0 0 20px rgba(244,114,182,0.5)); animation: float 3s ease-in-out infinite;
+    }
+    @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+    .page-header h1 {
+      font-size: 26px; font-weight: 900;
+      background: linear-gradient(135deg, #f472b6, #c084fc, #a78bfa);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; letter-spacing: 2px;
+    }
+    .page-header .step-badge {
+      display: inline-block; background: linear-gradient(135deg, #f472b6, #c084fc);
+      color: #fff; padding: 4px 16px; border-radius: 20px; font-size: 12px; font-weight: 700; letter-spacing: 2px; margin-bottom: 8px;
+    }
+    .page-header .sub { color: #94a3b8; font-size: 14px; margin-top: 8px; }
+    .neon-line {
+      width: 50%; height: 2px; margin: 16px auto 24px;
+      background: linear-gradient(90deg, transparent, #f472b6, #c084fc, #f472b6, transparent);
+    }
+
+    .content-card {
+      background: rgba(15,23,42,0.7); border: 1px solid rgba(244,114,182,0.15);
+      border-radius: 20px; padding: 24px 20px; margin-bottom: 16px; backdrop-filter: blur(10px);
+    }
+    .content-card h3 { font-size: 18px; font-weight: 700; color: #f472b6; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+    .content-card h3 .icon { font-size: 22px; }
+    .content-card p { color: #cbd5e1; font-size: 14px; margin-bottom: 8px; }
+    .content-card ul { list-style: none; padding: 0; }
+    .content-card ul li { padding: 6px 0 6px 20px; position: relative; color: #94a3b8; font-size: 14px; }
+    .content-card ul li::before { content: "▸"; position: absolute; left: 0; color: #f472b6; }
+
+    .prompt-box {
+      background: rgba(0,0,0,0.5); border: 1px solid rgba(244,114,182,0.3);
+      border-radius: 14px; padding: 16px; margin: 12px 0;
+      font-family: "Courier New", monospace; font-size: 13px; color: #fbcfe8;
+      white-space: pre-wrap; word-break: break-word; line-height: 1.6; position: relative;
+    }
+    .prompt-box .prompt-label {
+      position: absolute; top: -10px; left: 16px;
+      background: #f472b6; color: #fff; font-size: 10px; padding: 2px 10px;
+      border-radius: 10px; font-weight: 700; letter-spacing: 1px; font-family: -apple-system, sans-serif;
+    }
+    .copy-btn {
+      position: absolute; top: 8px; right: 12px;
+      background: rgba(244,114,182,0.3); border: none; color: #fff;
+      padding: 4px 12px; border-radius: 12px; font-size: 11px; cursor: pointer;
+      font-family: -apple-system, sans-serif;
+    }
+    .copy-btn:hover { background: rgba(244,114,182,0.6); }
+
+    .style-grid {
+      display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin: 12px 0;
+    }
+    .style-card {
+      background: rgba(15,23,42,0.6); border: 1px solid rgba(244,114,182,0.2);
+      border-radius: 14px; padding: 14px 10px; text-align: center;
+    }
+    .style-card .st-icon { font-size: 26px; margin-bottom: 4px; }
+    .style-card .st-name { font-size: 12px; font-weight: 700; color: #f472b6; }
+
+    .quote-card {
+      background: linear-gradient(135deg, rgba(244,114,182,0.1), rgba(192,132,252,0.08));
+      border: 1px solid rgba(244,114,182,0.3); border-radius: 18px; padding: 20px;
+      margin: 24px 0; text-align: center; position: relative;
+    }
+    .quote-card .quote-mark { font-size: 48px; color: #f472b6; opacity: 0.5; position: absolute; top: 6px; left: 16px; }
+    .quote-card .quote-text { font-size: 18px; font-weight: 700; color: #f472b6; margin: 10px 0 6px; }
+    .quote-card .quote-author { color: #94a3b8; font-size: 13px; }
+    .cta-box {
+      background: linear-gradient(135deg, rgba(244,114,182,0.3), rgba(192,132,252,0.15));
+      border: 2px solid rgba(244,114,182,0.4); border-radius: 20px; padding: 20px; text-align: center; margin-top: 24px;
+    }
+    .cta-box h3 { font-size: 19px; font-weight: 800; color: #fff; margin-bottom: 6px; }
+    .cta-box p { color: #94a3b8; font-size: 13px; margin-bottom: 16px; }
+    .cta-box .cta-btn {
+      display: inline-block; background: linear-gradient(135deg, #f472b6, #c084fc); color: #fff;
+      padding: 12px 28px; border-radius: 30px; text-decoration: none; font-weight: 700; font-size: 16px;
+    }
+    .contact-bar {
+      margin-top: 32px; background: rgba(15,23,42,0.9); border: 1px solid rgba(0,240,255,0.2);
+      border-radius: 18px; padding: 18px 20px; text-align: center; backdrop-filter: blur(10px);
+    }
+    .contact-bar .contact-label { color: #94a3b8; font-size: 13px; margin-bottom: 6px; letter-spacing: 1px; }
+    .contact-bar .contact-wx {
+      font-size: 20px; font-weight: 900;
+      background: linear-gradient(135deg, #00f0ff, #fbbf24);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; letter-spacing: 2px;
+    }
+    .contact-bar .contact-hint { color: #64748b; font-size: 11px; margin-top: 6px; }
+    .footer { text-align: center; color: #334155; font-size: 11px; margin-top: 20px; letter-spacing: 1px; }
+    .nav-buttons { display: flex; gap: 10px; margin-top: 24px; }
+    .nav-btn {
+      flex: 1; text-align: center; padding: 12px; border-radius: 14px; text-decoration: none;
+      font-weight: 700; font-size: 14px; border: 1px solid rgba(244,114,182,0.3); color: #f472b6; background: rgba(244,114,182,0.05);
+    }
+    .nav-btn.next { background: linear-gradient(135deg, rgba(244,114,182,0.5), rgba(192,132,252,0.2)); color: #fff; }
+
+    @media (max-width: 400px) {
+      .page-header h1 { font-size: 22px; }
+      .page-header .module-icon { font-size: 44px; }
+      .sub-nav-link { font-size: 11px; padding: 5px 10px; }
+      .sub-navbar-inner { height: 40px; }
+      .third-nav-link { font-size: 10px; padding: 3px 8px; }
+      .third-navbar-inner { height: 34px; }
+      .content-card { padding: 18px 14px; }
+      .style-grid { gap: 6px; }
+      .style-card { padding: 10px 6px; }
+    }
+    @media (min-width: 769px) { .content-card { padding: 28px 24px; } }
+  </style>
+</head>
+<body>
+  <canvas class="stars" id="starsCanvas"></canvas>
+
+  <nav class="navbar">
+    <div class="navbar-inner">
+      <a href="../../../index.html" class="nav-home">🏠 主页</a>
+      <span class="nav-divider"></span>
+      <a href="../../../business-thinking.html" class="nav-link">💰商业思维</a>
+      <a href="../../../human-nature.html" class="nav-link">🧠人性弱点</a>
+      <a href="../../../algorithm.html" class="nav-link">📐规则算法</a>
+      <a href="../../../product-selection.html" class="nav-link">🛒带货选品</a>
+      <a href="../../../ai-video.html" class="nav-link active">🤖AI视频</a>
+      <a href="../../../video-analysis.html" class="nav-link">📊视频分析</a>
+      <a href="../../../trend.html" class="nav-link">📈发展趋势</a>
+      <a href="../../../creative.html" class="nav-link">💡商业创意</a>
+    </div>
+  </nav>
+
+  <nav class="sub-navbar">
+    <div class="sub-navbar-inner">
+      <a href="../../../ai-video.html" class="sub-nav-link">📋 总览</a>
+      <a href="../text/" class="sub-nav-link">📝 文字</a>
+      <a href="../image/" class="sub-nav-link active">🎨 图片</a>
+      <a href="../video/" class="sub-nav-link">🎬 视频</a>
+      <a href="../audio/" class="sub-nav-link">🔊 声音</a>
+      <a href="../edit/" class="sub-nav-link">✂️ 剪辑</a>
+      <a href="../publish/" class="sub-nav-link">🚀 发布</a>
+    </div>
+  </nav>
+
+  <nav class="third-navbar">
+    <div class="third-navbar-inner">
+      <a href="index.html" class="third-nav-link">📋 总览</a>
+      <a href="midjourney.html" class="third-nav-link">🎨 Midjourney</a>
+      <a href="stablediffusion.html" class="third-nav-link">🤖 SD</a>
+      <a href="seedream.html" class="third-nav-link">🌱 Seedream</a>
+      <a href="kelin.html" class="third-nav-link">🎬 可灵</a>
+      <a href="jimeng.html" class="third-nav-link active">💫 即梦</a>
+      <a href="comfyui.html" class="third-nav-link">⚡ ComfyUI</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="page-header">
+      <span class="module-icon">💫</span>
+      <span class="step-badge">图片 · 即梦</span>
+      <h1>即梦</h1>
+      <p class="sub">字节跳动出品，风格多样，创意无限</p>
+    </div>
+    <div class="neon-line"></div>
+
+    <div class="content-card">
+      <h3><span class="icon">🌟</span> 为什么选即梦？</h3>
+      <p>即梦是<strong style="color:#f472b6;">字节跳动推出的AI内容平台</strong>，和豆包/Seedream不同，即梦更偏向创意和风格化。如果你需要多种艺术风格的素材图，即梦是最佳选择。</p>
+      <ul>
+        <li><strong style="color:#f472b6;">风格极其多样：</strong>写实、动漫、水彩、油画、赛博朋克、国风等几十种风格</li>
+        <li><strong style="color:#c084fc;">免费使用：</strong>每天有免费额度，够日常创作使用</li>
+        <li><strong style="color:#a78bfa;">中文原生支持：</strong>输入中文即可，支持文生图和图生图</li>
+        <li><strong style="color:#f472b6;">社区氛围好：</strong>可以看到别人生成的作品，获取灵感</li>
+      </ul>
+    </div>
+
+    <div class="content-card">
+      <h3><span class="icon">🎨</span> 即梦支持的风格类型</h3>
+      <p>不同的视频类型需要不同的画面风格，即梦几乎覆盖了所有需求：</p>
+      <div class="style-grid">
+        <div class="style-card"><div class="st-icon">📷</div><div class="st-name">写实摄影</div></div>
+        <div class="style-card"><div class="st-icon">🎨</div><div class="st-name">油画风格</div></div>
+        <div class="style-card"><div class="st-icon">✏️</div><div class="st-name">动漫二次元</div></div>
+        <div class="style-card"><div class="st-icon">🏮</div><div class="st-name">中国风</div></div>
+        <div class="style-card"><div class="st-icon">🌆</div><div class="st-name">赛博朋克</div></div>
+        <div class="style-card"><div class="st-icon">🎬</div><div class="st-name">3D渲染</div></div>
+        <div class="style-card"><div class="st-icon">🖼️</div><div class="st-name">水彩插画</div></div>
+        <div class="style-card"><div class="st-icon">📽️</div><div class="st-name">复古胶片</div></div>
+        <div class="style-card"><div class="st-icon">✨</div><div class="st-name">梦幻唯美</div></div>
+      </div>
+    </div>
+
+    <div class="content-card">
+      <h3><span class="icon">🚀</span> 快速上手</h3>
+      <ul>
+        <li><strong style="color:#f472b6;">① 访问官网：</strong>在浏览器打开即梦官网，抖音账号直接登录</li>
+        <li><strong style="color:#c084fc;">② 选择风格：</strong>进入创作页面，从几十种风格中选择你想要的</li>
+        <li><strong style="color:#a78bfa;">③ 输入描述：</strong>用中文描述画面内容，越具体越好</li>
+        <li><strong style="color:#f472b6;">④ 设置参数：</strong>选择画面比例（视频素材推荐16:9）和出图数量</li>
+        <li><strong style="color:#c084fc;">⑤ 生成下载：</strong>出图后可直接下载高清原图</li>
+      </ul>
+    </div>
+
+    <div class="content-card">
+      <h3><span class="icon">💡</span> 视频素材风格推荐</h3>
+
+      <div class="prompt-box">
+        <span class="prompt-label">治愈系视频素材</span>
+        <button class="copy-btn" onclick="copyText('p1')">📋 复制</button>
+        <span id="p1">一片樱花林，花瓣飘落在空中，阳光透过树枝洒下光斑，梦幻唯美风格，柔焦效果，竖屏9:16，超清画质</span>
+      </div>
+
+      <div class="prompt-box" style="margin-top:12px;">
+        <span class="prompt-label">科技感视频素材</span>
+        <button class="copy-btn" onclick="copyText('p2')">📋 复制</button>
+        <span id="p2">一个未来科技城市，霓虹灯光，赛博朋克风格，雨夜氛围，电影感构图，蓝紫色调，横屏16:9，4K</span>
+      </div>
+
+      <div class="prompt-box" style="margin-top:12px;">
+        <span class="prompt-label">国风视频素材</span>
+        <button class="copy-btn" onclick="copyText('p3')">📋 复制</button>
+        <span id="p3">一幅中国水墨画风格的山水画面，云雾缭绕，古松挺立，留白构图，国风意境，竖屏9:16，高清</span>
+      </div>
+    </div>
+
+    <div class="quote-card">
+      <span class="quote-mark">"</span>
+      <p class="quote-text">即梦让每种创意都能找到它的视觉表达——无论你做什么类型的视频，都能在这里找到对味的画面。</p>
+      <p class="quote-author">—— 风格是你的选择，出图是AI的任务</p>
+    </div>
+
+    <div class="cta-box">
+      <h3>💫 准备用即梦探索不同风格了吗？</h3>
+      <p>打开即梦，选择一个风格开始创作</p>
+      <a href="../../../form.html" class="cta-btn">📋 填写摸底表</a>
+    </div>
+
+    <div class="nav-buttons">
+      <a href="kelin.html" class="nav-btn">◀ 上一工具：可灵</a>
+      <a href="comfyui.html" class="nav-btn next">下一工具：ComfyUI ▶</a>
+    </div>
+
+    <div class="contact-bar">
+      <p class="contact-label">📩 深度带教 · 一对一指导</p>
+      <p class="contact-wx">微信：16500234000</p>
+      <p class="contact-hint">添加备注"AI学习"，优先通过</p>
+    </div>
+    <div class="footer">© 2024 张大业 · AI视频变现 · 微信 16500234000</div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('starsCanvas');
+    const ctx = canvas.getContext('2d');
+    let width, height, particles = [];
+    function resize() { width = window.innerWidth; height = window.innerHeight; canvas.width = width; canvas.height = height; }
+    resize(); window.addEventListener('resize', resize);
+    class Particle {
+      constructor() { this.reset(); }
+      reset() { this.x = Math.random() * width; this.y = Math.random() * height; this.size = Math.random() * 1.5 + 0.5; this.speedX = (Math.random() - 0.5) * 0.3; this.speedY = (Math.random() - 0.5) * 0.3; this.opacity = Math.random() * 0.6 + 0.2; this.fadeSpeed = Math.random() * 0.005 + 0.002; this.fading = Math.random() > 0.5; }
+      update() { this.x += this.speedX; this.y += this.speedY; if (this.fading) { this.opacity -= this.fadeSpeed; if (this.opacity <= 0.1) this.fading = false; } else { this.opacity += this.fadeSpeed; if (this.opacity >= 0.7) this.fading = true; } if (this.x < -10 || this.x > width + 10 || this.y < -10 || this.y > height + 10) { this.reset(); this.opacity = Math.random() * 0.5; } }
+      draw() { ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fillStyle = `rgba(244, 114, 182, ${this.opacity})`; ctx.fill(); }
+    }
+    for (let i = 0; i < 150; i++) particles.push(new Particle());
+    function animate() {
+      ctx.clearRect(0, 0, width, height);
+      particles.forEach(p => { p.update(); p.draw(); });
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x; const dy = particles[i].y - particles[j].y; const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 80) { ctx.beginPath(); ctx.moveTo(particles[i].x, particles[i].y); ctx.lineTo(particles[j].x, particles[j].y); ctx.strokeStyle = `rgba(244, 114, 182, ${0.06 * (1 - dist / 80)})`; ctx.lineWidth = 0.5; ctx.stroke(); }
+        }
+      }
+      requestAnimationFrame(animate);
+    }
+    animate();
+    function copyText(id) {
+      const text = document.getElementById(id).textContent;
+      navigator.clipboard.writeText(text).then(() => { alert('✅ 已复制！'); });
+    }
+  </script>
+</body>
+</html>

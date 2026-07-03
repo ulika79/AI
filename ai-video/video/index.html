@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>视频·AI生成视频 · 张大业AI视频变现</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #000;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      min-height: 100vh; overflow-x: hidden; color: #e2e8f0; line-height: 1.8;
+    }
+    .stars { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
+
+    .navbar {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(0,0,0,0.85); backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(168,85,247,0.2); padding: 0 10px;
+    }
+    .navbar-inner {
+      max-width: 680px; margin: 0 auto;
+      display: flex; align-items: center; height: 50px; gap: 6px;
+      overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none;
+    }
+    .navbar-inner::-webkit-scrollbar { display: none; }
+    .nav-home {
+      flex-shrink: 0; text-decoration: none; color: #a78bfa; font-weight: 700;
+      font-size: 15px; padding: 6px 12px; border: 1px solid rgba(168,85,247,0.3);
+      border-radius: 20px; white-space: nowrap; margin-right: 4px;
+    }
+    .nav-link {
+      flex-shrink: 0; text-decoration: none; color: #94a3b8; font-size: 12px;
+      padding: 6px 10px; border-radius: 14px; white-space: nowrap; border: 1px solid transparent;
+    }
+    .nav-link:hover { color: #a78bfa; }
+    .nav-link.active { color: #a78bfa; border-color: rgba(168,85,247,0.3); background: rgba(168,85,247,0.08); }
+    .nav-divider { width: 1px; height: 16px; background: rgba(255,255,255,0.1); flex-shrink: 0; margin: 0 2px; }
+
+    .sub-navbar {
+      position: sticky; top: 50px; z-index: 99;
+      background: rgba(0,0,0,0.8); backdrop-filter: blur(15px);
+      border-bottom: 1px solid rgba(168,85,247,0.15); padding: 0 10px;
+    }
+    .sub-navbar-inner {
+      max-width: 680px; margin: 0 auto;
+      display: flex; align-items: center; height: 44px; gap: 4px;
+      overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none;
+    }
+    .sub-navbar-inner::-webkit-scrollbar { display: none; }
+    .sub-nav-link {
+      flex-shrink: 0; text-decoration: none; color: #94a3b8; font-size: 12px;
+      padding: 6px 14px; border-radius: 18px; white-space: nowrap;
+      border: 1px solid rgba(168,85,247,0.2); font-weight: 600; letter-spacing: 0.5px;
+    }
+    .sub-nav-link:hover { color: #fff; border-color: rgba(168,85,247,0.5); background: rgba(168,85,247,0.1); }
+    .sub-nav-link.active { color: #fff; background: linear-gradient(135deg, #7c3aed, #a78bfa); border-color: transparent; }
+
+    .third-navbar {
+      position: sticky; top: 94px; z-index: 98;
+      background: rgba(0,0,0,0.75); backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(168,85,247,0.1); padding: 0 10px;
+    }
+    .third-navbar-inner {
+      max-width: 680px; margin: 0 auto;
+      display: flex; align-items: center; height: 38px; gap: 3px;
+      overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none;
+    }
+    .third-navbar-inner::-webkit-scrollbar { display: none; }
+    .third-nav-link {
+      flex-shrink: 0; text-decoration: none; color: #94a3b8; font-size: 11px;
+      padding: 4px 10px; border-radius: 12px; white-space: nowrap;
+      border: 1px solid rgba(168,85,247,0.15); font-weight: 500;
+    }
+    .third-nav-link:hover { color: #a78bfa; border-color: rgba(168,85,247,0.4); background: rgba(168,85,247,0.08); }
+    .third-nav-link.active { color: #a78bfa; border-color: rgba(168,85,247,0.4); background: rgba(168,85,247,0.12); }
+
+    .container { max-width: 680px; margin: 0 auto; padding: 20px 15px 60px; position: relative; z-index: 1; }
+    .page-header { text-align: center; padding: 20px 10px 10px; }
+    .page-header .module-icon {
+      font-size: 56px; display: block; margin-bottom: 12px;
+      filter: drop-shadow(0 0 20px rgba(168,85,247,0.5)); animation: float 3s ease-in-out infinite;
+    }
+    @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+    .page-header h1 {
+      font-size: 26px; font-weight: 900;
+      background: linear-gradient(135deg, #a78bfa, #c084fc, #818cf8);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; letter-spacing: 2px;
+    }
+    .page-header .step-badge {
+      display: inline-block; background: linear-gradient(135deg, #7c3aed, #a78bfa);
+      color: #fff; padding: 4px 16px; border-radius: 20px; font-size: 12px; font-weight: 700; letter-spacing: 2px; margin-bottom: 8px;
+    }
+    .page-header .sub { color: #94a3b8; font-size: 14px; margin-top: 8px; }
+    .neon-line {
+      width: 50%; height: 2px; margin: 16px auto 24px;
+      background: linear-gradient(90deg, transparent, #a78bfa, #c084fc, #a78bfa, transparent);
+    }
+
+    .content-card {
+      background: rgba(15,23,42,0.7); border: 1px solid rgba(168,85,247,0.15);
+      border-radius: 20px; padding: 24px 20px; margin-bottom: 16px; backdrop-filter: blur(10px);
+    }
+    .content-card h3 { font-size: 18px; font-weight: 700; color: #a78bfa; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+    .content-card h3 .icon { font-size: 22px; }
+    .content-card p { color: #cbd5e1; font-size: 14px; margin-bottom: 8px; }
+    .content-card ul { list-style: none; padding: 0; }
+    .content-card ul li { padding: 6px 0 6px 20px; position: relative; color: #94a3b8; font-size: 14px; }
+    .content-card ul li::before { content: "▸"; position: absolute; left: 0; color: #a78bfa; }
+
+    .tool-entry-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 16px 0;
+    }
+    .tool-entry {
+      display: block; text-decoration: none;
+      background: rgba(15,23,42,0.6); border: 1px solid rgba(168,85,247,0.2);
+      border-radius: 16px; padding: 18px 12px; text-align: center; transition: all 0.3s;
+    }
+    .tool-entry:hover {
+      border-color: rgba(168,85,247,0.5); box-shadow: 0 0 15px rgba(168,85,247,0.1); transform: translateY(-2px);
+    }
+    .tool-entry .te-icon { font-size: 32px; margin-bottom: 8px; }
+    .tool-entry .te-name { font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 4px; }
+    .tool-entry .te-desc { font-size: 11px; color: #94a3b8; line-height: 1.4; }
+    .tool-entry .te-tags { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; margin-top: 6px; }
+    .te-tag {
+      display: inline-block; padding: 2px 8px; border-radius: 8px;
+      font-size: 10px; font-weight: 700;
+    }
+    .tag-free { background: rgba(16,185,129,0.2); color: #34d399; }
+    .tag-pay { background: rgba(251,191,36,0.2); color: #fbbf24; }
+    .tag-china { background: rgba(59,130,246,0.2); color: #60a5fa; }
+    .tag-hot { background: rgba(239,68,68,0.2); color: #fca5a5; }
+
+    .compare-table {
+      width: 100%; border-collapse: collapse; font-size: 12px; margin: 12px 0;
+    }
+    .compare-table th {
+      background: rgba(168,85,247,0.2); padding: 10px 8px; text-align: center;
+      color: #a78bfa; font-weight: 700; border: 1px solid rgba(168,85,247,0.15);
+    }
+    .compare-table td {
+      padding: 10px 8px; text-align: center; color: #94a3b8;
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .quote-card {
+      background: linear-gradient(135deg, rgba(168,85,247,0.1), rgba(129,140,248,0.08));
+      border: 1px solid rgba(168,85,247,0.3); border-radius: 18px; padding: 20px;
+      margin: 24px 0; text-align: center; position: relative;
+    }
+    .quote-card .quote-mark { font-size: 48px; color: #a78bfa; opacity: 0.5; position: absolute; top: 6px; left: 16px; }
+    .quote-card .quote-text { font-size: 18px; font-weight: 700; color: #a78bfa; margin: 10px 0 6px; }
+    .quote-card .quote-author { color: #94a3b8; font-size: 13px; }
+    .cta-box {
+      background: linear-gradient(135deg, rgba(124,58,237,0.3), rgba(168,85,247,0.15));
+      border: 2px solid rgba(168,85,247,0.4); border-radius: 20px; padding: 20px; text-align: center; margin-top: 24px;
+    }
+    .cta-box h3 { font-size: 19px; font-weight: 800; color: #fff; margin-bottom: 6px; }
+    .cta-box p { color: #94a3b8; font-size: 13px; margin-bottom: 16px; }
+    .cta-box .cta-btn {
+      display: inline-block; background: linear-gradient(135deg, #7c3aed, #a78bfa); color: #fff;
+      padding: 12px 28px; border-radius: 30px; text-decoration: none; font-weight: 700; font-size: 16px;
+    }
+    .contact-bar {
+      margin-top: 32px; background: rgba(15,23,42,0.9); border: 1px solid rgba(0,240,255,0.2);
+      border-radius: 18px; padding: 18px 20px; text-align: center; backdrop-filter: blur(10px);
+    }
+    .contact-bar .contact-label { color: #94a3b8; font-size: 13px; margin-bottom: 6px; letter-spacing: 1px; }
+    .contact-bar .contact-wx {
+      font-size: 20px; font-weight: 900;
+      background: linear-gradient(135deg, #00f0ff, #fbbf24);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; letter-spacing: 2px;
+    }
+    .contact-bar .contact-hint { color: #64748b; font-size: 11px; margin-top: 6px; }
+    .footer { text-align: center; color: #334155; font-size: 11px; margin-top: 20px; letter-spacing: 1px; }
+    .nav-buttons { display: flex; gap: 10px; margin-top: 24px; }
+    .nav-btn {
+      flex: 1; text-align: center; padding: 12px; border-radius: 14px; text-decoration: none;
+      font-weight: 700; font-size: 14px; border: 1px solid rgba(168,85,247,0.3); color: #a78bfa; background: rgba(168,85,247,0.05);
+    }
+    .nav-btn.next { background: linear-gradient(135deg, rgba(124,58,237,0.5), rgba(168,85,247,0.2)); color: #fff; }
+
+    @media (max-width: 400px) {
+      .page-header h1 { font-size: 22px; }
+      .page-header .module-icon { font-size: 44px; }
+      .sub-nav-link { font-size: 11px; padding: 5px 10px; }
+      .sub-navbar-inner { height: 40px; }
+      .third-nav-link { font-size: 10px; padding: 3px 8px; }
+      .third-navbar-inner { height: 34px; }
+      .content-card { padding: 18px 14px; }
+      .tool-entry-grid { gap: 8px; }
+      .tool-entry { padding: 14px 10px; }
+      .compare-table { font-size: 10px; }
+      .compare-table th, .compare-table td { padding: 8px 4px; }
+    }
+    @media (min-width: 769px) { .content-card { padding: 28px 24px; } }
+  </style>
+</head>
+<body>
+  <canvas class="stars" id="starsCanvas"></canvas>
+
+  <!-- ==================== 一级导航栏 ==================== -->
+  <nav class="navbar">
+    <div class="navbar-inner">
+      <a href="../../index.html" class="nav-home">🏠 主页</a>
+      <span class="nav-divider"></span>
+      <a href="../../business-thinking.html" class="nav-link">💰商业思维</a>
+      <a href="../../human-nature.html" class="nav-link">🧠人性弱点</a>
+      <a href="../../algorithm.html" class="nav-link">📐规则算法</a>
+      <a href="../../product-selection.html" class="nav-link">🛒带货选品</a>
+      <a href="../../ai-video.html" class="nav-link active">🤖AI视频</a>
+      <a href="../../video-analysis.html" class="nav-link">📊视频分析</a>
+      <a href="../../trend.html" class="nav-link">📈发展趋势</a>
+      <a href="../../creative.html" class="nav-link">💡商业创意</a>
+    </div>
+  </nav>
+
+  <!-- ==================== 二级导航栏 ==================== -->
+  <nav class="sub-navbar">
+    <div class="sub-navbar-inner">
+      <a href="../../ai-video.html" class="sub-nav-link">📋 总览</a>
+      <a href="../text/" class="sub-nav-link">📝 文字</a>
+      <a href="../image/" class="sub-nav-link">🎨 图片</a>
+      <a href="../video/" class="sub-nav-link active">🎬 视频</a>
+      <a href="../audio/" class="sub-nav-link">🔊 声音</a>
+      <a href="../edit/" class="sub-nav-link">✂️ 剪辑</a>
+      <a href="../publish/" class="sub-nav-link">🚀 发布</a>
+    </div>
+  </nav>
+
+  <!-- ==================== 三级导航栏 ==================== -->
+  <nav class="third-navbar">
+    <div class="third-navbar-inner">
+      <a href="index.html" class="third-nav-link active">📋 总览</a>
+      <a href="kelin.html" class="third-nav-link">🎬 可灵</a>
+      <a href="jimeng.html" class="third-nav-link">💫 即梦</a>
+      <a href="runway.html" class="third-nav-link">🎥 Runway</a>
+      <a href="pika.html" class="third-nav-link">🎯 Pika</a>
+      <a href="happyhorse.html" class="third-nav-link">🐴 Happy Horse</a>
+      <a href="comfyui.html" class="third-nav-link">⚡ ComfyUI</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="page-header">
+      <span class="module-icon">🎬</span>
+      <span class="step-badge">STEP 3</span>
+      <h1>AI生成视频</h1>
+      <p class="sub">让静态图片动起来，批量产出高质量视频素材</p>
+    </div>
+    <div class="neon-line"></div>
+
+    <div class="content-card">
+      <h3><span class="icon">🎯</span> AI视频生成在制作流程中的位置</h3>
+      <p>你已经用AI写好了脚本、生成了分镜图，现在需要把这些<strong style="color:#a78bfa;">静态画面变成动态视频</strong>。AI视频生成工具就是做这件事的。</p>
+      <ul>
+        <li><strong style="color:#a78bfa;">图生视频：</strong>把AI生成的图片变成动态片段，是视频制作的核心步骤</li>
+        <li><strong style="color:#c084fc;">文生视频：</strong>直接用文字描述生成视频，无需素材图</li>
+        <li><strong style="color:#818cf8;">视频编辑：</strong>对已有视频进行风格转换、局部修改、延长时长</li>
+      </ul>
+    </div>
+
+    <div class="content-card">
+      <h3><span class="icon">📊</span> 六大AI视频工具对比</h3>
+      <div style="overflow-x:auto;">
+        <table class="compare-table">
+          <thead>
+            <tr><th>工具</th><th>价格</th><th>视频时长</th><th>画质</th><th>上手难度</th><th>最适合</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="color:#fff;font-weight:700;">🎬 可灵</td>
+              <td><span style="color:#fbbf24;">付费（较高）</span></td>
+              <td>最长15秒</td>
+              <td>⭐⭐⭐⭐</td>
+              <td>⭐</td>
+              <td>国产高质量视频</td>
+            </tr>
+            <tr>
+              <td style="color:#fff;font-weight:700;">💫 即梦</td>
+              <td><span style="color:#fbbf24;">付费（较高）</span></td>
+              <td>最长15秒</td>
+              <td>⭐⭐⭐⭐</td>
+              <td>⭐</td>
+              <td>风格化视频生成</td>
+            </tr>
+            <tr>
+              <td style="color:#fff;font-weight:700;">🎥 Runway</td>
+              <td><span style="color:#fbbf24;">付费</span></td>
+              <td>4-10秒</td>
+              <td>⭐⭐⭐⭐⭐</td>
+              <td>⭐⭐</td>
+              <td>专业级制作</td>
+            </tr>
+            <tr>
+              <td style="color:#fff;font-weight:700;">🎯 Pika</td>
+              <td><span style="color:#34d399;">部分免费</span></td>
+              <td>3-5秒</td>
+              <td>⭐⭐⭐⭐</td>
+              <td>⭐⭐</td>
+              <td>创意动画</td>
+            </tr>
+            <tr>
+              <td style="color:#fff;font-weight:700;">🐴 Happy Horse</td>
+              <td><span style="color:#fca5a5;">待定</span></td>
+              <td>最长60秒</td>
+              <td>⭐⭐⭐⭐⭐</td>
+              <td>⭐</td>
+              <td>未来趋势</td>
+            </tr>
+            <tr>
+              <td style="color:#fff;font-weight:700;">⚡ ComfyUI</td>
+              <td><span style="color:#34d399;">免费</span></td>
+              <td>5-30秒</td>
+              <td>⭐⭐⭐⭐</td>
+              <td>⭐⭐⭐⭐⭐</td>
+              <td>批量自动化</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="content-card">
+      <h3><span class="icon">🧰</span> 点击进入各工具详细教程</h3>
+      <div class="tool-entry-grid">
+        <a href="kelin.html" class="tool-entry">
+          <div class="te-icon">🎬</div>
+          <div class="te-name">可灵</div>
+          <div class="te-desc">快手出品，图生视频+文生视频，最长15秒</div>
+          <div class="te-tags"><span class="te-tag tag-china">国产</span><span class="te-tag tag-pay">付费</span></div>
+        </a>
+        <a href="jimeng.html" class="tool-entry">
+          <div class="te-icon">💫</div>
+          <div class="te-name">即梦</div>
+          <div class="te-desc">字节出品，风格化视频，最长15秒</div>
+          <div class="te-tags"><span class="te-tag tag-china">国产</span><span class="te-tag tag-pay">付费</span></div>
+        </a>
+        <a href="runway.html" class="tool-entry">
+          <div class="te-icon">🎥</div>
+          <div class="te-name">Runway</div>
+          <div class="te-desc">专业级AI视频，Gen-3最新，4-10秒</div>
+          <div class="te-tags"><span class="te-tag tag-pay">付费</span></div>
+        </a>
+        <a href="pika.html" class="tool-entry">
+          <div class="te-icon">🎯</div>
+          <div class="te-name">Pika</div>
+          <div class="te-desc">创意动画，口型同步，3-5秒</div>
+          <div class="te-tags"><span class="te-tag tag-free">部分免费</span></div>
+        </a>
+        <a href="happyhorse.html" class="tool-entry">
+          <div class="te-icon">🌟</div>
+          <div class="te-name">Sora</div>
+          <div class="te-desc">OpenAI出品，电影级画质，最长60秒</div>
+          <div class="te-tags"><span class="te-tag tag-hot">即将开放</span></div>
+        </a>
+        <a href="comfyui.html" class="tool-entry">
+          <div class="te-icon">⚡</div>
+          <div class="te-name">ComfyUI</div>
+          <div class="te-desc">节点式工作流，批量生成，5-30秒</div>
+          <div class="te-tags"><span class="te-tag tag-free">免费</span></div>
+        </a>
+      </div>
+    </div>
+
+    <div class="quote-card">
+      <span class="quote-mark">"</span>
+      <p class="quote-text">AI视频生成是2024年最大的技术突破——以前需要整个团队做的事，现在一个人就能搞定。</p>
+      <p class="quote-author">—— 抓住这个窗口期，建立你的内容护城河</p>
+    </div>
+
+    <div class="cta-box">
+      <h3>🎬 准备开始生成AI视频了吗？</h3>
+      <p>选择一个工具，开始让图片动起来</p>
+      <a href="../../form.html" class="cta-btn">📋 填写摸底表</a>
+    </div>
+
+    <div class="nav-buttons">
+      <a href="../image/comfyui.html" class="nav-btn">◀ 上一步：图片</a>
+      <a href="../audio/index.html" class="nav-btn next">下一步：AI配音 ▶</a>
+    </div>
+
+    <div class="contact-bar">
+      <p class="contact-label">📩 深度带教 · 一对一指导</p>
+      <p class="contact-wx">微信：16500234000</p>
+      <p class="contact-hint">添加备注"AI学习"，优先通过</p>
+    </div>
+    <div class="footer">© 2024 张大业 · AI视频变现 · 微信 16500234000</div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('starsCanvas');
+    const ctx = canvas.getContext('2d');
+    let width, height, particles = [];
+    function resize() { width = window.innerWidth; height = window.innerHeight; canvas.width = width; canvas.height = height; }
+    resize(); window.addEventListener('resize', resize);
+    class Particle {
+      constructor() { this.reset(); }
+      reset() { this.x = Math.random() * width; this.y = Math.random() * height; this.size = Math.random() * 1.5 + 0.5; this.speedX = (Math.random() - 0.5) * 0.3; this.speedY = (Math.random() - 0.5) * 0.3; this.opacity = Math.random() * 0.6 + 0.2; this.fadeSpeed = Math.random() * 0.005 + 0.002; this.fading = Math.random() > 0.5; }
+      update() { this.x += this.speedX; this.y += this.speedY; if (this.fading) { this.opacity -= this.fadeSpeed; if (this.opacity <= 0.1) this.fading = false; } else { this.opacity += this.fadeSpeed; if (this.opacity >= 0.7) this.fading = true; } if (this.x < -10 || this.x > width + 10 || this.y < -10 || this.y > height + 10) { this.reset(); this.opacity = Math.random() * 0.5; } }
+      draw() { ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fillStyle = `rgba(168, 85, 247, ${this.opacity})`; ctx.fill(); }
+    }
+    for (let i = 0; i < 150; i++) particles.push(new Particle());
+    function animate() {
+      ctx.clearRect(0, 0, width, height);
+      particles.forEach(p => { p.update(); p.draw(); });
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x; const dy = particles[i].y - particles[j].y; const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 80) { ctx.beginPath(); ctx.moveTo(particles[i].x, particles[i].y); ctx.lineTo(particles[j].x, particles[j].y); ctx.strokeStyle = `rgba(168, 85, 247, ${0.06 * (1 - dist / 80)})`; ctx.lineWidth = 0.5; ctx.stroke(); }
+        }
+      }
+      requestAnimationFrame(animate);
+    }
+    animate();
+  </script>
+</body>
+</html>

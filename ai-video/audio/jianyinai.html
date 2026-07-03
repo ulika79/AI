@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>剪映AI配音 · AI声音 · 张大业AI视频变现</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #000;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      min-height: 100vh; overflow-x: hidden; color: #e2e8f0; line-height: 1.8;
+    }
+    .stars { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
+
+    .navbar {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(0,0,0,0.85); backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(6,182,212,0.2); padding: 0 10px;
+    }
+    .navbar-inner {
+      max-width: 680px; margin: 0 auto;
+      display: flex; align-items: center; height: 50px; gap: 6px;
+      overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none;
+    }
+    .navbar-inner::-webkit-scrollbar { display: none; }
+    .nav-home {
+      flex-shrink: 0; text-decoration: none; color: #06b6d4; font-weight: 700;
+      font-size: 15px; padding: 6px 12px; border: 1px solid rgba(6,182,212,0.3);
+      border-radius: 20px; white-space: nowrap; margin-right: 4px;
+    }
+    .nav-home:active { background: rgba(6,182,212,0.15); }
+    .nav-link {
+      flex-shrink: 0; text-decoration: none; color: #94a3b8; font-size: 12px;
+      padding: 6px 10px; border-radius: 14px; white-space: nowrap; border: 1px solid transparent;
+    }
+    .nav-link:hover { color: #06b6d4; }
+    .nav-link.active { color: #06b6d4; border-color: rgba(6,182,212,0.3); background: rgba(6,182,212,0.08); }
+    .nav-divider { width: 1px; height: 16px; background: rgba(255,255,255,0.1); flex-shrink: 0; margin: 0 2px; }
+
+    .sub-navbar {
+      position: sticky; top: 50px; z-index: 99;
+      background: rgba(0,0,0,0.8); backdrop-filter: blur(15px);
+      border-bottom: 1px solid rgba(6,182,212,0.15); padding: 0 10px;
+    }
+    .sub-navbar-inner {
+      max-width: 680px; margin: 0 auto;
+      display: flex; align-items: center; height: 44px; gap: 4px;
+      overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none;
+    }
+    .sub-navbar-inner::-webkit-scrollbar { display: none; }
+    .sub-nav-link {
+      flex-shrink: 0; text-decoration: none; color: #94a3b8; font-size: 12px;
+      padding: 6px 14px; border-radius: 18px; white-space: nowrap;
+      border: 1px solid rgba(6,182,212,0.2); font-weight: 600; letter-spacing: 0.5px;
+    }
+    .sub-nav-link:hover { color: #fff; border-color: rgba(6,182,212,0.5); background: rgba(6,182,212,0.1); }
+    .sub-nav-link.active { color: #fff; background: linear-gradient(135deg, #0891b2, #06b6d4); border-color: transparent; }
+
+    .third-navbar {
+      position: sticky; top: 94px; z-index: 98;
+      background: rgba(0,0,0,0.75); backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(6,182,212,0.1); padding: 0 10px;
+    }
+    .third-navbar-inner {
+      max-width: 680px; margin: 0 auto;
+      display: flex; align-items: center; height: 38px; gap: 3px;
+      overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none;
+    }
+    .third-navbar-inner::-webkit-scrollbar { display: none; }
+    .third-nav-link {
+      flex-shrink: 0; text-decoration: none; color: #94a3b8; font-size: 11px;
+      padding: 4px 10px; border-radius: 12px; white-space: nowrap;
+      border: 1px solid rgba(6,182,212,0.15); font-weight: 500;
+    }
+    .third-nav-link:hover { color: #06b6d4; border-color: rgba(6,182,212,0.4); background: rgba(6,182,212,0.08); }
+    .third-nav-link.active { color: #06b6d4; border-color: rgba(6,182,212,0.4); background: rgba(6,182,212,0.12); }
+
+    .container { max-width: 680px; margin: 0 auto; padding: 20px 15px 60px; position: relative; z-index: 1; }
+    .page-header { text-align: center; padding: 20px 10px 10px; }
+    .page-header .module-icon {
+      font-size: 56px; display: block; margin-bottom: 12px;
+      filter: drop-shadow(0 0 20px rgba(6,182,212,0.5)); animation: float 3s ease-in-out infinite;
+    }
+    @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+    .page-header h1 {
+      font-size: 26px; font-weight: 900;
+      background: linear-gradient(135deg, #06b6d4, #22d3ee, #10b981);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; letter-spacing: 2px;
+    }
+    .page-header .step-badge {
+      display: inline-block; background: linear-gradient(135deg, #0891b2, #06b6d4);
+      color: #000; padding: 4px 16px; border-radius: 20px; font-size: 12px; font-weight: 700; letter-spacing: 2px; margin-bottom: 8px;
+    }
+    .page-header .sub { color: #94a3b8; font-size: 14px; margin-top: 8px; }
+    .neon-line {
+      width: 50%; height: 2px; margin: 16px auto 24px;
+      background: linear-gradient(90deg, transparent, #06b6d4, #10b981, #06b6d4, transparent);
+    }
+
+    .content-card {
+      background: rgba(15,23,42,0.7); border: 1px solid rgba(6,182,212,0.15);
+      border-radius: 20px; padding: 24px 20px; margin-bottom: 16px; backdrop-filter: blur(10px);
+    }
+    .content-card h3 { font-size: 18px; font-weight: 700; color: #22d3ee; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+    .content-card h3 .icon { font-size: 22px; }
+    .content-card p { color: #cbd5e1; font-size: 14px; margin-bottom: 8px; }
+    .content-card ul { list-style: none; padding: 0; }
+    .content-card ul li { padding: 6px 0 6px 20px; position: relative; color: #94a3b8; font-size: 14px; }
+    .content-card ul li::before { content: "▸"; position: absolute; left: 0; color: #06b6d4; }
+
+    .feature-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 16px 0;
+    }
+    .feature-card {
+      background: rgba(15,23,42,0.6); border: 1px solid rgba(6,182,212,0.2);
+      border-radius: 14px; padding: 16px 12px; text-align: center; transition: all 0.3s;
+    }
+    .feature-card:hover { border-color: rgba(6,182,212,0.5); box-shadow: 0 0 15px rgba(6,182,212,0.1); }
+    .feature-card .fc-icon { font-size: 28px; margin-bottom: 6px; }
+    .feature-card .fc-name { font-size: 14px; font-weight: 700; color: #22d3ee; margin-bottom: 4px; }
+    .feature-card .fc-desc { font-size: 11px; color: #94a3b8; line-height: 1.4; }
+
+    .compare-table {
+      width: 100%; border-collapse: collapse; font-size: 12px; margin: 12px 0;
+    }
+    .compare-table th {
+      background: rgba(6,182,212,0.2); padding: 10px 8px; text-align: center;
+      color: #22d3ee; font-weight: 700; border: 1px solid rgba(6,182,212,0.15);
+    }
+    .compare-table td {
+      padding: 10px 8px; text-align: center; color: #94a3b8;
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .quote-card {
+      background: linear-gradient(135deg, rgba(6,182,212,0.1), rgba(34,211,238,0.08));
+      border: 1px solid rgba(6,182,212,0.3); border-radius: 18px; padding: 20px;
+      margin: 24px 0; text-align: center; position: relative;
+    }
+    .quote-card .quote-mark { font-size: 48px; color: #22d3ee; opacity: 0.5; position: absolute; top: 6px; left: 16px; }
+    .quote-card .quote-text { font-size: 18px; font-weight: 700; color: #22d3ee; margin: 10px 0 6px; }
+    .quote-card .quote-author { color: #94a3b8; font-size: 13px; }
+    .cta-box {
+      background: linear-gradient(135deg, rgba(6,182,212,0.3), rgba(8,145,178,0.15));
+      border: 2px solid rgba(6,182,212,0.4); border-radius: 20px; padding: 20px; text-align: center; margin-top: 24px;
+    }
+    .cta-box h3 { font-size: 19px; font-weight: 800; color: #fff; margin-bottom: 6px; }
+    .cta-box p { color: #94a3b8; font-size: 13px; margin-bottom: 16px; }
+    .cta-box .cta-btn {
+      display: inline-block; background: linear-gradient(135deg, #06b6d4, #0891b2); color: #fff;
+      padding: 12px 28px; border-radius: 30px; text-decoration: none; font-weight: 700; font-size: 16px;
+    }
+    .contact-bar {
+      margin-top: 32px; background: rgba(15,23,42,0.9); border: 1px solid rgba(0,240,255,0.2);
+      border-radius: 18px; padding: 18px 20px; text-align: center; backdrop-filter: blur(10px);
+    }
+    .contact-bar .contact-label { color: #94a3b8; font-size: 13px; margin-bottom: 6px; letter-spacing: 1px; }
+    .contact-bar .contact-wx {
+      font-size: 20px; font-weight: 900;
+      background: linear-gradient(135deg, #00f0ff, #fbbf24);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; letter-spacing: 2px;
+    }
+    .contact-bar .contact-hint { color: #64748b; font-size: 11px; margin-top: 6px; }
+    .footer { text-align: center; color: #334155; font-size: 11px; margin-top: 20px; letter-spacing: 1px; }
+    .nav-buttons { display: flex; gap: 10px; margin-top: 24px; }
+    .nav-btn {
+      flex: 1; text-align: center; padding: 12px; border-radius: 14px; text-decoration: none;
+      font-weight: 700; font-size: 14px; border: 1px solid rgba(6,182,212,0.3); color: #22d3ee; background: rgba(6,182,212,0.05);
+    }
+    .nav-btn.next { background: linear-gradient(135deg, rgba(6,182,212,0.5), rgba(8,145,178,0.2)); color: #fff; }
+
+    @media (max-width: 400px) {
+      .page-header h1 { font-size: 22px; }
+      .page-header .module-icon { font-size: 44px; }
+      .sub-nav-link { font-size: 11px; padding: 5px 10px; }
+      .sub-navbar-inner { height: 40px; }
+      .third-nav-link { font-size: 10px; padding: 3px 8px; }
+      .third-navbar-inner { height: 34px; }
+      .content-card { padding: 18px 14px; }
+      .feature-grid { gap: 8px; }
+      .feature-card { padding: 12px 8px; }
+    }
+    @media (min-width: 769px) { .content-card { padding: 28px 24px; } }
+  </style>
+</head>
+<body>
+  <canvas class="stars" id="starsCanvas"></canvas>
+
+  <nav class="navbar">
+    <div class="navbar-inner">
+      <a href="../../index.html" class="nav-home">🏠 主页</a>
+      <span class="nav-divider"></span>
+      <a href="../../business-thinking.html" class="nav-link">💰商业思维</a>
+      <a href="../../human-nature.html" class="nav-link">🧠人性弱点</a>
+      <a href="../../algorithm.html" class="nav-link">📐规则算法</a>
+      <a href="../../product-selection.html" class="nav-link">🛒带货选品</a>
+      <a href="../../ai-video.html" class="nav-link active">🤖AI视频</a>
+      <a href="../../video-analysis.html" class="nav-link">📊视频分析</a>
+      <a href="../../trend.html" class="nav-link">📈发展趋势</a>
+      <a href="../../creative.html" class="nav-link">💡商业创意</a>
+    </div>
+  </nav>
+
+  <nav class="sub-navbar">
+    <div class="sub-navbar-inner">
+      <a href="../../ai-video.html" class="sub-nav-link">📋 总览</a>
+      <a href="../text/" class="sub-nav-link">📝 文字</a>
+      <a href="../image/" class="sub-nav-link">🎨 图片</a>
+      <a href="../video/" class="sub-nav-link">🎬 视频</a>
+      <a href="../audio/" class="sub-nav-link active">🔊 声音</a>
+      <a href="../edit/" class="sub-nav-link">✂️ 剪辑</a>
+      <a href="../publish/" class="sub-nav-link">🚀 发布</a>
+    </div>
+  </nav>
+
+  <nav class="third-navbar">
+    <div class="third-navbar-inner">
+      <a href="index.html" class="third-nav-link">📋 总览</a>
+      <a href="jianyinai.html" class="third-nav-link active">🎙️ 剪映AI</a>
+      <a href="elevenlabs.html" class="third-nav-link">🗣️ ElevenLabs</a>
+      <a href="moyin.html" class="third-nav-link">🎤 魔音工坊</a>
+      <a href="suno.html" class="third-nav-link">🎵 Suno</a>
+      <a href="udio.html" class="third-nav-link">🎶 Udio</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="page-header">
+      <span class="module-icon">🎙️</span>
+      <span class="step-badge">声音 · 剪映AI</span>
+      <h1>剪映AI配音</h1>
+      <p class="sub">免费配音工具，中文友好，一键生成专业配音</p>
+    </div>
+    <div class="neon-line"></div>
+
+    <div class="content-card">
+      <h3><span class="icon">🌟</span> 为什么选剪映AI配音？</h3>
+      <p>剪映AI配音是<strong style="color:#22d3ee;">国内最常用、最方便的AI配音工具</strong>。完全免费，中文支持极好，而且可以直接在剪映剪辑软件中使用，配音+剪辑一气呵成。</p>
+      <ul>
+        <li><strong style="color:#22d3ee;">完全免费：</strong>没有任何收费，不限次数使用</li>
+        <li><strong style="color:#06b6d4;">中文原生支持：</strong>中文发音自然流畅，支持多种音色</li>
+        <li><strong style="color:#10b981;">一键生成：</strong>输入文字 → 选择音色 → 生成配音，三步搞定</li>
+        <li><strong style="color:#22d3ee;">字幕同步：</strong>配音自动生成字幕，无需手动对齐</li>
+        <li><strong style="color:#06b6d4;">剪辑联动：</strong>在剪映里配音后直接剪辑，工作流无缝衔接</li>
+      </ul>
+    </div>
+
+    <div class="content-card">
+      <h3><span class="icon">🎯</span> 核心功能</h3>
+      <div class="feature-grid">
+        <div class="feature-card">
+          <div class="fc-icon">🎤</div>
+          <div class="fc-name">文字转语音</div>
+          <div class="fc-desc">输入文字自动生成配音，支持中文/英文/方言</div>
+        </div>
+        <div class="feature-card">
+          <div class="fc-icon">👥</div>
+          <div class="fc-name">多音色选择</div>
+          <div class="fc-desc">男声/女声/童声/老年声等几十种音色可选</div>
+        </div>
+        <div class="feature-card">
+          <div class="fc-icon">⏱️</div>
+          <div class="fc-name">语速调节</div>
+          <div class="fc-desc">0.5倍-2倍语速自由调节，适配不同场景</div>
+        </div>
+        <div class="feature-card">
+          <div class="fc-icon">📝</div>
+          <div class="fc-name">自动字幕</div>
+          <div class="fc-desc">配音同步生成字幕，支持字幕样式自定义</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="content-card">
+      <h3><span class="icon">🚀</span> 快速上手（3步搞定）</h3>
+      <ul>
+        <li><strong style="color:#22d3ee;">① 打开剪映：</strong>电脑版或手机版均可，进入"文本"→"新建文本"</li>
+        <li><strong style="color:#06b6d4;">② 输入文案：</strong>把AI生成的脚本粘贴进去，点击"文本朗读"</li>
+        <li><strong style="color:#10b981;">③ 选择音色：</strong>从几十种音色中选一个喜欢的，点击生成即可</li>
+      </ul>
+      <p style="margin-top:12px;">生成的配音会自动添加到时间轴上，直接和视频画面同步剪辑。</p>
+    </div>
+
+    <div class="content-card">
+      <h3><span class="icon">🎤</span> 常用音色推荐</h3>
+      <div style="overflow-x:auto;">
+        <table class="compare-table">
+          <thead>
+            <tr><th>音色名称</th><th>类型</th><th>特点</th><th>适用场景</th></tr>
+          </thead>
+          <tbody>
+            <tr><td style="color:#22d3ee;font-weight:700;">阳光男声</td><td>男声</td><td>年轻有活力</td><td>知识科普、教程解说</td></tr>
+            <tr><td style="color:#22d3ee;font-weight:700;">温柔女声</td><td>女声</td><td>亲切温暖</td><td>生活记录、育儿内容</td></tr>
+            <tr><td style="color:#22d3ee;font-weight:700;">专业男声</td><td>男声</td><td>沉稳大气</td><td>商业分析、新闻播报</td></tr>
+            <tr><td style="color:#22d3ee;font-weight:700;">甜美女声</td><td>女声</td><td>活泼甜美</td><td>带货视频、种草内容</td></tr>
+            <tr><td style="color:#22d3ee;font-weight:700;">磁性男声</td><td>男声</td><td>低沉有磁性</td><td>情感故事、纪录片</td></tr>
+            <tr><td style="color:#22d3ee;font-weight:700;">可爱童声</td><td>童声</td><td>天真可爱</td><td>亲子内容、趣味视频</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="content-card">
+      <h3><span class="icon">💡</span> 让配音更自然的技巧</h3>
+      <ul>
+        <li><strong style="color:#22d3ee;">加标点控制停顿：</strong>用逗号(短停顿)、句号(长停顿)、省略号(渐弱)来控制节奏</li>
+        <li><strong style="color:#06b6d4;">分段朗读：</strong>不要一次性生成整个脚本，按段落分段生成，方便后期调整</li>
+        <li><strong style="color:#10b981;">微调语速：</strong>一般保持1.0倍速，开头钩子可以调到1.1倍（更紧迫），结尾金句调到0.9倍（更有力）</li>
+        <li><strong style="color:#22d3ee;">加语气词：</strong>在文案中加入"嗯""啊""这个"等语气词，让配音更像真人说话</li>
+      </ul>
+    </div>
+
+    <div class="content-card">
+      <h3><span class="icon">⚠️</span> 剪映AI配音的局限</h3>
+      <ul>
+        <li><strong style="color:#ef4444;">情感控制有限：</strong>只有基础的情绪变化，不如ElevenLabs细腻</li>
+        <li><strong style="color:#f87171;">不支持声音克隆：</strong>不能用你自己的声音或特定人物的声音</li>
+        <li><strong style="color:#fca5a5;">英文效果一般：</strong>主要优化中文，英文发音不如专业工具</li>
+        <li><strong style="color:#ef4444;">音色固定：</strong>只能用预设音色，不能自定义训练</li>
+      </ul>
+    </div>
+
+    <div class="quote-card">
+      <span class="quote-mark">"</span>
+      <p class="quote-text">剪映AI配音是入门者的最佳选择——零成本、零门槛，今天就给你的视频配上专业声音。</p>
+      <p class="quote-author">—— 从剪映开始你的AI配音之旅</p>
+    </div>
+
+    <div class="cta-box">
+      <h3>🎙️ 准备用剪映给你的视频配音了吗？</h3>
+      <p>打开剪映，三步生成专业配音</p>
+      <a href="../../form.html" class="cta-btn">📋 填写摸底表</a>
+    </div>
+
+    <div class="nav-buttons">
+      <a href="index.html" class="nav-btn">◀ 返回声音总览</a>
+      <a href="elevenlabs.html" class="nav-btn next">下一工具：ElevenLabs ▶</a>
+    </div>
+
+    <div class="contact-bar">
+      <p class="contact-label">📩 深度带教 · 一对一指导</p>
+      <p class="contact-wx">微信：16500234000</p>
+      <p class="contact-hint">添加备注"AI学习"，优先通过</p>
+    </div>
+    <div class="footer">© 2024 张大业 · AI视频变现 · 微信 16500234000</div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('starsCanvas');
+    const ctx = canvas.getContext('2d');
+    let width, height, particles = [];
+    function resize() { width = window.innerWidth; height = window.innerHeight; canvas.width = width; canvas.height = height; }
+    resize(); window.addEventListener('resize', resize);
+    class Particle {
+      constructor() { this.reset(); }
+      reset() { this.x = Math.random() * width; this.y = Math.random() * height; this.size = Math.random() * 1.5 + 0.5; this.speedX = (Math.random() - 0.5) * 0.3; this.speedY = (Math.random() - 0.5) * 0.3; this.opacity = Math.random() * 0.6 + 0.2; this.fadeSpeed = Math.random() * 0.005 + 0.002; this.fading = Math.random() > 0.5; }
+      update() { this.x += this.speedX; this.y += this.speedY; if (this.fading) { this.opacity -= this.fadeSpeed; if (this.opacity <= 0.1) this.fading = false; } else { this.opacity += this.fadeSpeed; if (this.opacity >= 0.7) this.fading = true; } if (this.x < -10 || this.x > width + 10 || this.y < -10 || this.y > height + 10) { this.reset(); this.opacity = Math.random() * 0.5; } }
+      draw() { ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fillStyle = `rgba(6, 182, 212, ${this.opacity})`; ctx.fill(); }
+    }
+    for (let i = 0; i < 150; i++) particles.push(new Particle());
+    function animate() {
+      ctx.clearRect(0, 0, width, height);
+      particles.forEach(p => { p.update(); p.draw(); });
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x; const dy = particles[i].y - particles[j].y; const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 80) { ctx.beginPath(); ctx.moveTo(particles[i].x, particles[i].y); ctx.lineTo(particles[j].x, particles[j].y); ctx.strokeStyle = `rgba(6, 182, 212, ${0.06 * (1 - dist / 80)})`; ctx.lineWidth = 0.5; ctx.stroke(); }
+        }
+      }
+      requestAnimationFrame(animate);
+    }
+    animate();
+  </script>
+</body>
+</html>

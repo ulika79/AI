@@ -15,6 +15,7 @@
       color: #fff;
     }
 
+    /* 星空粒子背景 */
     .stars {
       position: fixed;
       top: 0; left: 0;
@@ -23,6 +24,7 @@
       z-index: 0;
     }
 
+    /* 主容器 */
     .container {
       max-width: 680px;
       margin: 0 auto;
@@ -31,6 +33,7 @@
       z-index: 1;
     }
 
+    /* 顶部Logo区 */
     .hero {
       text-align: center;
       padding: 40px 10px 20px;
@@ -75,6 +78,7 @@
       letter-spacing: 1px;
     }
 
+    /* 霓虹分割线 */
     .neon-line {
       width: 60%;
       height: 2px;
@@ -83,6 +87,7 @@
       border-radius: 2px;
     }
 
+    /* 摸底表入口 */
     .cta-banner {
       display: block;
       background: linear-gradient(135deg, rgba(124,58,237,0.3), rgba(0,240,255,0.15));
@@ -152,6 +157,7 @@
       50% { opacity: 0.3; }
     }
 
+    /* 模块标题 */
     .section-header {
       display: flex;
       align-items: center;
@@ -173,6 +179,7 @@
       letter-spacing: 1px;
     }
 
+    /* 卡片网格 */
     .card-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -243,6 +250,7 @@
       line-height: 1.5;
     }
 
+    /* 锁定样式 */
     .card.locked {
       opacity: 0.4;
       pointer-events: none;
@@ -257,6 +265,7 @@
       opacity: 0.8;
     }
 
+    /* 底部微信 */
     .contact-bar {
       background: rgba(15, 23, 42, 0.9);
       border: 1px solid rgba(0,240,255,0.3);
@@ -290,6 +299,7 @@
       margin-top: 6px;
     }
 
+    /* 底部数据条 */
     .stats-bar {
       display: flex;
       justify-content: center;
@@ -327,7 +337,6 @@
       letter-spacing: 1px;
     }
 
-    /* ========== 手机适配 ========== */
     @media (max-width: 400px) {
       .hero .logo-text { font-size: 32px; }
       .hero .sub-brand { font-size: 15px; }
@@ -335,27 +344,15 @@
       .card { padding: 14px 10px; }
       .card .card-icon { font-size: 28px; }
       .card .card-title { font-size: 13px; }
-      .contact-bar .contact-wx { font-size: 18px; }
-    }
-
-    /* ========== 平板适配 ========== */
-    @media (min-width: 401px) and (max-width: 768px) {
-      .hero .logo-text { font-size: 38px; }
-      .card { padding: 20px 16px; }
-    }
-
-    /* ========== 电脑适配 ========== */
-    @media (min-width: 769px) {
-      .card-grid { gap: 14px; }
-      .card { padding: 24px 18px; transition: all 0.4s; }
-      .card:hover { transform: translateY(-6px); box-shadow: 0 0 35px rgba(0,240,255,0.25); }
     }
   </style>
 </head>
 <body>
 
+  <!-- 星空粒子背景 -->
   <canvas class="stars" id="starsCanvas"></canvas>
 
+  <!-- 主容器 -->
   <div class="container">
 
     <!-- 顶部Logo -->
@@ -458,7 +455,7 @@
     <!-- 联系微信 -->
     <div class="contact-bar">
       <p class="contact-label">📩 深度带教 · 一对一指导</p>
-      <p class="contact-wx">微信：16500234000</p>
+      <p class="contact-wx">微信：你的微信号</p>
       <p class="contact-hint">添加备注"AI学习"，优先通过</p>
     </div>
 
@@ -483,14 +480,16 @@
     </div>
 
     <div class="footer">
-      © 2024 张大业 · AI视频变现 · 微信 16500234000
+      © 2024 张大业 · AI视频变现 · 持续进化中
     </div>
 
   </div>
 
   <script>
+    // 星空粒子动画
     const canvas = document.getElementById('starsCanvas');
     const ctx = canvas.getContext('2d');
+
     let width, height;
     let particles = [];
 
@@ -504,6 +503,7 @@
     resize();
     window.addEventListener('resize', resize);
 
+    // 创建粒子
     class Particle {
       constructor() {
         this.reset();
@@ -521,6 +521,7 @@
       update() {
         this.x += this.speedX;
         this.y += this.speedY;
+
         if (this.fading) {
           this.opacity -= this.fadeSpeed;
           if (this.opacity <= 0.1) this.fading = false;
@@ -528,6 +529,7 @@
           this.opacity += this.fadeSpeed;
           if (this.opacity >= 0.7) this.fading = true;
         }
+
         if (this.x < -10 || this.x > width + 10 || this.y < -10 || this.y > height + 10) {
           this.reset();
           this.opacity = Math.random() * 0.5;
@@ -541,16 +543,20 @@
       }
     }
 
+    // 初始化粒子
     for (let i = 0; i < 150; i++) {
       particles.push(new Particle());
     }
 
+    // 动画循环
     function animate() {
       ctx.clearRect(0, 0, width, height);
       particles.forEach(p => {
         p.update();
         p.draw();
       });
+
+      // 连线
       for (let i = 0; i < particles.length; i++) {
         for (let j = i + 1; j < particles.length; j++) {
           const dx = particles[i].x - particles[j].x;
@@ -566,8 +572,10 @@
           }
         }
       }
+
       requestAnimationFrame(animate);
     }
+
     animate();
   </script>
 
