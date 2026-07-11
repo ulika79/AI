@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 模型全景分类分析</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: #f6f9fc;
+            color: #1a2634;
+            padding: 2rem 1rem;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-size: 2.8rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            background: linear-gradient(135deg, #1e3a5f, #2b5a8c);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: #4a5b6e;
+            margin-bottom: 2rem;
+            border-left: 5px solid #2b5a8c;
+            padding-left: 1.2rem;
+            background: rgba(43, 90, 140, 0.05);
+            border-radius: 0 8px 8px 0;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 1rem;
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+            margin-bottom: 2.5rem;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1e3a5f;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: #5a6f82;
+            margin-top: 0.2rem;
+        }
+
+        .nav-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem 1.2rem;
+            background: white;
+            padding: 1rem 1.5rem;
+            border-radius: 40px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            margin-bottom: 2.5rem;
+            justify-content: center;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #1e3a5f;
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: color 0.2s;
+            border-bottom: 2px solid transparent;
+            padding-bottom: 2px;
+        }
+
+        .nav-links a:hover {
+            color: #2b5a8c;
+            border-bottom-color: #2b5a8c;
+        }
+
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 1.8rem;
+            margin-bottom: 3rem;
+        }
+
+        .category-card {
+            background: white;
+            border-radius: 20px;
+            padding: 1.8rem 1.8rem 2rem;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.05);
+            transition: transform 0.15s ease, box-shadow 0.2s;
+            border-top: 6px solid #2b5a8c;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .category-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 28px rgba(0,0,0,0.08);
+        }
+
+        .category-card .cat-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #0b1e2e;
+            margin-bottom: 0.3rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .category-card .cat-icon {
+            font-size: 1.6rem;
+        }
+
+        .category-card .cat-models {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem 0.8rem;
+            margin: 0.6rem 0 1rem 0;
+        }
+
+        .cat-models .model-tag {
+            background: #eef3f9;
+            padding: 0.2rem 0.8rem;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: #1e3a5f;
+            letter-spacing: 0.01em;
+            border: 1px solid #d5e0ec;
+        }
+
+        .category-card .section {
+            margin-top: 0.7rem;
+        }
+
+        .category-card .section strong {
+            color: #0b1e2e;
+            display: inline-block;
+            margin-right: 0.4rem;
+        }
+
+        .category-card .section ul {
+            list-style: none;
+            padding-left: 0;
+            margin-top: 0.2rem;
+        }
+
+        .category-card .section ul li {
+            padding: 0.2rem 0 0.2rem 1.4rem;
+            position: relative;
+            font-size: 0.95rem;
+        }
+
+        .category-card .section ul li::before {
+            content: "•";
+            position: absolute;
+            left: 0.2rem;
+            color: #2b5a8c;
+            font-weight: 700;
+        }
+
+        .category-card .use-case {
+            background: #f0f6fe;
+            border-radius: 12px;
+            padding: 0.8rem 1.2rem;
+            margin-top: 0.8rem;
+            font-size: 0.95rem;
+            border-left: 3px solid #2b5a8c;
+        }
+
+        .category-card .use-case strong {
+            color: #0b1e2e;
+        }
+
+        /* 色彩主题 */
+        .cat-flagship { border-top-color: #1e3a5f; }
+        .cat-lightweight { border-top-color: #3f7e9c; }
+        .cat-reasoning { border-top-color: #b13e3e; }
+        .cat-code { border-top-color: #2a7d4f; }
+        .cat-image-gen { border-top-color: #b47c2e; }
+        .cat-video-gen { border-top-color: #8a4b9e; }
+        .cat-vision { border-top-color: #c06d3a; }
+        .cat-voice { border-top-color: #4f7a8c; }
+        .cat-translate { border-top-color: #3f7e5a; }
+        .cat-embedding { border-top-color: #6b5f8a; }
+        .cat-character { border-top-color: #b3576b; }
+        .cat-mj { border-top-color: #777777; }
+        .cat-music { border-top-color: #b38f4a; }
+        .cat-other { border-top-color: #8a8a8a; }
+
+        .quick-pick {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.05);
+            margin-top: 2rem;
+        }
+
+        .quick-pick h2 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #0b1e2e;
+            margin-bottom: 1.5rem;
+        }
+
+        .quick-pick table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95rem;
+        }
+
+        .quick-pick th {
+            text-align: left;
+            padding: 0.8rem 0.6rem;
+            background: #eef3f9;
+            color: #1e3a5f;
+            font-weight: 600;
+            border-bottom: 2px solid #d5e0ec;
+        }
+
+        .quick-pick td {
+            padding: 0.7rem 0.6rem;
+            border-bottom: 1px solid #e4eaf1;
+        }
+
+        .quick-pick tr:last-child td {
+            border-bottom: none;
+        }
+
+        .notes {
+            background: #f9fbfd;
+            border-radius: 16px;
+            padding: 1.8rem 2rem;
+            margin-top: 2.5rem;
+            border-left: 6px solid #2b5a8c;
+        }
+
+        .notes h3 {
+            font-weight: 600;
+            color: #0b1e2e;
+            margin-bottom: 0.6rem;
+        }
+
+        .notes ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .notes ul li {
+            padding: 0.3rem 0 0.3rem 1.8rem;
+            position: relative;
+        }
+
+        .notes ul li::before {
+            content: "📌";
+            position: absolute;
+            left: 0;
+        }
+
+        @media (max-width: 700px) {
+            h1 { font-size: 2rem; }
+            .category-grid { grid-template-columns: 1fr; }
+            .nav-links { border-radius: 20px; flex-direction: column; align-items: center; }
+            .quick-pick table { font-size: 0.85rem; }
+            .quick-pick th, .quick-pick td { padding: 0.5rem 0.3rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>🧠 AI 模型全景分类分析</h1>
+    <div class="subtitle">横跨文本、图像、视频、语音、代码等领域的 300+ 模型深度解析</div>
+
+    <!-- 统计概览 -->
+    <div class="stats-grid">
+        <div class="stat-item"><div class="stat-number">~40</div><div class="stat-label">旗舰文本模型</div></div>
+        <div class="stat-item"><div class="stat-number">~30</div><div class="stat-label">轻量文本模型</div></div>
+        <div class="stat-item"><div class="stat-number">~15</div><div class="stat-label">推理/思维链</div></div>
+        <div class="stat-item"><div class="stat-number">~12</div><div class="stat-label">代码专用</div></div>
+        <div class="stat-item"><div class="stat-number">~15</div><div class="stat-label">图像生成</div></div>
+        <div class="stat-item"><div class="stat-number">~12</div><div class="stat-label">视频生成</div></div>
+        <div class="stat-item"><div class="stat-number">~10</div><div class="stat-label">视觉理解</div></div>
+        <div class="stat-item"><div class="stat-number">~18</div><div class="stat-label">语音/TTS</div></div>
+    </div>
+
+    <!-- 快速导航 -->
+    <div class="nav-links">
+        <a href="#cat-flagship">🚀 旗舰文本</a>
+        <a href="#cat-lightweight">⚡ 轻量文本</a>
+        <a href="#cat-reasoning">🧮 推理模型</a>
+        <a href="#cat-code">💻 代码模型</a>
+        <a href="#cat-image-gen">🎨 图像生成</a>
+        <a href="#cat-video-gen">🎬 视频生成</a>
+        <a href="#cat-vision">👁️ 视觉理解</a>
+        <a href="#cat-voice">🎤 语音/TTS</a>
+        <a href="#cat-translate">🌐 翻译</a>
+        <a href="#cat-embedding">📊 嵌入/重排</a>
+        <a href="#cat-character">🎭 角色扮演</a>
+        <a href="#cat-mj">🎨 MJ 工具</a>
+        <a href="#cat-music">🎵 音乐生成</a>
+        <a href="#cat-other">📦 其他</a>
+    </div>
+
+    <!-- 分类卡片 -->
+    <div class="category-grid">
+
+        <!-- 1. 旗舰文本 -->
+        <div class="category-card cat-flagship" id="cat-flagship">
+            <div class="cat-title"><span class="cat-icon">🚀</span> 旗舰文本模型</div>
+            <div class="cat-models">
+                <span class="model-tag">GPT-5.6-Sol</span>
+                <span class="model-tag">DeepSeek-V3.2</span>
+                <span class="model-tag">Qwen3.5-Plus</span>
+                <span class="model-tag">GLM-5.2</span>
+                <span class="model-tag">Claude-Opus-4-8</span>
+                <span class="model-tag">LLaMA-3.1-405B</span>
+                <span class="model-tag">Grok-4.5</span>
+            </div>
+            <div class="section"><strong>✅ 优点</strong>
+                <ul><li>顶尖推理能力，复杂任务处理准确</li><li>超大上下文（100K~1M tokens）</li><li>多模态输入（图像/音频/视频）</li><li>成熟的 Agent 和工具调用</li></ul>
+            </div>
+            <div class="section"><strong>❌ 缺点</strong>
+                <ul><li>成本高昂（尤其 Ultra/Opus 级别）</li><li>推理延迟较高</li><li>部署需大量算力</li></ul>
+            </div>
+            <div class="use-case"><strong>🎯 用途</strong> 复杂业务推理、科研辅助、法律/医疗分析、高质量长文创作、企业级 Agent</div>
+        </div>
+
+        <!-- 2. 轻量文本 -->
+        <div class="category-card cat-lightweight" id="cat-lightweight">
+            <div class="cat-title"><span class="cat-icon">⚡</span> 轻量/性价比文本</div>
+            <div class="cat-models">
+                <span class="model-tag">GPT-5.6-Luna</span>
+                <span class="model-tag">Qwen3-0.6B</span>
+                <span class="model-tag">Gemma-7B</span>
+                <span class="model-tag">LLaMA-3.2-3B</span>
+                <span class="model-tag">GPT-4.1-Nano</span>
+                <span class="model-tag">Qwen3-8B</span>
+            </div>
+            <div class="section"><strong>✅ 优点</strong>
+                <ul><li>极低成本（输入 $1/1M tokens）</li><li>响应速度极快（<100ms）</li><li>可部署于边缘/移动设备</li><li>适合高并发大批量任务</li></ul>
+            </div>
+            <div class="section"><strong>❌ 缺点</strong>
+                <ul><li>复杂推理能力弱</li><li>多模态能力有限</li><li>上下文窗口较小</li></ul>
+            </div>
+            <div class="use-case"><strong>🎯 用途</strong> 大规模分类、情感分析、RAG 前置检索、实时客服、数据预处理</div>
+        </div>
+
+        <!-- 3. 推理模型 -->
+        <div class="category-card cat-reasoning" id="cat-reasoning">
+            <div class="cat-title"><span class="cat-icon">🧮</span> 推理/思维链模型</div>
+            <div class="cat-models">
+                <span class="model-tag">o1 / o3 / o4-Mini</span>
+                <span class="model-tag">DeepSeek-R1</span>
+                <span class="model-tag">QwQ-32B</span>
+                <span class="model-tag">Qwen3-*-Thinking</span>
+            </div>
+            <div class="section"><strong>✅ 优点</strong>
+                <ul><li>数学/逻辑/编程推理显著强</li><li>思维链可见，可解释性高</li><li>在 AIME/MATH 等基准优异</li></ul>
+            </div>
+            <div class="section"><strong>❌ 缺点</strong>
+                <ul><li>推理耗时较长</li><li>成本高于普通模型</li><li>简单任务“过度思考”</li></ul>
+            </div>
+            <div class="use-case"><strong>🎯 用途</strong> 数学题求解、竞赛编程、复杂规划、策略生成、科研假设验证</div>
+        </div>
+
+        <!-- 4. 代码模型 -->
+        <div class="category-card cat-code" id="cat-code">
+            <div class="cat-title"><span class="cat-icon">💻</span> 代码专用模型</div>
+            <div class="cat-models">
+                <span class="model-tag">GPT-5.x-Codex</span>
+                <span class="model-tag">Qwen-Coder-Plus</span>
+                <span class="model-tag">DeepSeek-Coder</span>
+                <span class="model-tag">Kimi-K2.7-Code</span>
+            </div>
+            <div class="section"><strong>✅ 优点</strong>
+                <ul><li>专项训练，代码生成/修复强</li><li>支持长上下文（40万+ tokens）</li><li>多语言多框架支持</li></ul>
+            </div>
+            <div class="section"><strong>❌ 缺点</strong>
+                <ul><li>通用对话能力相对弱</li><li>非代码任务效果一般</li></ul>
+            </div>
+            <div class="use-case"><strong>🎯 用途</strong> 自动代码生成、代码审查、单元测试、代码重构、技术文档</div>
+        </div>
+
+        <!-- 5. 图像生成 -->
+        <div class="category-card cat-image-gen" id="cat-image-gen">
+            <div class="cat-title"><span class="cat-icon">🎨</span> 图像生成模型</div>
+            <div class="cat-models">
+                <span class="model-tag">GPT-Image-2</span>
+                <span class="model-tag">DALL-E 3</span>
+                <span class="model-tag">Wan2.7-Image-Pro</span>
+                <span class="model-tag">Qwen-Image-Edit-Plus</span>
+                <span class="model-tag">Grok-Imagine-Image</span>
+            </div>
+            <div class="section"><strong>✅ 优点</strong>
+                <ul><li>高分辨率（2K~4K）</li><li>精准控制（文字渲染、身份一致）</li><li>强大编辑能力（局部重绘、风格迁移）</li></ul>
+            </div>
+            <div class="section"><strong>❌ 缺点</strong>
+                <ul><li>旗舰模型成本高</li><li>人脸/版权内容受限</li><li>速度与质量需权衡</li></ul>
+            </div>
+            <div class="use-case"><strong>🎯 用途</strong> 商业设计、广告素材、电商产品图、漫画绘本、概念艺术</div>
+        </div>
+
+        <!-- 6. 视频生成 -->
+        <div class="category-card cat-video-gen" id="cat-video-gen">
+            <div class="cat-title"><span class="cat-icon">🎬</span> 视频生成模型</div>
+            <div class="cat-models">
+                <span class="model-tag">Vidu Q3-Pro</span>
+                <span class="model-tag">Kling 3.0-Turbo</span>
+                <span class="model-tag">HappyHorse 1.1</span>
+                <span class="model-tag">Pixverse 系列</span>
+                <span class="model-tag">Grok-Imagine-Video</span>
+            </div>
+            <div class="section"><strong>✅ 优点</strong>
+                <ul><li>分辨率最高 4K</li><li>多镜头、多主体一致性</li><li>运动控制、表情迁移、视频延长</li></ul>
+            </div>
+            <div class="section"><strong>❌ 缺点</strong>
+                <ul><li>生成时间长（分钟级）</li><li>复杂场景物理逻辑可能出错</li><li>音视频同步仍在优化</li></ul>
+            </div>
+            <div class="use-case"><strong>🎯 用途</strong> 短视频/广告制作、虚拟角色动画、游戏预览、教育培训视频</div>
+        </div>
+
+        <!-- 7. 视觉理解 -->
+        <div class="category-card cat-vision" id="cat-vision">
+            <div class="cat-title"><span class="cat-icon">👁️</span> 视觉理解 (VLM)</div>
+            <div class="cat-models">
+                <span class="model-tag">Qwen-VL-Max/Plus</span>
+                <span class="model-tag">LLaMA-3.2-11B/90B-Vision</span>
+                <span class="model-tag">GLM-4.6V</span>
+                <span class="model-tag">Claude-Opus-4-5</span>
+            </div>
+            <div class="section"><strong>✅ 优点</strong>
+                <ul><li>图文理解、图表推理、OCR 强</li><li>支持高分辨率图像</li><li>部分支持视频帧理解</li></ul>
+            </div>
+            <div class="section"><strong>❌ 缺点</strong>
+                <ul><li>参数大，推理成本高</li><li>对模糊图像鲁棒性一般</li></ul>
+            </div>
+            <div class="use-case"><strong>🎯 用途</strong> 文档数字化、票据识别、医疗影像辅助、电商图片理解、视觉问答</div>
+        </div>
+
+        <!-- 8. 语音/TTS/ASR -->
+        <div class="category-card cat-voice" id="cat-voice">
+            <div class="cat-title"><span class="cat-icon">🎤</span> 语音 / TTS / ASR</div>
+            <div class="cat-models">
+                <span class="model-tag">Speech-2.8-Turbo</span>
+                <span class="model-tag">Qwen3-TTS-Flash</span>
+                <span class="model-tag">GPT-4o-Transcribe</span>
+                <span class="model-tag">Whisper-1</span>
+                <span class="model-tag">TTS-1-HD</span>
+            </div>
+            <div class="section"><strong>✅ 优点</strong>
+                <ul><li>低延迟（<250ms）</li><li>多语言、多音色</li><li>实时语音克隆、情感控制</li></ul>
+            </div>
+            <div class="section"><strong>❌ 缺点</strong>
+                <ul><li>部分模型仅支持单任务</li><li>音质在不同语言表现不均</li></ul>
+            </div>
+            <div class="use-case"><strong>🎯 用途</strong> 实时语音助手、客服、有声书/播客、多语言会议转写、视频配音</div>
+        </div>
+
+        <!-- 9. 翻译 -->
+        <div class="category-card cat-translate" id="cat-translate">
+            <div class="cat-title"><span class="cat-icon">🌐</span> 翻译 / 多语言</div>
+            <div class="cat-models">
+                <span class="model-tag">Qwen-MT-Plus</span>
+                <span class="model-tag">Qwen-LiveTranslate</span>
+            </div>
+            <div class="section"><strong>✅ 优点</strong>
+                <ul><li>专为翻译优化</li><li>支持实时流式翻译</li><li>多语言对覆盖广</li></ul>
+            </div>
+            <div class="section"><strong>❌ 缺点</strong>
+                <ul><li>通用能力相对较弱</li><li>部分小众语言支持有限</li></ul>
+            </div>
+            <div class="use-case"><strong>🎯 用途</strong> 实时会议翻译、文档翻译、多语言客服、跨语言内容生成</div>
+        </div>
+
+        <!-- 10. 嵌入/重排 -->
+        <div class="category-card cat-embedding" id="cat-embedding">
+            <div class="cat-title"><span class="cat-icon">📊</span> 嵌入 / 重排序</div>
+            <div class="cat-models">
+                <span class="model-tag">text-embedding-3-large</span>
+                <span class="model-tag">BGE-Reranker-v2-m3</span>
+                <span class="model-tag">Qwen3-Rerank</span>
+            </div>
+            <div class="section"><strong>✅ 优点</strong>
+                <ul><li>高精度语义检索</li><li>低延迟，适合 RAG</li><li>多语言支持</li></ul>
+            </div>
+            <div class="section"><strong>❌ 缺点</strong>
+                <ul><li>仅用于检索/排序，不生成内容</li></ul>
+            </div>
+            <div class="use-case"><strong>🎯 用途</strong> RAG 检索、向量数据库、语义搜索、相关性重排</div>
+        </div>
+
+        <!-- 11. 角色扮演 -->
+        <div class="category-card cat-character" id="cat-character">
+            <div class="cat-title"><span class="cat-icon">🎭</span> 角色扮演 / 垂域</div>
+            <div class="cat-models">
+                <span class="model-tag">ERNIE-Character-8K</span>
+                <span class="model-tag">Qwen-Character</span>
+                <span class="model-tag">SparkDesk-v3.5</span>
+            </div>
+            <div class="section"><strong>✅ 优点</strong>
+                <ul><li>人设鲜明、一致性高</li><li>指令遵循能力强</li><li>适合沉浸式对话</li></ul>
+            </div>
+            <div class="section"><strong>❌ 缺点</strong>
+                <ul><li>通用能力相对有限</li><li>上下文长度较短（8K）</li></ul>
+            </div>
+            <div class="use-case"><strong>🎯 用途</strong> 游戏 NPC、客服机器人、角色扮演对话、虚拟陪伴</div>
+        </div>
+
+        <!-- 12. Midjourney 工具 -->
+        <div class="category-card cat-mj" id="cat-mj">
+            <div class="cat-title"><span class="cat-icon">🎨</span> Midjourney 衍生工具</div>
+            <div class="cat-models">
+                <span class="model-tag">mj_variation</span>
+                <span class="model-tag">mj_upscale</span>
+                <span class="model-tag">mj_inpaint</span>
+                <span class="model-tag">mj_pan</span>
+                <span class="model-tag">mj_zoom</span>
+                <span class="model-tag">mj_blend</span>
+            </div>
+            <div class="section"><strong>✅ 优点</strong>
+                <ul><li>无缝集成 Midjourney 工作流</li><li>快速变体/放大/重绘</li><li>丰富创意控制</li></ul>
+            </div>
+            <div class="section"><strong>❌ 缺点</strong>
+                <ul><li>非独立模型，需 MJ 主服务</li><li>功能相对单一</li></ul>
+            </div>
+            <div class="use-case"><strong>🎯 用途</strong> 图像变体生成、高清放大、局部重绘、画布平移、缩放、混合</div>
+        </div>
+
+        <!-- 13. 音乐生成 -->
+        <div class="category-card cat-music" id="cat-music">
+            <div class="cat-title"><span class="cat-icon">🎵</span> 音乐 / 音频生成</div>
+            <div class="cat-models">
+                <span class="model-tag">Suno 系列 (歌词/音乐/翻唱)</span>
+            </div>
+            <div class="section"><strong>✅ 优点</strong>
+                <ul><li>高质量音乐生成</li><li>支持歌词创作和风格控制</li><li>翻唱/混音功能</li></ul>
+            </div>
+            <div class="section"><strong>❌ 缺点</strong>
+                <ul><li>版权风险需注意</li><li>音乐时长有限</li></ul>
+            </div>
+            <div class="use-case"><strong>🎯 用途</strong> 背景音乐制作、歌曲创作、音频内容配乐</div>
+        </div>
+
+        <!-- 14. 其他 -->
+        <div class="category-card cat-other" id="cat-other">
+            <div class="cat-title"><span class="cat-icon">📦</span> 其他 / 专用工具</div>
+            <div class="cat-models">
+                <span class="model-tag">longcat</span>
+                <span class="model-tag">mai-ds-r1</span>
+                <span class="model-tag">vidu-tts</span>
+                <span class="model-tag">pixverse-lipsync</span>
+                <span class="model-tag">kling-custom-voices</span>
+            </div>
+            <div class="section"><strong>✅ 优点</strong>
+                <ul><li>特定场景优化</li><li>功能单一但高效</li></ul>
+            </div>
+            <div class="section"><strong>❌ 缺点</strong>
+                <ul><li>通用性差</li><li>文档和支持有限</li></ul>
+            </div>
+            <div class="use-case"><strong>🎯 用途</strong> 长文本处理、特定推理、语音合成、唇形同步、自定义音色等</div>
+        </div>
+
+    </div>
+
+    <!-- 快速选型 -->
+    <div class="quick-pick">
+        <h2>⚡ 快速选型建议（按需求）</h2>
+        <table>
+            <thead><tr><th>需求场景</th><th>推荐模型</th></tr></thead>
+            <tbody>
+                <tr><td>通用复杂任务</td><td>GPT-5.6-Sol、DeepSeek-V3.2、Qwen3.5-Plus</td></tr>
+                <tr><td>性价比文本处理</td><td>GPT-5.6-Luna、Qwen3-8B、Gemma-7B</td></tr>
+                <tr><td>编程/代码</td><td>GPT-5.2-Codex、Qwen-Coder-Plus、DeepSeek-Coder</td></tr>
+                <tr><td>数学/逻辑推理</td><td>o3-Mini、DeepSeek-R1、QwQ-32B</td></tr>
+                <tr><td>高质量图像生成</td><td>GPT-Image-2、Wan2.7-Image-Pro</td></tr>
+                <tr><td>图像编辑</td><td>Qwen-Image-Edit-Plus、GPT-Image-2</td></tr>
+                <tr><td>视频生成</td><td>Vidu Q3-Pro、Kling-3.0-Turbo</td></tr>
+                <tr><td>视觉理解</td><td>Qwen-VL-Max、LLaMA-3.2-90B-Vision</td></tr>
+                <tr><td>实时语音交互</td><td>Speech-2.8-Turbo、GPT-4o-Realtime</td></tr>
+                <tr><td>TTS/语音合成</td><td>TTS-1-HD、Qwen3-TTS-Flash</td></tr>
+                <tr><td>翻译/多语言</td><td>Qwen-MT-Plus、Qwen-LiveTranslate</td></tr>
+                <tr><td>嵌入/检索</td><td>text-embedding-3-large、BGE-Reranker</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- 注意事项 -->
+    <div class="notes">
+        <h3>📌 注意事项</h3>
+        <ul>
+            <li><strong>日期后缀</strong>（如 <code>-2026-07-09</code>）表示特定快照版本，优先使用 <code>-latest</code> 或最新日期。</li>
+            <li><strong>同名不同后缀</strong>（如 <code>gpt-5.6-sol</code> vs <code>gpt-5.6-sol-ultra</code>）表示同一模型的不同运行模式（ultra 开启多代理协作）。</li>
+            <li><strong>旧模型淘汰</strong>：<code>gpt-4-turbo-preview</code>、<code>gpt-3.5-turbo-1106</code>、<code>davinci-002</code> 等已被新系列替代，不建议在新项目中使用。</li>
+            <li><strong>拼写提示</strong>：列表中的 <code>viduq1</code> 通常指生数科技 <strong>Vidu Q1</strong> 的简写。</li>
+            <li><strong>MJ 系列</strong>：<code>mj_*</code> 工具需配合 Midjourney 主服务使用，非独立模型。</li>
+        </ul>
+    </div>
+
+    <footer style="margin-top: 3rem; text-align: center; color: #6a7f92; font-size: 0.9rem; border-top: 1px solid #d5e0ec; padding-top: 1.5rem;">
+        数据整理基于公开模型信息 · 分类仅供参考 · 实际选型请结合最新基准和成本
+    </footer>
+</div>
+</body>
+</html>
