@@ -1,0 +1,2250 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>张大业 AI 视频生成平台</title>
+    <!-- 引入 CloudBase Web SDK -->
+    <script src="https://imgcache.qq.com/qcloud/cloudbase-js-sdk/1.7.0/cloudbase.full.js"></script>
+    <style>
+        /* 样式与原版保持一致，此处省略（与您提供的样式完全相同） */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg-primary: #0b0e1a; --bg-secondary: #11162b; --bg-card: #161d3a;
+            --bg-card-hover: #1e274a; --bg-input: #0d1225; --border-color: #2a3460;
+            --text-primary: #e8edf5; --text-secondary: #8ea4d6; --text-muted: #4f6a9a;
+            --accent: #5b7cfa; --accent-glow: rgba(91,124,250,0.25); --accent-dark: #3d5cc7;
+            --success: #34d399; --danger: #f87171; --warning: #fbbf24;
+            --radius: 12px; --shadow: 0 8px 32px rgba(0,0,0,0.5); --transition: all 0.25s ease;
+        }
+        html { font-size: 14px; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'PingFang SC', 'Microsoft YaHei', sans-serif; background: var(--bg-primary); color: var(--text-primary); min-height: 100vh; overflow-x: hidden; }
+        a { color: var(--accent); text-decoration: none; }
+        input, select, textarea, button { font-family: inherit; font-size: inherit; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg-secondary); }
+        ::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 8px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+        .hidden { display: none !important; }
+        .flex { display: flex; }
+        .flex-col { flex-direction: column; }
+        .items-center { align-items: center; }
+        .justify-between { justify-content: space-between; }
+        .gap-2 { gap: 8px; }
+        .gap-3 { gap: 12px; }
+        .gap-4 { gap: 16px; }
+        .gap-6 { gap: 24px; }
+        .flex-1 { flex: 1; }
+        .text-center { text-align: center; }
+        .text-muted { color: var(--text-muted); }
+        .text-secondary { color: var(--text-secondary); }
+        .w-full { width: 100%; }
+        .mt-2 { margin-top: 8px; }
+        .mt-3 { margin-top: 12px; }
+        .mt-4 { margin-top: 16px; }
+        .mb-2 { margin-bottom: 8px; }
+        .mb-3 { margin-bottom: 12px; }
+        .mb-4 { margin-bottom: 16px; }
+
+        #loginPage {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: radial-gradient(ellipse at 30% 20%, #1a2340, #070a15);
+            padding: 20px;
+        }
+        .login-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 44px 40px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: var(--shadow);
+        }
+        .login-box .logo { font-size: 28px; font-weight: 700; text-align: center; margin-bottom: 6px; background: linear-gradient(135deg, #5b7cfa, #a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .login-box .sub { text-align: center; color: var(--text-secondary); font-size: 13px; margin-bottom: 28px; }
+        .login-box label { display: block; font-size: 13px; font-weight: 500; color: var(--text-secondary); margin-bottom: 4px; }
+        .login-box input {
+            width: 100%;
+            padding: 10px 14px;
+            background: var(--bg-input);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            outline: none;
+            transition: var(--transition);
+        }
+        .login-box input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
+        .login-box .btn {
+            width: 100%;
+            padding: 11px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            background: var(--accent);
+            color: #fff;
+            font-size: 15px;
+        }
+        .login-box .btn:hover { background: var(--accent-dark); transform: translateY(-1px); box-shadow: 0 4px 20px var(--accent-glow); }
+        .login-box .btn-secondary { background: transparent; color: var(--text-secondary); border: 1px solid var(--border-color); }
+        .login-box .btn-secondary:hover { background: var(--bg-input); transform: none; box-shadow: none; }
+        .login-box .switch-link { text-align: center; margin-top: 16px; font-size: 13px; color: var(--text-secondary); cursor: pointer; }
+        .login-box .switch-link span { color: var(--accent); font-weight: 500; }
+        .login-box .switch-link span:hover { text-decoration: underline; }
+        .login-error { color: var(--danger); font-size: 13px; text-align: center; margin-top: 10px; min-height: 20px; }
+
+        #mainPage { display: none; min-height: 100vh; flex-direction: column; }
+        #mainPage.active { display: flex; }
+
+        .topbar {
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+            padding: 12px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+        .topbar .brand { display: flex; align-items: center; gap: 10px; font-size: 22px; font-weight: 700; background: linear-gradient(135deg, #5b7cfa, #a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .topbar .brand small { font-size: 12px; font-weight: 400; -webkit-text-fill-color: var(--text-secondary); background: none; }
+        .topbar .user-area { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+        .topbar .user-area .balance { background: var(--bg-input); padding: 4px 14px; border-radius: 20px; font-size: 13px; border: 1px solid var(--border-color); color: var(--text-secondary); }
+        .topbar .user-area .balance strong { color: var(--success); }
+        .topbar .user-area .uname { font-size: 13px; color: var(--text-secondary); }
+        .topbar .user-area .btn-logout { background: transparent; border: 1px solid var(--border-color); color: var(--text-secondary); padding: 4px 14px; border-radius: 6px; cursor: pointer; font-size: 12px; transition: var(--transition); }
+        .topbar .user-area .btn-logout:hover { border-color: var(--danger); color: var(--danger); }
+        .topbar .badge-admin { background: var(--accent); color: #fff; font-size: 10px; padding: 2px 10px; border-radius: 12px; font-weight: 600; letter-spacing: 0.5px; }
+
+        .app-body { display: flex; flex: 1; min-height: 0; }
+        .sidebar { width: 200px; background: var(--bg-secondary); border-right: 1px solid var(--border-color); padding: 16px 0; flex-shrink: 0; overflow-y: auto; }
+        .sidebar .menu-item { display: flex; align-items: center; gap: 10px; padding: 10px 20px; color: var(--text-secondary); cursor: pointer; transition: var(--transition); border-left: 3px solid transparent; font-size: 13px; font-weight: 500; }
+        .sidebar .menu-item:hover { background: var(--bg-card); color: var(--text-primary); }
+        .sidebar .menu-item.active { background: var(--bg-card); color: var(--accent); border-left-color: var(--accent); }
+        .sidebar .menu-item .icon { font-size: 18px; width: 24px; text-align: center; }
+        .sidebar .menu-divider { height: 1px; background: var(--border-color); margin: 8px 16px; }
+
+        .content { flex: 1; padding: 24px 28px; overflow-y: auto; max-height: calc(100vh - 64px); }
+        .page-section { display: none; animation: fadeUp 0.3s ease; }
+        .page-section.active { display: block; }
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+        .page-section h2 { font-size: 22px; font-weight: 600; margin-bottom: 6px; }
+        .page-section .desc { color: var(--text-secondary); font-size: 14px; margin-bottom: 20px; }
+
+        .card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius); padding: 20px 24px; margin-bottom: 16px; transition: var(--transition); }
+        .card:hover { border-color: rgba(91,124,250,0.3); }
+        .card-title { font-size: 15px; font-weight: 600; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+
+        .form-group { margin-bottom: 14px; }
+        .form-group label { display: block; font-size: 13px; font-weight: 500; color: var(--text-secondary); margin-bottom: 4px; }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 9px 12px;
+            background: var(--bg-input);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            outline: none;
+            transition: var(--transition);
+            resize: vertical;
+        }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+        .form-group textarea { min-height: 70px; font-family: inherit; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        @media (max-width: 640px) {
+            .form-row { grid-template-columns: 1fr; }
+            .sidebar { width: 56px; }
+            .sidebar .menu-item span:not(.icon) { display: none; }
+            .content { padding: 16px; }
+            .login-box { padding: 30px 20px; }
+            .topbar .brand { font-size: 16px; }
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 9px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 13px;
+            background: var(--bg-input);
+            color: var(--text-secondary);
+            border: 1px solid var(--border-color);
+        }
+        .btn:hover { background: var(--bg-card-hover); color: var(--text-primary); }
+        .btn-primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+        .btn-primary:hover { background: var(--accent-dark); border-color: var(--accent-dark); box-shadow: 0 4px 20px var(--accent-glow); transform: translateY(-1px); }
+        .btn-success { background: var(--success); color: #0b0e1a; border-color: var(--success); }
+        .btn-success:hover { filter: brightness(1.1); }
+        .btn-danger { background: var(--danger); color: #fff; border-color: var(--danger); }
+        .btn-danger:hover { filter: brightness(1.1); }
+        .btn-warning { background: var(--warning); color: #0b0e1a; border-color: var(--warning); }
+        .btn-sm { padding: 5px 12px; font-size: 12px; }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
+
+        .status-badge {
+            display: inline-block;
+            padding: 2px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        .status-badge.running { background: rgba(52,211,153,0.2); color: var(--success); }
+        .status-badge.stopped { background: rgba(248,113,113,0.2); color: var(--danger); }
+        .status-badge.pending { background: rgba(251,191,36,0.2); color: var(--warning); }
+        .status-badge.done { background: rgba(52,211,153,0.2); color: var(--success); }
+        .status-badge.error { background: rgba(248,113,113,0.2); color: var(--danger); }
+        .status-badge.queued { background: rgba(91,124,250,0.2); color: var(--accent); }
+
+        .task-item {
+            background: var(--bg-input);
+            border-radius: 8px;
+            padding: 14px 16px;
+            margin-bottom: 10px;
+            border: 1px solid var(--border-color);
+            transition: var(--transition);
+        }
+        .task-item:hover { border-color: rgba(91,124,250,0.3); }
+        .task-item .task-head { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+        .task-item .task-id { font-size: 12px; color: var(--text-muted); font-family: monospace; }
+        .task-item .task-result { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 10px; }
+        .task-item .task-result a { color: var(--accent); word-break: break-all; }
+        .task-item .task-result video, .task-item .task-result img {
+            max-width: 200px;
+            max-height: 140px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        .file-list-container { max-height: 300px; overflow-y: auto; font-size: 13px; }
+        .file-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 6px 8px;
+            border-bottom: 1px solid var(--border-color);
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        .file-item:last-child { border-bottom: none; }
+        .file-item .file-info { display: flex; align-items: center; gap: 8px; flex: 1; min-width: 120px; }
+        .file-item .file-info .fname { color: var(--text-primary); word-break: break-all; }
+        .file-item .file-info .fname a { color: var(--accent); cursor: pointer; }
+        .file-item .file-info .fname a:hover { text-decoration: underline; }
+        .file-item .file-info .fsize { color: var(--text-muted); font-size: 11px; white-space: nowrap; }
+        .file-item .file-actions { display: flex; gap: 6px; }
+        .file-item .file-actions .btn { padding: 2px 8px; font-size: 11px; }
+
+        .preview-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(6px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            padding: 20px;
+        }
+        .preview-overlay.active { display: flex; }
+        .preview-modal {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            max-width: 95vw;
+            max-height: 95vh;
+            width: auto;
+            height: auto;
+            position: relative;
+            padding: 24px 28px;
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: auto;
+        }
+        .preview-modal .close-btn {
+            position: absolute;
+            top: 8px;
+            right: 14px;
+            font-size: 28px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            background: transparent;
+            border: none;
+            line-height: 1;
+            transition: var(--transition);
+        }
+        .preview-modal .close-btn:hover { color: var(--danger); transform: scale(1.1); }
+        .preview-modal img { max-width: 100%; max-height: 75vh; border-radius: 8px; object-fit: contain; }
+        .preview-modal video { max-width: 100%; max-height: 75vh; border-radius: 8px; }
+        .preview-modal .preview-filename { margin-top: 12px; font-size: 14px; color: var(--text-secondary); word-break: break-all; text-align: center; }
+        .preview-modal .preview-actions { margin-top: 10px; display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+        .preview-modal .preview-url { font-size: 11px; color: var(--text-muted); word-break: break-all; max-width: 100%; margin-top: 6px; text-align: center; }
+        .preview-modal .btn-switch { background: var(--bg-input); color: var(--text-secondary); border-color: var(--border-color); }
+        .preview-modal .btn-switch:hover { background: var(--bg-card-hover); }
+
+        .sys-status {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: var(--bg-input);
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+        .sys-status .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+        .sys-status .dot.green { background: var(--success); box-shadow: 0 0 12px rgba(52,211,153,0.4); }
+        .sys-status .dot.red { background: var(--danger); box-shadow: 0 0 12px rgba(248,113,113,0.4); }
+        .sys-status .dot.yellow { background: var(--warning); box-shadow: 0 0 12px rgba(251,191,36,0.4); }
+
+        .admin-user-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border-color);
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .admin-user-row:last-child { border-bottom: none; }
+        .admin-user-row .info { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+        .rate-setting {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            background: var(--bg-input);
+            padding: 12px 16px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            margin-top: 12px;
+        }
+        .rate-setting label { font-weight: 500; color: var(--text-secondary); }
+        .rate-setting input { width: 100px; padding: 4px 8px; background: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 4px; color: var(--text-primary); }
+        .rate-setting .btn { padding: 4px 12px; }
+
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(4px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 999;
+        }
+        .modal-overlay.active { display: flex; }
+        .modal-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 30px 34px;
+            max-width: 420px;
+            width: 90%;
+            box-shadow: var(--shadow);
+        }
+        .modal-box h3 { font-size: 18px; margin-bottom: 4px; }
+        .modal-box .sub { color: var(--text-secondary); font-size: 13px; margin-bottom: 16px; }
+        .modal-box .btn-row { display: flex; gap: 10px; margin-top: 16px; }
+        .modal-box .btn-row .btn { flex: 1; }
+
+        @media (max-width: 768px) {
+            .app-body { flex-direction: column; }
+            .sidebar {
+                width: 100%;
+                border-right: none;
+                border-bottom: 1px solid var(--border-color);
+                display: flex;
+                overflow-x: auto;
+                padding: 8px 12px;
+                gap: 4px;
+            }
+            .sidebar .menu-item {
+                padding: 8px 14px;
+                border-left: none;
+                border-bottom: 3px solid transparent;
+                white-space: nowrap;
+                flex-shrink: 0;
+            }
+            .sidebar .menu-item.active { border-left: none; border-bottom-color: var(--accent); }
+            .sidebar .menu-item span:not(.icon) { display: inline; }
+            .sidebar .menu-divider { display: none; }
+            .content { max-height: none; padding: 16px; }
+            .topbar { padding: 10px 16px; }
+            .topbar .brand { font-size: 16px; }
+            .form-row { grid-template-columns: 1fr; }
+            .preview-modal { max-width: 98vw; padding: 16px; }
+            .preview-modal .close-btn { top: 4px; right: 10px; font-size: 24px; }
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+            border: 2px solid var(--border-color);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .api-config {
+            background: var(--bg-input);
+            border-radius: 8px;
+            padding: 12px 16px;
+            border: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+        .api-config label { color: var(--text-secondary); font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+        .api-config input { flex: 1; min-width: 200px; padding: 6px 12px; background: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 6px; color: var(--text-primary); outline: none; font-size: 13px; }
+        .api-config input:focus { border-color: var(--accent); }
+        .api-config .btn { padding: 6px 14px; font-size: 12px; }
+
+        .param-group {
+            background: var(--bg-input);
+            border-radius: 8px;
+            padding: 12px 14px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 10px;
+        }
+        .param-group .param-label { font-size: 13px; font-weight: 500; color: var(--text-secondary); display: flex; align-items: center; gap: 6px; }
+        .param-group .param-label .badge { font-size: 10px; background: var(--border-color); color: var(--text-muted); padding: 0 8px; border-radius: 4px; font-weight: 400; }
+        .param-group input, .param-group textarea {
+            width: 100%;
+            padding: 6px 10px;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: var(--text-primary);
+            outline: none;
+            margin-top: 4px;
+            font-size: 13px;
+        }
+        .param-group input:focus, .param-group textarea:focus { border-color: var(--accent); }
+
+        .preview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 12px;
+            margin-top: 10px;
+        }
+        .preview-grid .preview-item {
+            background: var(--bg-input);
+            border-radius: 8px;
+            padding: 8px;
+            border: 1px solid var(--border-color);
+            text-align: center;
+        }
+        .preview-grid .preview-item video, .preview-grid .preview-item img {
+            max-width: 100%;
+            max-height: 120px;
+            border-radius: 6px;
+        }
+        .preview-grid .preview-item .fname { font-size: 11px; color: var(--text-muted); margin-top: 4px; word-break: break-all; }
+
+        .pwd-change-box {
+            background: var(--bg-input);
+            border-radius: 8px;
+            padding: 16px;
+            border: 1px solid var(--border-color);
+        }
+        .pwd-change-box .form-group { margin-bottom: 10px; }
+        .pwd-change-box .form-group:last-child { margin-bottom: 0; }
+
+        .rate-info {
+            font-size: 14px;
+            color: var(--text-secondary);
+            background: var(--bg-input);
+            padding: 8px 12px;
+            border-radius: 6px;
+            display: inline-block;
+            margin-top: 6px;
+        }
+        .online-status {
+            font-size: 13px;
+            color: var(--success);
+            margin-left: 12px;
+        }
+        .login-box .login-email-hint {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- ============================================================ -->
+<!-- 登录页 -->
+<!-- ============================================================ -->
+<div id="loginPage">
+    <div class="login-box">
+        <div class="logo">✦ 张大业</div>
+        <div class="sub">AI 视频生成 · 镜像工作流</div>
+        <form id="loginForm" autocomplete="off">
+            <div class="form-group">
+                <label>用户名</label>
+                <input type="text" id="loginUser" placeholder="请输入用户名">
+                <div class="login-email-hint">💡 使用用户名登录，无需输入邮箱后缀</div>
+            </div>
+            <div class="form-group">
+                <label>密码</label>
+                <input type="password" id="loginPass" placeholder="请输入密码">
+            </div>
+            <button type="submit" class="btn btn-primary" id="loginBtn">登 录</button>
+            <div class="login-error" id="loginError"></div>
+            <div class="switch-link" id="switchToRegister">还没有账号？ <span>立即注册</span></div>
+        </form>
+        <form id="registerForm" autocomplete="off" class="hidden" style="margin-top:4px;">
+            <div class="form-group">
+                <label>用户名</label>
+                <input type="text" id="regUser" placeholder="设置用户名">
+                <div class="login-email-hint">用户名将作为邮箱前缀，例如 <code>用户名@zhangdaye.local</code></div>
+            </div>
+            <div class="form-group">
+                <label>密码</label>
+                <input type="password" id="regPass" placeholder="设置密码（至少6位）">
+            </div>
+            <button type="submit" class="btn btn-primary" id="registerBtn">注 册</button>
+            <div class="login-error" id="regError"></div>
+            <div class="switch-link" id="switchToLogin">已有账号？ <span>去登录</span></div>
+        </form>
+    </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- 主界面 -->
+<!-- ============================================================ -->
+<div id="mainPage">
+    <header class="topbar">
+        <div class="brand">✦ 张大业 <small>AI 视频</small></div>
+        <div class="user-area">
+            <span class="uname" id="displayName">用户</span>
+            <span class="balance">💰 余额 <strong id="displayBalance">0.00</strong></span>
+            <span id="adminBadge" class="badge-admin hidden">管理员</span>
+            <button class="btn-logout" id="logoutBtn">退出</button>
+        </div>
+    </header>
+
+    <div class="app-body">
+        <nav class="sidebar" id="sidebar">
+            <div class="menu-item active" data-page="workflow"><span class="icon">🎬</span><span>工作流</span></div>
+            <div class="menu-item" data-page="tasks"><span class="icon">📋</span><span>我的任务</span></div>
+            <div class="menu-item" data-page="system"><span class="icon">⚙️</span><span>系统控制</span></div>
+            <div class="menu-item" data-page="account"><span class="icon">👤</span><span>我的账户</span></div>
+            <div class="menu-divider"></div>
+            <div class="menu-item" data-page="admin" id="adminMenu"><span class="icon">🛡️</span><span>管理后台</span></div>
+            <div class="menu-divider"></div>
+            <div class="menu-item" style="cursor:default;color:var(--text-muted);font-size:12px;padding:8px 20px;">
+                <span>💬 微信16500234000</span>
+            </div>
+        </nav>
+
+        <main class="content">
+            <section id="page-workflow" class="page-section active">
+                <h2>🎬 视频生成</h2>
+                <p class="desc">选择工作流，配置参数，上传素材，一键生成视频</p>
+
+                <div class="api-config">
+                    <label>🔗 API</label>
+                    <input type="text" id="baseUrlInput" placeholder="https://xxx.seetacloud.com:8443" value="https://uu974005-7836223fb764.westd.seetacloud.com:8443">
+                    <button class="btn btn-primary btn-sm" id="saveBaseUrl">应用</button>
+                    <span style="font-size:11px;color:var(--text-muted);">(需包含端口)</span>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">① 选择工作流</div>
+                    <div class="form-group">
+                        <label>已保存的工作流</label>
+                        <select id="workflowSelect"><option value="">— 请选择 —</option></select>
+                        <button class="btn btn-sm btn-primary mt-2" id="refreshWorkflows">🔄 刷新列表</button>
+                    </div>
+                    <div id="workflowInfo" class="text-muted" style="font-size:13px;margin-top:4px;"></div>
+                </div>
+
+                <div class="card" id="paramsCard">
+                    <div class="card-title">② 参数配置</div>
+                    <div id="paramsContainer"><p class="text-muted" style="font-size:13px;">请先选择工作流，自动加载参数配置</p></div>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">③ 文件管理</div>
+                    <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:12px;">
+                        <button class="btn btn-sm btn-primary" id="refreshFileList">🔄 刷新列表</button>
+                        <span style="font-size:13px;color:var(--text-secondary);">点击文件名可在页面内预览</span>
+                    </div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+                        <div>
+                            <h4 style="font-size:14px;font-weight:600;margin-bottom:8px;">📤 上传的文件 (input)</h4>
+                            <div id="inputFileList" class="file-list-container"><p class="text-muted">加载中...</p></div>
+                        </div>
+                        <div>
+                            <h4 style="font-size:14px;font-weight:600;margin-bottom:8px;">📥 生成的文件 (output)</h4>
+                            <div id="outputFileList" class="file-list-container"><p class="text-muted">加载中...</p></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">④ 提交生成</div>
+                    <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;">
+                        <button class="btn btn-primary" id="submitGenerate">🚀 生成视频</button>
+                        <span id="generateStatus" style="font-size:13px;color:var(--text-secondary);"></span>
+                    </div>
+                    <div id="submitResult" style="margin-top:12px;"></div>
+                </div>
+            </section>
+
+            <section id="page-tasks" class="page-section">
+                <h2>📋 我的任务</h2>
+                <p class="desc">查看所有生成任务的状态与结果（登录已按时间计费，任务不再额外收费）</p>
+                <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;">
+                    <button class="btn btn-sm btn-primary" id="refreshTasks">🔄 刷新</button>
+                    <button class="btn btn-sm" id="pollRunningTasks">⏳ 轮询进行中</button>
+                </div>
+                <div id="taskList"><p class="text-muted">暂无任务，去工作页生成视频吧</p></div>
+            </section>
+
+            <section id="page-system" class="page-section">
+                <h2>⚙️ 系统控制</h2>
+                <p class="desc">管理 ComfyUI 服务状态</p>
+                <div class="card">
+                    <div class="card-title">ComfyUI 状态</div>
+                    <div class="sys-status">
+                        <span class="dot" id="comfyDot"></span>
+                        <span id="comfyStatusText">未知</span>
+                        <span style="color:var(--text-muted);font-size:13px;" id="comfyDetail"></span>
+                        <span style="flex:1;"></span>
+                        <button class="btn btn-sm btn-success" id="comfyStartBtn">▶ 启动</button>
+                        <button class="btn btn-sm btn-danger" id="comfyStopBtn">⏹ 停止</button>
+                        <button class="btn btn-sm" id="comfyRefreshBtn">🔄 刷新</button>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-title">硬件信息</div>
+                    <div id="hardwareInfo" style="font-size:13px;color:var(--text-secondary);">
+                        <button class="btn btn-sm" id="refreshHardware">刷新</button>
+                        <div id="hardwareData" class="mt-2"></div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-title">📡 代理配置（启动时使用）</div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>useProxy</label>
+                            <select id="proxyUseProxy"><option value="true">开启 (true)</option><option value="false">关闭 (false)</option></select>
+                        </div>
+                        <div class="form-group">
+                            <label>proxyType</label>
+                            <select id="proxyType"><option value="network_turbo">network_turbo (推荐)</option><option value="none">none</option></select>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="page-account" class="page-section">
+                <h2>👤 我的账户</h2>
+                <p class="desc">查看余额、在线时长与计费</p>
+                <div class="card">
+                    <div class="card-title">💰 余额</div>
+                    <div style="font-size:28px;font-weight:700;color:var(--success);" id="accountBalance">0.00</div>
+                    <div class="rate-info">⏱️ 登录计费费率：每分钟 <strong id="rateDisplay">1.00</strong> 个余额</div>
+                    <div style="margin-top:8px;font-size:13px;color:var(--text-secondary);" id="onlineInfo">
+                        <span id="onlineStatus">未登录</span>
+                        <span id="onlineDuration" style="margin-left:12px;"></span>
+                    </div>
+                    <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+                        <button class="btn btn-warning" id="openRechargeModal">💳 充值</button>
+                        <span id="rechargeContact" style="display:none;color:var(--text-secondary);font-size:14px;">💡 如需充值，请联系管理员</span>
+                        <button class="btn btn-sm" id="refreshBalance">刷新</button>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-title">🔑 修改密码</div>
+                    <div class="pwd-change-box">
+                        <div class="form-group"><label>当前密码</label><input type="password" id="oldPwd" placeholder="输入旧密码"></div>
+                        <div class="form-group"><label>新密码</label><input type="password" id="newPwd" placeholder="输入新密码（至少6位）"></div>
+                        <div class="form-group"><label>确认新密码</label><input type="password" id="newPwdConfirm" placeholder="再次输入新密码"></div>
+                        <button class="btn btn-primary" id="changePwdBtn">确认修改</button>
+                        <span id="pwdChangeMsg" style="margin-left:12px;font-size:13px;"></span>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-title">📊 使用统计</div>
+                    <div style="font-size:14px;color:var(--text-secondary);" id="usageStats">加载中...</div>
+                </div>
+            </section>
+
+            <section id="page-admin" class="page-section">
+                <h2>🛡️ 管理后台</h2>
+                <p class="desc">用户管理 · 充值 · 费率设置</p>
+                <div class="card">
+                    <div class="card-title">⚙️ 费率设置</div>
+                    <div class="rate-setting">
+                        <label>每分钟计费金额：</label>
+                        <input type="number" id="rateInput" step="0.1" min="0.1" value="1.0">
+                        <button class="btn btn-primary btn-sm" id="updateRateBtn">修改费率</button>
+                        <span id="rateMsg" style="font-size:12px;color:var(--text-muted);"></span>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-title">👥 所有用户</div>
+                    <div id="adminUserList"><p class="text-muted">加载中...</p></div>
+                </div>
+                <div class="card">
+                    <div class="card-title">📋 所有任务 (最近20条)</div>
+                    <div id="adminTaskList"><p class="text-muted">加载中...</p></div>
+                </div>
+            </section>
+        </main>
+    </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- 预览模态框 -->
+<!-- ============================================================ -->
+<div class="preview-overlay" id="previewOverlay" onclick="closePreview(event)">
+    <div class="preview-modal" onclick="event.stopPropagation();">
+        <button class="close-btn" onclick="closePreview()">✕</button>
+        <div id="previewContent"></div>
+        <div class="preview-filename" id="previewFilename"></div>
+        <div class="preview-url" id="previewUrlDisplay"></div>
+        <div class="preview-actions">
+            <button class="btn btn-sm btn-switch" id="switchUrlBtn" onclick="switchPreviewUrl()">🔄 切换链接方式</button>
+            <a href="#" id="previewDownloadLink" class="btn btn-sm btn-primary" target="_blank">下载</a>
+        </div>
+    </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- 充值弹窗 -->
+<!-- ============================================================ -->
+<div class="modal-overlay" id="rechargeModal">
+    <div class="modal-box">
+        <h3>💳 充值</h3>
+        <div class="sub">输入充值金额，余额将立即到账</div>
+        <div class="form-group">
+            <label>充值金额</label>
+            <input type="number" id="rechargeAmount" placeholder="输入金额" min="1" value="10">
+        </div>
+        <div class="btn-row">
+            <button class="btn btn-secondary" id="closeRechargeModal">取消</button>
+            <button class="btn btn-success" id="confirmRecharge">确认充值</button>
+        </div>
+        <div id="rechargeResult" style="margin-top:10px;font-size:13px;text-align:center;"></div>
+    </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- JavaScript - CloudBase 适配版 -->
+<!-- ============================================================ -->
+<script>
+    // ================================================================
+    //  CloudBase 配置（请替换为您的实际值）
+    // ================================================================
+    const CLOUDBASE_ENV_ID = 'your-env-id';        // 替换为您的环境 ID
+    const CLOUDBASE_PUBLISHABLE_KEY = 'your-publishable-key'; // 替换为您的 Publishable Key
+    const BASE_URL = 'https://uu974005-7836223fb764.westd.seetacloud.com:8443'; // ComfyUI 地址
+
+    // 初始化 CloudBase
+    const app = cloudbase.init({ env: CLOUDBASE_ENV_ID });
+    const auth = app.auth({ persistence: 'local' });
+
+    // REST API 基础 URL
+    const API_BASE = `https://${CLOUDBASE_ENV_ID}.api.tcloudbasegateway.com/v1/rdb/rest`;
+
+    // 辅助函数：带认证的 fetch
+    async function restFetch(path, options = {}) {
+        const token = auth.currentUser?.accessToken;
+        const headers = {
+            'Authorization': `Bearer ${CLOUDBASE_PUBLISHABLE_KEY}`,
+            'Content-Type': 'application/json',
+            ...options.headers
+        };
+        if (token) {
+            headers['Authorization'] = `Bearer ${token}`; // 优先使用用户 token
+        }
+        const res = await fetch(`${API_BASE}${path}`, { ...options, headers });
+        if (!res.ok) {
+            const text = await res.text();
+            throw new Error(`HTTP ${res.status}: ${text}`);
+        }
+        return res.json();
+    }
+
+    // ================================================================
+    //  全局状态
+    // ================================================================
+    let currentUser = null;      // CloudBase 用户对象
+    let currentProfile = null;   // 从 profiles 表查询的用户扩展信息
+    let workflows = [];
+    let selectedWorkflowId = '';
+    let workflowConfig = null;
+    let uploadedFiles = {};
+    let isPolling = false;
+    let heartbeatTimer = null;
+    const HEARTBEAT_INTERVAL = 30000;
+
+    // ================================================================
+    //  工具函数
+    // ================================================================
+    function $(id) { return document.getElementById(id); }
+    function $$(sel) { return document.querySelectorAll(sel); }
+    function apiUrl(path) {
+        const base = localStorage.getItem('zhangdaye_base_url') || BASE_URL;
+        return base.replace(/\/+$/, '') + path;
+    }
+    function uuid() { return 'xxxxxxxxxxxx'.replace(/[x]/g, () => ((Math.random() * 16) | 0).toString(16)); }
+    function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+    function formatTime(ts) {
+        if (!ts) return '-';
+        const d = new Date(ts);
+        return d.toLocaleString('zh-CN');
+    }
+    function formatDuration(seconds) {
+        if (!seconds) return '-';
+        const mins = Math.floor(seconds / 60);
+        const secs = Math.round(seconds % 60);
+        if (mins > 0) return mins + '分' + secs + '秒';
+        return secs + '秒';
+    }
+    function getStatusBadge(status) {
+        const map = { 'queued':'queued','running':'running','done':'done','error':'error','pending':'pending','stopped':'stopped' };
+        const cls = map[status] || 'pending';
+        return `<span class="status-badge ${cls}">${status}</span>`;
+    }
+    function formatFileSize(bytes) {
+        if (bytes < 1024) return bytes + ' B';
+        if (bytes < 1024*1024) return (bytes/1024).toFixed(1) + ' KB';
+        return (bytes/(1024*1024)).toFixed(1) + ' MB';
+    }
+
+    // ================================================================
+    //  用户认证（使用 CloudBase 邮箱登录）
+    // ================================================================
+    async function login(username, password) {
+        const email = username + '@zhangdaye.local';
+        try {
+            await auth.signInWithEmailAndPassword(email, password);
+            // 获取用户信息
+            const user = auth.currentUser;
+            if (!user) throw new Error('登录失败');
+            currentUser = user;
+            // 查询 profile
+            await refreshProfile();
+            return { success: true };
+        } catch (e) {
+            return { success: false, msg: e.message };
+        }
+    }
+
+    async function register(username, password) {
+        const email = username + '@zhangdaye.local';
+        try {
+            await auth.signUpWithEmailAndPassword(email, password);
+            // 注册成功后自动登录
+            await auth.signInWithEmailAndPassword(email, password);
+            const user = auth.currentUser;
+            if (!user) throw new Error('注册失败');
+            currentUser = user;
+            // 创建 profile 记录（调用云函数或直接插入）
+            // 这里直接使用 REST API 插入
+            await restFetch('/profiles', {
+                method: 'POST',
+                body: JSON.stringify({
+                    user_id: user.uid,
+                    username: username,
+                    balance: 0,
+                    role: 'user',
+                    is_online: false,
+                    created_at: new Date().toISOString()
+                })
+            });
+            await refreshProfile();
+            return { success: true };
+        } catch (e) {
+            return { success: false, msg: e.message };
+        }
+    }
+
+    async function logout() {
+        // 结算
+        await settleSession();
+        // 退出
+        await auth.signOut();
+        stopHeartbeat();
+        currentUser = null;
+        currentProfile = null;
+        document.getElementById('loginPage').style.display = 'flex';
+        document.getElementById('mainPage').classList.remove('active');
+        document.getElementById('loginError').textContent = '';
+        document.getElementById('loginUser').value = '';
+        document.getElementById('loginPass').value = '';
+    }
+
+    // 刷新 profile
+    async function refreshProfile() {
+        if (!currentUser) return;
+        const result = await restFetch(`/profiles?user_id=eq.${currentUser.uid}`);
+        if (result && result.length > 0) {
+            currentProfile = result[0];
+        } else {
+            currentProfile = null;
+        }
+    }
+
+    // 获取当前余额
+    function getBalance() {
+        return currentProfile ? currentProfile.balance : 0;
+    }
+
+    // ================================================================
+    //  心跳 & 结算（调用云函数）
+    // ================================================================
+    async function callCloudFunction(name, data) {
+        // CloudBase 云函数调用
+        const res = await fetch(`https://${CLOUDBASE_ENV_ID}.service.tcloudbase.com/${name}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+        return res.json();
+    }
+
+    function startHeartbeat() {
+        if (heartbeatTimer) return;
+        sendHeartbeat();
+        heartbeatTimer = setInterval(sendHeartbeat, HEARTBEAT_INTERVAL);
+    }
+
+    function stopHeartbeat() {
+        if (heartbeatTimer) {
+            clearInterval(heartbeatTimer);
+            heartbeatTimer = null;
+        }
+    }
+
+    async function sendHeartbeat() {
+        if (!currentUser) return;
+        try {
+            await callCloudFunction('heartbeat', { uid: currentUser.uid });
+        } catch (e) { console.error('心跳失败', e); }
+    }
+
+    async function settleSession() {
+        if (!currentUser) return;
+        try {
+            const result = await callCloudFunction('settle', { uid: currentUser.uid });
+            console.log('结算结果', result);
+            await refreshProfile();
+            updateUI();
+        } catch (e) { console.error('结算失败', e); }
+    }
+
+    // ================================================================
+    //  修改密码（CloudBase Auth）
+    // ================================================================
+    async function changePassword(oldPwd, newPwd) {
+        try {
+            // 先验证旧密码（通过重新登录）
+            const email = currentUser.email;
+            await auth.signInWithEmailAndPassword(email, oldPwd);
+            // 更新密码
+            await auth.updatePassword(newPwd);
+            return { success: true, msg: '密码修改成功' };
+        } catch (e) {
+            return { success: false, msg: e.message };
+        }
+    }
+
+    // ================================================================
+    //  管理员功能（调用云函数）
+    // ================================================================
+    async function adminRecharge(username, amount) {
+        if (!currentUser) return { success: false, msg: '未登录' };
+        try {
+            const result = await callCloudFunction('recharge', {
+                adminUid: currentUser.uid,
+                username,
+                amount
+            });
+            if (result.code === 0) return { success: true, data: result.data };
+            else return { success: false, msg: result.msg };
+        } catch (e) {
+            return { success: false, msg: e.message };
+        }
+    }
+
+    async function adminUpdateRate(rate) {
+        if (!currentUser) return { success: false, msg: '未登录' };
+        try {
+            const result = await callCloudFunction('update-rate', {
+                adminUid: currentUser.uid,
+                rate
+            });
+            if (result.code === 0) return { success: true, data: result.data };
+            else return { success: false, msg: result.msg };
+        } catch (e) {
+            return { success: false, msg: e.message };
+        }
+    }
+
+    // 获取所有用户（管理员）直接查询
+    async function adminGetAllUsers() {
+        if (currentProfile?.role !== 'admin') return [];
+        try {
+            return await restFetch('/profiles?select=*');
+        } catch (e) { return []; }
+    }
+
+    // 获取所有任务（管理员）
+    async function adminGetAllTasks() {
+        if (currentProfile?.role !== 'admin') return [];
+        try {
+            const res = await restFetch('/tasks?select=*&order=created_at.desc&limit=20');
+            return res || [];
+        } catch (e) { return []; }
+    }
+
+    // ================================================================
+    //  UI 渲染
+    // ================================================================
+    function updateUI() {
+        if (!currentUser) return;
+        $('displayName').textContent = currentProfile?.username || currentUser.email;
+        const balance = getBalance();
+        $('displayBalance').textContent = balance.toFixed(2);
+        $('accountBalance').textContent = balance.toFixed(2);
+
+        // 费率显示（从 settings 表读取）
+        fetchRate().then(rate => {
+            $('rateDisplay').textContent = rate.toFixed(2);
+        });
+
+        const isAdmin = currentProfile?.role === 'admin';
+        if (isAdmin) {
+            $('adminBadge').classList.remove('hidden');
+            $('adminMenu').style.display = 'flex';
+        } else {
+            $('adminBadge').classList.add('hidden');
+            $('adminMenu').style.display = 'none';
+        }
+
+        const rechargeBtn = document.getElementById('openRechargeModal');
+        const rechargeContact = document.getElementById('rechargeContact');
+        if (rechargeBtn) rechargeBtn.style.display = isAdmin ? '' : 'none';
+        if (rechargeContact) rechargeContact.style.display = isAdmin ? 'none' : 'inline';
+
+        updateOnlineInfo();
+        switchPage('workflow');
+    }
+
+    async function fetchRate() {
+        try {
+            const res = await restFetch('/settings?key=eq.rate_per_minute');
+            if (res && res.length > 0) return parseFloat(res[0].value) || 1.0;
+            return 1.0;
+        } catch { return 1.0; }
+    }
+
+    function updateOnlineInfo() {
+        const lastActive = currentProfile?.last_active_at;
+        if (!lastActive) {
+            $('onlineStatus').textContent = '当前未登录';
+            $('onlineDuration').textContent = '';
+            return;
+        }
+        const now = Date.now();
+        const last = new Date(lastActive).getTime();
+        const durationSec = (now - last) / 1000;
+        $('onlineStatus').textContent = '🟢 在线中';
+        $('onlineDuration').textContent = `当前会话已持续 ${formatDuration(durationSec)}`;
+    }
+
+    function switchPage(page) {
+        $$('.page-section').forEach(el => el.classList.remove('active'));
+        const target = $('page-' + page);
+        if (target) target.classList.add('active');
+
+        $$('.sidebar .menu-item').forEach(el => el.classList.remove('active'));
+        const menuItem = document.querySelector(`.sidebar .menu-item[data-page="${page}"]`);
+        if (menuItem) menuItem.classList.add('active');
+
+        if (page === 'workflow') { refreshWorkflowList(); loadFileLists(); }
+        if (page === 'tasks') renderTasks();
+        if (page === 'system') refreshComfyStatus();
+        if (page === 'account') {
+            $('accountBalance').textContent = getBalance().toFixed(2);
+            renderUsageStats();
+            updateOnlineInfo();
+        }
+        if (page === 'admin' && currentProfile?.role === 'admin') {
+            renderAdmin();
+            fetchRate().then(r => $('rateInput').value = r.toFixed(2));
+        }
+    }
+
+    // ================================================================
+    //  工作流 API（与之前相同）
+    // ================================================================
+    async function fetchWorkflowList() {
+        try {
+            const res = await fetch(apiUrl('/api/workflow/list'));
+            const data = await res.json();
+            if (data.success && data.workflows) {
+                workflows = data.workflows;
+                return workflows;
+            }
+            return [];
+        } catch (e) { console.error('获取工作流列表失败:', e); return []; }
+    }
+
+    async function fetchWorkflowConfig(id) {
+        try {
+            const res = await fetch(apiUrl('/api/workflow/config/' + encodeURIComponent(id)));
+            const data = await res.json();
+            if (data.success) {
+                workflowConfig = data;
+                return data;
+            }
+            return null;
+        } catch (e) { console.error('获取工作流配置失败:', e); return null; }
+    }
+
+    async function refreshWorkflowList() {
+        const sel = $('workflowSelect');
+        const info = $('workflowInfo');
+        sel.disabled = true;
+        sel.innerHTML = '<option value="">加载中...</option>';
+        try {
+            const list = await fetchWorkflowList();
+            sel.innerHTML = '<option value="">— 请选择 —</option>';
+            if (list.length === 0) {
+                sel.innerHTML += '<option value="">（暂无工作流）</option>';
+                info.textContent = '⚠️ 未找到已保存的工作流，请先在面板中导入并保存。';
+            } else {
+                list.forEach(w => {
+                    const opt = document.createElement('option');
+                    opt.value = w.id;
+                    opt.textContent = w.name + (w.run_count ? ` (运行${w.run_count}次)` : '');
+                    sel.appendChild(opt);
+                });
+                info.textContent = `共 ${list.length} 个工作流`;
+            }
+            if (selectedWorkflowId) sel.value = selectedWorkflowId;
+        } catch (e) {
+            sel.innerHTML = '<option value="">加载失败</option>';
+            info.textContent = '❌ 加载失败，请检查API地址';
+        }
+        sel.disabled = false;
+    }
+
+    async function loadWorkflowConfig(id) {
+        if (!id) { $('paramsContainer').innerHTML = '<p class="text-muted">请先选择工作流</p>'; return; }
+        $('paramsContainer').innerHTML = '<p class="text-muted">加载参数配置...</p>';
+        const config = await fetchWorkflowConfig(id);
+        if (!config) {
+            $('paramsContainer').innerHTML = '<p class="text-muted" style="color:var(--danger);">⚠️ 加载失败，请检查工作流是否存在</p>';
+            return;
+        }
+        selectedWorkflowId = id;
+        renderParams(config);
+    }
+
+    function renderParams(config) {
+        const container = $('paramsContainer');
+        const apiConfig = config.api_config || {};
+        const enabledParams = apiConfig.enabledParams || {};
+        const customLabels = apiConfig.customLabels || {};
+        const formValues = apiConfig.formValues || {};
+        const template = config.workflow_template || {};
+        const paramKeys = Object.keys(enabledParams).filter(k => enabledParams[k]);
+
+        if (paramKeys.length === 0) {
+            container.innerHTML = `
+                <p class="text-muted">该工作流没有可配置的参数，直接生成即可。</p>
+                <div style="margin-top:8px;font-size:12px;color:var(--text-muted);">
+                    <details><summary>查看原始配置</summary>
+                    <pre style="background:var(--bg-input);padding:8px;border-radius:4px;overflow:auto;font-size:11px;max-height:200px;">${JSON.stringify(template, null, 2)}</pre>
+                    </details>
+                </div>
+            `;
+            return;
+        }
+
+        let html = `<div style="margin-bottom:8px;font-size:13px;color:var(--text-secondary);">共 ${paramKeys.length} 个可配置参数</div>`;
+        html += `<div id="paramInputs">`;
+
+        paramKeys.forEach(key => {
+            const label = customLabels[key] || key;
+            const val = formValues[key] || '';
+            const isFile = key.includes('image') || key.includes('audio') || key.includes('video') || key.includes('file');
+            const isText = key.includes('text') || key.includes('prompt') || key.includes('caption');
+            const isNumber = key.includes('value') || key.includes('seed') || key.includes('width') || key.includes('height') || key.includes('steps');
+
+            let inputHtml = '';
+            if (isFile) {
+                const fileKey = 'file_' + key.replace(/[^a-zA-Z0-9]/g, '_');
+                const uploaded = uploadedFiles[key];
+                inputHtml = `
+                    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+                        <button class="btn btn-sm btn-primary" onclick="triggerFileUpload('${key}')">📎 选择文件</button>
+                        <span id="fileLabel_${fileKey}" style="font-size:12px;color:var(--text-muted);">${uploaded ? '✅ ' + uploaded.name : '未选择'}</span>
+                        ${uploaded ? `<button class="btn btn-sm" onclick="clearFile('${key}')">✕</button>` : ''}
+                        <input type="file" id="fileInput_${fileKey}" style="display:none;" accept="image/*,video/*,audio/*" onchange="handleFileSelect('${key}', this)">
+                    </div>
+                    <input type="hidden" id="param_${key}" value="${uploaded ? uploaded.name : ''}">
+                    <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">支持图片/视频/音频</div>
+                `;
+            } else if (isText) {
+                const rows = val.length > 60 ? 3 : 2;
+                inputHtml = `<textarea id="param_${key}" rows="${rows}" placeholder="输入提示词或文本...">${val}</textarea>`;
+            } else if (isNumber) {
+                inputHtml = `<input type="number" id="param_${key}" value="${val}" step="1" placeholder="数值">`;
+            } else {
+                inputHtml = `<input type="text" id="param_${key}" value="${val}" placeholder="输入值">`;
+            }
+
+            html += `
+                <div class="param-group">
+                    <div class="param-label">
+                        ${label}
+                        <span class="badge">${key}</span>
+                        ${isFile ? '📎' : ''} ${isText ? '📝' : ''} ${isNumber ? '🔢' : ''}
+                    </div>
+                    ${inputHtml}
+                </div>
+            `;
+        });
+
+        html += `</div>`;
+        html += `
+            <details style="margin-top:12px;">
+                <summary style="cursor:pointer;font-size:12px;color:var(--text-muted);">📋 高级：直接编辑 JSON</summary>
+                <textarea id="paramsJson" style="width:100%;min-height:100px;background:var(--bg-primary);border:1px solid var(--border-color);border-radius:6px;padding:8px;color:var(--text-primary);font-family:monospace;font-size:12px;margin-top:6px;">${JSON.stringify({}, null, 2)}</textarea>
+                <button class="btn btn-sm btn-primary mt-2" onclick="applyJsonParams()">应用 JSON</button>
+            </details>
+        `;
+        container.innerHTML = html;
+        updateParamsJson();
+    }
+
+    // ----- 文件上传（用于参数）-----
+    let pendingFileKey = null;
+
+    function triggerFileUpload(key) {
+        pendingFileKey = key;
+        const fileKey = 'file_' + key.replace(/[^a-zA-Z0-9]/g, '_');
+        const input = document.getElementById('fileInput_' + fileKey);
+        if (input) input.click();
+    }
+
+    async function handleFileSelect(key, input) {
+        if (!input.files || input.files.length === 0) return;
+        const file = input.files[0];
+        const fileKey = 'file_' + key.replace(/[^a-zA-Z0-9]/g, '_');
+        const label = document.getElementById('fileLabel_' + fileKey);
+
+        try {
+            label.textContent = '⏳ 上传中...';
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('overwrite', 'true');
+
+            const res = await fetch(apiUrl('/api/comfy/upload/file'), {
+                method: 'POST',
+                body: formData
+            });
+            const data = await res.json();
+            if (data.name) {
+                uploadedFiles[key] = { name: data.name, subfolder: data.subfolder || '', type: data.type || 'input' };
+                label.textContent = '✅ ' + data.name;
+                const hidden = document.getElementById('param_' + key);
+                if (hidden) hidden.value = data.name;
+                updateParamsJson();
+                loadFileLists();
+            } else {
+                label.textContent = '❌ 上传失败';
+                console.error('上传响应:', data);
+            }
+        } catch (e) {
+            label.textContent = '❌ 上传异常: ' + e.message;
+            console.error(e);
+        }
+    }
+
+    function clearFile(key) {
+        delete uploadedFiles[key];
+        const fileKey = 'file_' + key.replace(/[^a-zA-Z0-9]/g, '_');
+        const label = document.getElementById('fileLabel_' + fileKey);
+        if (label) label.textContent = '未选择';
+        const hidden = document.getElementById('param_' + key);
+        if (hidden) hidden.value = '';
+        updateParamsJson();
+    }
+
+    function updateParamsJson() {
+        const inputs = document.querySelectorAll('#paramInputs input, #paramInputs textarea');
+        const obj = {};
+        inputs.forEach(el => {
+            if (el.id && el.id.startsWith('param_')) {
+                const key = el.id.replace('param_', '');
+                obj[key] = el.value;
+            }
+        });
+        const jsonArea = document.getElementById('paramsJson');
+        if (jsonArea) jsonArea.value = JSON.stringify(obj, null, 2);
+    }
+
+    function applyJsonParams() {
+        const jsonArea = document.getElementById('paramsJson');
+        if (!jsonArea) return;
+        try {
+            const obj = JSON.parse(jsonArea.value);
+            Object.keys(obj).forEach(key => {
+                const el = document.getElementById('param_' + key);
+                if (el) el.value = obj[key];
+            });
+            Object.keys(obj).forEach(key => {
+                if (uploadedFiles[key] && uploadedFiles[key].name !== obj[key]) {
+                    const fileKey = 'file_' + key.replace(/[^a-zA-Z0-9]/g, '_');
+                    const label = document.getElementById('fileLabel_' + fileKey);
+                    if (label) label.textContent = '✅ ' + obj[key];
+                }
+            });
+        } catch (e) {
+            alert('JSON 格式错误: ' + e.message);
+        }
+    }
+
+    // ================================================================
+    //  📁 文件管理（同前，略）
+    // ================================================================
+    async function loadFileLists() {
+        await loadInputFiles();
+        await loadOutputFiles();
+    }
+
+    let currentPreviewUrls = [];
+    let currentPreviewIndex = 0;
+
+    function openPreview(urls, name) {
+        const overlay = document.getElementById('previewOverlay');
+        const content = document.getElementById('previewContent');
+        const filenameEl = document.getElementById('previewFilename');
+        const urlDisplay = document.getElementById('previewUrlDisplay');
+        const downloadLink = document.getElementById('previewDownloadLink');
+        const switchBtn = document.getElementById('switchUrlBtn');
+
+        currentPreviewUrls = urls;
+        currentPreviewIndex = 0;
+
+        content.innerHTML = '';
+        const ext = name.split('.').pop().toLowerCase();
+        const isVideo = ['mp4','webm','mov','avi'].includes(ext);
+        const isImage = ['png','jpg','jpeg','gif','webp'].includes(ext);
+
+        if (isVideo) {
+            const video = document.createElement('video');
+            video.controls = true;
+            video.autoplay = false;
+            video.style.maxWidth = '100%';
+            video.style.maxHeight = '75vh';
+            content.appendChild(video);
+            loadMedia(video, urls[0], 'video');
+            video.addEventListener('error', function() {
+                if (currentPreviewIndex < urls.length - 1) {
+                    currentPreviewIndex++;
+                    loadMedia(video, urls[currentPreviewIndex], 'video');
+                    updatePreviewUI(urls[currentPreviewIndex], name);
+                }
+            });
+        } else if (isImage) {
+            const img = document.createElement('img');
+            img.alt = name;
+            img.style.maxWidth = '100%';
+            img.style.maxHeight = '75vh';
+            content.appendChild(img);
+            loadMedia(img, urls[0], 'image');
+            img.addEventListener('error', function() {
+                if (currentPreviewIndex < urls.length - 1) {
+                    currentPreviewIndex++;
+                    loadMedia(img, urls[currentPreviewIndex], 'image');
+                    updatePreviewUI(urls[currentPreviewIndex], name);
+                }
+            });
+        } else {
+            content.innerHTML = `<p style="color:var(--text-secondary);">该文件类型不支持预览，请下载查看。</p>`;
+        }
+
+        filenameEl.textContent = name;
+        updatePreviewUI(urls[0], name);
+        downloadLink.href = urls[0];
+        downloadLink.textContent = '下载';
+
+        switchBtn.onclick = function() {
+            if (currentPreviewIndex < urls.length - 1) {
+                currentPreviewIndex++;
+                const media = content.querySelector('video, img');
+                if (media) {
+                    loadMedia(media, urls[currentPreviewIndex], media.tagName.toLowerCase());
+                    updatePreviewUI(urls[currentPreviewIndex], name);
+                    downloadLink.href = urls[currentPreviewIndex];
+                }
+            } else {
+                alert('已尝试所有链接方式，若仍无法预览，请检查文件是否存在或服务配置。');
+            }
+        };
+        overlay.classList.add('active');
+    }
+
+    function loadMedia(element, url, type) {
+        if (type === 'video') {
+            element.src = url;
+            element.load();
+        } else if (type === 'image') {
+            element.src = url;
+        }
+    }
+
+    function updatePreviewUI(url, name) {
+        const urlDisplay = document.getElementById('previewUrlDisplay');
+        urlDisplay.textContent = '当前使用链接: ' + url;
+    }
+
+    function closePreview(e) {
+        if (e && e.target !== e.currentTarget && e.target !== document.getElementById('previewOverlay')) return;
+        document.getElementById('previewOverlay').classList.remove('active');
+        const video = document.querySelector('#previewContent video');
+        if (video) video.pause();
+        currentPreviewUrls = [];
+        currentPreviewIndex = 0;
+    }
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') closePreview();
+    });
+
+    async function loadInputFiles() {
+        const container = $('inputFileList');
+        container.innerHTML = '<p class="text-muted">加载中...</p>';
+        try {
+            const res = await fetch(apiUrl('/api/input-assets'));
+            const data = await res.json();
+            let files = [];
+            if (Array.isArray(data)) files = data;
+            else if (data.files && Array.isArray(data.files)) files = data.files;
+            else if (data.success && data.files) files = data.files;
+            if (files.length === 0) {
+                container.innerHTML = '<p class="text-muted">暂无上传的文件</p>';
+                return;
+            }
+            let html = '';
+            files.forEach(file => {
+                const name = file.name || file.relativePath || file.filename || '未知';
+                const size = file.size ? formatFileSize(file.size) : '';
+                const mtime = file.mtime || file.modified || '';
+                const subfolder = file.subfolder || '';
+                let previewUrl = apiUrl('/api/comfy/view?filename=' + encodeURIComponent(name) + '&type=input');
+                if (subfolder) previewUrl += '&subfolder=' + encodeURIComponent(subfolder);
+                const ext = name.split('.').pop().toLowerCase();
+                const isPreview = ['png','jpg','jpeg','gif','webp','mp4','webm','mov'].includes(ext);
+                const nameDisplay = isPreview ?
+                    `<a href="javascript:void(0)" onclick="openPreview(['${previewUrl.replace(/'/g, "\\'")}'], '${name.replace(/'/g, "\\'")}')" class="fname">${name}</a>` :
+                    `<span class="fname">${name}</span>`;
+                const delPath = (file.relativePath || file.name || file.filename || name).replace(/\\/g, '/');
+                html += `
+                    <div class="file-item">
+                        <div class="file-info">
+                            ${nameDisplay}
+                            ${size ? `<span class="fsize">${size}</span>` : ''}
+                            ${mtime ? `<span class="fsize" style="font-size:10px;">${formatTime(mtime)}</span>` : ''}
+                        </div>
+                        <div class="file-actions">
+                            <button class="btn btn-danger btn-sm" onclick="deleteInputFile('${delPath.replace(/'/g, "\\'")}')">删除</button>
+                        </div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        } catch (e) {
+            container.innerHTML = `<p class="text-muted" style="color:var(--danger);">❌ 加载失败: ${e.message}</p>`;
+            console.error('loadInputFiles error:', e);
+        }
+    }
+
+    async function loadOutputFiles() {
+        const container = $('outputFileList');
+        container.innerHTML = '<p class="text-muted">加载中...</p>';
+        try {
+            const res = await fetch(apiUrl('/api/images'));
+            const data = await res.json();
+            let files = [];
+            if (Array.isArray(data)) files = data;
+            else if (data.files && Array.isArray(data.files)) files = data.files;
+            else if (data.success && data.files) files = data.files;
+            if (files.length === 0) {
+                container.innerHTML = '<p class="text-muted">暂无生成的文件</p>';
+                return;
+            }
+            let html = '';
+            files.forEach(file => {
+                const name = file.name || file.relativePath || file.filename || '未知';
+                const size = file.size ? formatFileSize(file.size) : '';
+                const mtime = file.mtime || file.modified || '';
+                const path = file.relativePath || file.name || file.filename || name;
+                const pathParts = path.split('/');
+                const filename = pathParts.pop();
+                const subfolder = pathParts.join('/');
+
+                let proxyUrl = apiUrl('/api/comfy/view?filename=' + encodeURIComponent(filename) + '&type=output');
+                if (subfolder) proxyUrl += '&subfolder=' + encodeURIComponent(subfolder);
+
+                let directUrl = apiUrl('/output/');
+                if (subfolder) directUrl += encodeURIComponent(subfolder) + '/';
+                directUrl += encodeURIComponent(filename);
+
+                const urls = [proxyUrl, directUrl];
+
+                const ext = name.split('.').pop().toLowerCase();
+                const isPreview = ['png','jpg','jpeg','gif','webp','mp4','webm','mov'].includes(ext);
+                const nameDisplay = isPreview ?
+                    `<a href="javascript:void(0)" onclick="openPreview(['${proxyUrl.replace(/'/g, "\\'")}','${directUrl.replace(/'/g, "\\'")}'], '${name.replace(/'/g, "\\'")}')" class="fname">${name}</a>` :
+                    `<span class="fname">${name}</span>`;
+                html += `
+                    <div class="file-item">
+                        <div class="file-info">
+                            ${nameDisplay}
+                            ${size ? `<span class="fsize">${size}</span>` : ''}
+                            ${mtime ? `<span class="fsize" style="font-size:10px;">${formatTime(mtime)}</span>` : ''}
+                        </div>
+                        <div class="file-actions">
+                            <a href="${proxyUrl}" target="_blank" class="btn btn-sm btn-primary">下载(代理)</a>
+                            <a href="${directUrl}" target="_blank" class="btn btn-sm btn-primary">下载(直链)</a>
+                            <button class="btn btn-danger btn-sm" onclick="deleteOutputFile('${path.replace(/'/g, "\\'")}')">删除</button>
+                        </div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        } catch (e) {
+            container.innerHTML = `<p class="text-muted" style="color:var(--danger);">❌ 加载失败: ${e.message}</p>`;
+            console.error('loadOutputFiles error:', e);
+        }
+    }
+
+    async function deleteInputFile(path) {
+        if (!confirm(`确定要删除 input 文件 "${path}" 吗？`)) return;
+        try {
+            const res = await fetch(apiUrl('/api/input-assets/delete'), {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ paths: [path] })
+            });
+            const data = await res.json();
+            if (data.success !== false) {
+                alert('✅ 删除成功');
+                loadInputFiles();
+            } else {
+                alert('❌ 删除失败: ' + (data.error || '未知错误'));
+            }
+        } catch (e) { alert('❌ 请求异常: ' + e.message); }
+    }
+
+    async function deleteOutputFile(path) {
+        if (!confirm(`确定要删除 output 文件 "${path}" 吗？`)) return;
+        try {
+            const res = await fetch(apiUrl('/api/images/delete'), {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ paths: [path] })
+            });
+            const data = await res.json();
+            if (data.success !== false) {
+                alert('✅ 删除成功');
+                loadOutputFiles();
+            } else {
+                alert('❌ 删除失败: ' + (data.error || '未知错误'));
+            }
+        } catch (e) { alert('❌ 请求异常: ' + e.message); }
+    }
+
+    // ================================================================
+    //  提交生成（不再扣费）
+    // ================================================================
+    async function submitGenerate() {
+        const workflowId = $('workflowSelect').value;
+        if (!workflowId) {
+            $('generateStatus').textContent = '⚠️ 请先选择工作流';
+            return;
+        }
+
+        const balance = getBalance();
+        if (balance < 0.1) {
+            $('generateStatus').textContent = '⚠️ 余额过低（至少 0.1），请充值';
+            return;
+        }
+
+        const inputValues = {};
+        const paramInputs = document.querySelectorAll('#paramInputs input, #paramInputs textarea');
+        paramInputs.forEach(el => {
+            if (el.id && el.id.startsWith('param_')) {
+                const key = el.id.replace('param_', '');
+                if (el.value) inputValues[key] = el.value;
+            }
+        });
+        document.querySelectorAll('input[type="hidden"][id^="param_"]').forEach(el => {
+            const key = el.id.replace('param_', '');
+            if (el.value) inputValues[key] = el.value;
+        });
+
+        if (Object.keys(inputValues).length === 0) {
+            $('generateStatus').textContent = '⚠️ 请至少配置一个参数';
+            return;
+        }
+
+        const btn = $('submitGenerate');
+        btn.disabled = true;
+        btn.textContent = '⏳ 提交中...';
+        $('generateStatus').textContent = '⏳ 正在提交任务...';
+        $('submitResult').innerHTML = '';
+
+        try {
+            const payload = {
+                workflow_id: workflowId,
+                input_values: inputValues,
+                client_id: 'web_' + uuid()
+            };
+
+            const res = await fetch(apiUrl('/api/workflow/generate'), {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            const data = await res.json();
+
+            if (data.success && data.prompt_id) {
+                const startTime = Date.now();
+                const task = {
+                    id: uuid(),
+                    user_id: currentUser.uid,
+                    username: currentProfile?.username,
+                    workflow_id: workflowId,
+                    prompt_id: data.prompt_id,
+                    status: 'pending',
+                    created_at: new Date().toISOString(),
+                    updated_at: new Date().toISOString(),
+                    input_values: inputValues,
+                    results: [],
+                    start_time: startTime,
+                    end_time: null,
+                    duration_sec: null,
+                    cost: 0,
+                    billed: false
+                };
+                // 保存任务到数据库（REST API）
+                await restFetch('/tasks', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        user_id: task.user_id,
+                        workflow_id: task.workflow_id,
+                        prompt_id: task.prompt_id,
+                        status: task.status,
+                        input_values: task.input_values,
+                        results: task.results,
+                        created_at: task.created_at,
+                        updated_at: task.updated_at
+                    })
+                });
+                $('generateStatus').textContent = '✅ 任务已提交，prompt_id: ' + data.prompt_id;
+                $('submitResult').innerHTML = `
+                    <div style="background:var(--bg-input);border-radius:8px;padding:12px;border:1px solid var(--success);">
+                        <div style="font-weight:600;color:var(--success);">✅ 提交成功！</div>
+                        <div style="font-size:13px;color:var(--text-secondary);margin-top:4px;">
+                            Prompt ID: <code>${data.prompt_id}</code>
+                            <br>⏱️ 任务不额外收费，登录期间已按时间计费。
+                            <br><button class="btn btn-sm btn-primary mt-2" onclick="switchPage('tasks')">查看任务</button>
+                        </div>
+                    </div>
+                `;
+                renderTasks();
+                setTimeout(() => pollSingleTask(task.prompt_id, task.id), 3000);
+            } else {
+                $('generateStatus').textContent = '❌ 提交失败: ' + (data.error || '未知错误');
+                $('submitResult').innerHTML = `<div style="color:var(--danger);">${data.error || '提交失败'}</div>`;
+            }
+        } catch (e) {
+            $('generateStatus').textContent = '❌ 请求异常: ' + e.message;
+            $('submitResult').innerHTML = `<div style="color:var(--danger);">${e.message}</div>`;
+            console.error(e);
+        }
+        btn.disabled = false;
+        btn.textContent = '🚀 生成视频';
+    }
+
+    // ================================================================
+    //  任务管理
+    // ================================================================
+    async function pollTaskResult(promptId, taskId) {
+        try {
+            const res = await fetch(apiUrl('/api/workflow/result?prompt_id=' + encodeURIComponent(promptId)));
+            const data = await res.json();
+            // 从数据库查询任务状态（使用REST API）
+            const taskRes = await restFetch(`/tasks?prompt_id=eq.${promptId}`);
+            if (!taskRes || taskRes.length === 0) return;
+            const task = taskRes[0];
+
+            if (task.status === 'done' || task.status === 'error') {
+                return true;
+            }
+
+            if (data.success && data.pending === false) {
+                const updated = {
+                    status: 'done',
+                    results: data.results || [],
+                    updated_at: new Date().toISOString(),
+                    end_time: new Date().toISOString(),
+                    duration_sec: (new Date() - new Date(task.created_at)) / 1000,
+                    cost: 0,
+                    billed: true
+                };
+                await restFetch(`/tasks?prompt_id=eq.${promptId}`, {
+                    method: 'PATCH',
+                    body: JSON.stringify(updated)
+                });
+                renderTasks();
+                $('submitResult').innerHTML += `
+                    <div style="background:var(--bg-input);border-radius:8px;padding:12px;border:1px solid var(--success);margin-top:10px;">
+                        <div style="font-weight:600;color:var(--success);">🎉 生成完成！</div>
+                        <div style="font-size:13px;color:var(--text-secondary);">
+                            耗时 ${formatDuration(updated.duration_sec)}（不额外扣费）
+                            <br><button class="btn btn-sm btn-primary mt-2" onclick="switchPage('tasks')">查看结果</button>
+                        </div>
+                    </div>
+                `;
+                return true;
+            } else if (data.success && data.pending === true) {
+                await restFetch(`/tasks?prompt_id=eq.${promptId}`, {
+                    method: 'PATCH',
+                    body: JSON.stringify({ status: 'running', updated_at: new Date().toISOString() })
+                });
+                renderTasks();
+                return false;
+            } else {
+                await restFetch(`/tasks?prompt_id=eq.${promptId}`, {
+                    method: 'PATCH',
+                    body: JSON.stringify({ status: 'error', updated_at: new Date().toISOString() })
+                });
+                renderTasks();
+                return true;
+            }
+        } catch (e) {
+            console.error('轮询任务失败:', e);
+            return false;
+        }
+    }
+
+    async function renderTasks() {
+        const container = $('taskList');
+        if (!currentUser) return;
+        const tasksRes = await restFetch(`/tasks?user_id=eq.${currentUser.uid}&order=created_at.desc`);
+        const tasks = tasksRes || [];
+        if (tasks.length === 0) {
+            container.innerHTML = '<p class="text-muted">暂无任务，去工作页生成视频吧</p>';
+            return;
+        }
+        let html = '';
+        tasks.forEach(task => {
+            const duration = task.duration_sec ? formatDuration(task.duration_sec) : '-';
+            html += `
+                <div class="task-item">
+                    <div class="task-head">
+                        <div>
+                            <strong>${task.workflow_id}</strong>
+                            ${getStatusBadge(task.status)}
+                            <span class="task-id">${task.prompt_id}</span>
+                        </div>
+                        <div style="font-size:12px;color:var(--text-muted);">
+                            ${formatTime(task.created_at)}
+                            ${task.status === 'done' ? `⏱️ ${duration}` : ''}
+                        </div>
+                    </div>
+                    <div style="font-size:12px;color:var(--text-secondary);margin-top:4px;">
+                        参数: ${Object.keys(task.input_values || {}).join(', ') || '无'}
+                    </div>
+                    ${task.status === 'done' && task.results && task.results.length > 0 ? `
+                        <div class="task-result">
+                            <div class="preview-grid">
+                                ${task.results.map(r => {
+                                    const url = apiUrl(r.url);
+                                    const ext = (r.filename || '').split('.').pop().toLowerCase();
+                                    const isVideo = ['mp4','webm','mov','avi'].includes(ext);
+                                    const isImage = ['png','jpg','jpeg','gif','webp'].includes(ext);
+                                    let preview = '';
+                                    if (isVideo) preview = `<video controls src="${url}"></video>`;
+                                    else if (isImage) preview = `<img src="${url}" alt="result">`;
+                                    else preview = `<a href="${url}" target="_blank">📄 ${r.filename || '下载'}</a>`;
+                                    return `
+                                        <div class="preview-item">
+                                            ${preview}
+                                            <div class="fname">${r.filename || r.url}</div>
+                                            <a href="${url}" target="_blank" style="font-size:11px;">下载</a>
+                                        </div>
+                                    `;
+                                }).join('')}
+                            </div>
+                        </div>
+                    ` : ''}
+                    ${task.status === 'pending' || task.status === 'running' ? `
+                        <div style="margin-top:8px;">
+                            <button class="btn btn-sm btn-primary" onclick="pollSingleTask('${task.prompt_id}')">🔄 查询进度</button>
+                        </div>
+                    ` : ''}
+                    ${task.status === 'error' ? `
+                        <div style="margin-top:8px;font-size:12px;color:var(--danger);">⚠️ ${task.error || '任务出错'}</div>
+                    ` : ''}
+                </div>
+            `;
+        });
+        container.innerHTML = html;
+    }
+
+    async function pollSingleTask(promptId) {
+        await pollTaskResult(promptId, null);
+    }
+
+    async function pollAllRunningTasks() {
+        if (isPolling) return;
+        isPolling = true;
+        const tasksRes = await restFetch(`/tasks?user_id=eq.${currentUser.uid}&status=in.(pending,running)`);
+        const tasks = tasksRes || [];
+        for (const task of tasks) {
+            await pollTaskResult(task.prompt_id, null);
+        }
+        isPolling = false;
+        renderTasks();
+    }
+
+    // ================================================================
+    //  系统控制（同前，略）
+    // ================================================================
+    async function refreshComfyStatus() {
+        const dot = $('comfyDot');
+        const text = $('comfyStatusText');
+        const detail = $('comfyDetail');
+        try {
+            const res = await fetch(apiUrl('/api/comfy/status'));
+            const data = await res.json();
+            if (data.running) {
+                dot.className = 'dot green';
+                text.textContent = '🟢 运行中';
+                detail.textContent = `端口 ${data.port || 6006}`;
+            } else if (data.starting) {
+                dot.className = 'dot yellow';
+                text.textContent = '🟡 启动中';
+                detail.textContent = '请稍候...';
+            } else {
+                dot.className = 'dot red';
+                text.textContent = '🔴 已停止';
+                detail.textContent = data.reason || '';
+            }
+        } catch (e) {
+            dot.className = 'dot red';
+            text.textContent = '⚠️ 连接失败';
+            detail.textContent = e.message;
+        }
+    }
+
+    async function comfyStart() {
+        const useProxy = $('proxyUseProxy').value === 'true';
+        const proxyType = $('proxyType').value;
+        try {
+            const res = await fetch(apiUrl('/api/comfy/start'), {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ useProxy, proxyType })
+            });
+            const data = await res.json();
+            alert(data.log || '启动命令已发送');
+            refreshComfyStatus();
+        } catch (e) { alert('启动失败: ' + e.message); }
+    }
+
+    async function comfyStop() {
+        if (!confirm('确定要停止 ComfyUI 吗？')) return;
+        try {
+            const res = await fetch(apiUrl('/api/comfy/stop'), {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({})
+            });
+            const data = await res.json();
+            alert(data.log || '停止命令已发送');
+            refreshComfyStatus();
+        } catch (e) { alert('停止失败: ' + e.message); }
+    }
+
+    async function refreshHardware() {
+        const container = $('hardwareData');
+        container.innerHTML = '加载中...';
+        try {
+            const res = await fetch(apiUrl('/api/gpu/info'));
+            const data = await res.json();
+            if (data.success) {
+                let html = `<div>GPU: ${data.hasGPU ? '✅ 有' : '❌ 无'}</div>`;
+                if (data.gpus && data.gpus.length > 0) {
+                    data.gpus.forEach(g => {
+                        html += `<div style="margin-top:4px;">• ${g.name} | 显存 ${g.memory_used_mb || 0}/${g.memory_total_mb || 0} MB</div>`;
+                    });
+                }
+                container.innerHTML = html;
+            } else {
+                container.innerHTML = '获取失败';
+            }
+        } catch (e) { container.innerHTML = '❌ ' + e.message; }
+    }
+
+    // ================================================================
+    //  账户与充值
+    // ================================================================
+    function renderUsageStats() {
+        $('usageStats').innerHTML = `
+            <div>总任务: ${tasksCount}</div>
+            <div>总消耗（登录计费）: ${totalCost.toFixed(2)} 余额</div>
+            <div style="margin-top:6px;font-size:12px;color:var(--text-muted);">⏱️ 当前费率：每分钟 ${rate.toFixed(2)} 余额</div>
+        `;
+    }
+
+    function openRechargeModal() {
+        if (currentProfile?.role !== 'admin') {
+            alert('只有管理员可以进行充值操作。');
+            return;
+        }
+        $('rechargeModal').classList.add('active');
+        $('rechargeAmount').value = 10;
+        $('rechargeResult').textContent = '';
+    }
+
+    function closeRechargeModal() { $('rechargeModal').classList.remove('active'); }
+
+    async function confirmRecharge() {
+        if (currentProfile?.role !== 'admin') {
+            alert('只有管理员可以进行充值操作。');
+            return;
+        }
+        const username = prompt('请输入要充值的用户名：');
+        if (!username) return;
+        const amount = parseInt($('rechargeAmount').value);
+        if (!amount || amount <= 0) {
+            $('rechargeResult').textContent = '⚠️ 请输入有效金额';
+            return;
+        }
+        const result = await adminRecharge(username, amount);
+        if (result.success) {
+            $('rechargeResult').textContent = '✅ 充值成功！' + username + ' +' + amount;
+            renderAdmin();
+            await refreshProfile();
+            $('displayBalance').textContent = getBalance().toFixed(2);
+            $('accountBalance').textContent = getBalance().toFixed(2);
+            setTimeout(closeRechargeModal, 1000);
+        } else {
+            $('rechargeResult').textContent = '❌ ' + result.msg;
+        }
+    }
+
+    // ================================================================
+    //  管理后台
+    // ================================================================
+    async function renderAdmin() {
+        if (currentProfile?.role !== 'admin') return;
+        const users = await adminGetAllUsers();
+        let userHtml = '';
+        users.forEach(u => {
+            userHtml += `
+                <div class="admin-user-row">
+                    <div class="info">
+                        <strong>${u.username}</strong>
+                        ${u.role === 'admin' ? '👑' : ''}
+                        <span style="color:var(--text-muted);">余额: <strong style="color:var(--success);">${(u.balance || 0).toFixed(2)}</strong></span>
+                        <span style="color:var(--text-muted);font-size:12px;">任务: ${tasksCount}</span>
+                    </div>
+                    <div style="display:flex;gap:6px;">
+                        <input type="number" id="adminRecharge_${u.username}" placeholder="金额" style="width:80px;padding:4px 8px;background:var(--bg-input);border:1px solid var(--border-color);border-radius:4px;color:var(--text-primary);">
+                        <button class="btn btn-sm btn-success" onclick="adminRecharge('${u.username}')">充值</button>
+                        ${u.role !== 'admin' ? `<button class="btn btn-sm btn-danger" onclick="adminDeleteUser('${u.username}')">删除</button>` : ''}
+                    </div>
+                </div>
+            `;
+        });
+        $('adminUserList').innerHTML = userHtml || '<p class="text-muted">暂无用户</p>';
+
+        const tasks = await adminGetAllTasks();
+        let taskHtml = '';
+        if (tasks.length === 0) {
+            taskHtml = '<p class="text-muted">暂无任务</p>';
+        } else {
+            tasks.forEach(t => {
+                taskHtml += `
+                    <div class="task-item" style="padding:10px 14px;">
+                        <div class="task-head">
+                            <div>
+                                <strong>${t.username}</strong> → ${t.workflow_id}
+                                ${getStatusBadge(t.status)}
+                                <span class="task-id">${t.prompt_id}</span>
+                            </div>
+                            <div style="font-size:12px;color:var(--text-muted);">${formatTime(t.created_at)}</div>
+                        </div>
+                        ${t.results && t.results.length > 0 ? `
+                            <div style="font-size:12px;color:var(--text-secondary);margin-top:4px;">
+                                产出: ${t.results.map(r => r.filename || r.url).join(', ')}
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            });
+        }
+        $('adminTaskList').innerHTML = taskHtml;
+    }
+
+    // ================================================================
+    //  事件绑定
+    // ================================================================
+    function initEvents() {
+        $('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const username = $('loginUser').value.trim();
+            const password = $('loginPass').value.trim();
+            if (!username || !password) {
+                $('loginError').textContent = '请填写完整信息';
+                return;
+            }
+            $('loginBtn').disabled = true;
+            $('loginBtn').textContent = '登录中...';
+            const result = await login(username, password);
+            $('loginBtn').disabled = false;
+            $('loginBtn').textContent = '登 录';
+            if (result.success) {
+                $('loginError').textContent = '';
+                showMainApp();
+            } else {
+                $('loginError').textContent = result.msg;
+            }
+        });
+
+        $('registerForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const username = $('regUser').value.trim();
+            const password = $('regPass').value.trim();
+            if (!username || !password) {
+                $('regError').textContent = '请填写完整信息';
+                return;
+            }
+            if (password.length < 6) {
+                $('regError').textContent = '密码至少6位';
+                return;
+            }
+            $('registerBtn').disabled = true;
+            $('registerBtn').textContent = '注册中...';
+            const result = await register(username, password);
+            $('registerBtn').disabled = false;
+            $('registerBtn').textContent = '注 册';
+            if (result.success) {
+                $('regError').textContent = '';
+                showMainApp();
+            } else {
+                $('regError').textContent = result.msg;
+            }
+        });
+
+        $('switchToRegister').addEventListener('click', () => {
+            $('loginForm').classList.add('hidden');
+            $('registerForm').classList.remove('hidden');
+            $('loginError').textContent = '';
+            $('regError').textContent = '';
+        });
+        $('switchToLogin').addEventListener('click', () => {
+            $('loginForm').classList.remove('hidden');
+            $('registerForm').classList.add('hidden');
+            $('loginError').textContent = '';
+            $('regError').textContent = '';
+        });
+
+        $('logoutBtn').addEventListener('click', logout);
+
+        $$('.sidebar .menu-item[data-page]').forEach(el => {
+            el.addEventListener('click', function() {
+                const page = this.dataset.page;
+                if (page === 'admin' && currentProfile?.role !== 'admin') return;
+                switchPage(page);
+            });
+        });
+
+        $('workflowSelect').addEventListener('change', function() {
+            const id = this.value;
+            if (id) loadWorkflowConfig(id);
+            else $('paramsContainer').innerHTML = '<p class="text-muted">请先选择工作流</p>';
+        });
+
+        $('refreshWorkflows').addEventListener('click', refreshWorkflowList);
+        $('refreshFileList').addEventListener('click', loadFileLists);
+
+        $('saveBaseUrl').addEventListener('click', function() {
+            const url = $('baseUrlInput').value.trim();
+            if (url) {
+                localStorage.setItem('zhangdaye_base_url', url);
+                alert('✅ API地址已保存');
+                loadFileLists();
+            }
+        });
+
+        $('submitGenerate').addEventListener('click', submitGenerate);
+        $('refreshTasks').addEventListener('click', renderTasks);
+        $('pollRunningTasks').addEventListener('click', pollAllRunningTasks);
+
+        $('comfyStartBtn').addEventListener('click', comfyStart);
+        $('comfyStopBtn').addEventListener('click', comfyStop);
+        $('comfyRefreshBtn').addEventListener('click', refreshComfyStatus);
+        $('refreshHardware').addEventListener('click', refreshHardware);
+
+        $('refreshBalance').addEventListener('click', async function() {
+            await refreshProfile();
+            $('displayBalance').textContent = getBalance().toFixed(2);
+            $('accountBalance').textContent = getBalance().toFixed(2);
+            updateOnlineInfo();
+        });
+
+        $('openRechargeModal').addEventListener('click', openRechargeModal);
+        $('closeRechargeModal').addEventListener('click', closeRechargeModal);
+        $('confirmRecharge').addEventListener('click', confirmRecharge);
+        $('rechargeModal').addEventListener('click', function(e) {
+            if (e.target === this) closeRechargeModal();
+        });
+
+        $('changePwdBtn').addEventListener('click', async function() {
+            const oldPwd = $('oldPwd').value;
+            const newPwd = $('newPwd').value;
+            const confirmPwd = $('newPwdConfirm').value;
+            const msgEl = $('pwdChangeMsg');
+
+            if (!oldPwd || !newPwd || !confirmPwd) {
+                msgEl.textContent = '⚠️ 请填写完整';
+                msgEl.style.color = 'var(--danger)';
+                return;
+            }
+            if (newPwd !== confirmPwd) {
+                msgEl.textContent = '⚠️ 两次密码不一致';
+                msgEl.style.color = 'var(--danger)';
+                return;
+            }
+            const result = await changePassword(oldPwd, newPwd);
+            msgEl.textContent = result.msg;
+            msgEl.style.color = result.success ? 'var(--success)' : 'var(--danger)';
+            if (result.success) {
+                $('oldPwd').value = '';
+                $('newPwd').value = '';
+                $('newPwdConfirm').value = '';
+            }
+        });
+
+        $('updateRateBtn').addEventListener('click', async function() {
+            const rate = parseFloat($('rateInput').value);
+            if (isNaN(rate) || rate < 0.1) {
+                $('rateMsg').textContent = '⚠️ 请输入有效费率（≥0.1）';
+                return;
+            }
+            const result = await adminUpdateRate(rate);
+            if (result.success) {
+                $('rateMsg').textContent = '✅ 费率已更新为 ' + rate.toFixed(2);
+                $('rateDisplay').textContent = rate.toFixed(2);
+            } else {
+                $('rateMsg').textContent = '❌ ' + result.msg;
+            }
+        });
+
+        $('baseUrlInput').value = localStorage.getItem('zhangdaye_base_url') || BASE_URL;
+    }
+
+    // ================================================================
+    //  启动应用
+    // ================================================================
+    async function showMainApp() {
+        document.getElementById('loginPage').style.display = 'none';
+        document.getElementById('mainPage').classList.add('active');
+        await refreshProfile();
+        updateUI();
+        refreshWorkflowList();
+        renderTasks();
+        refreshComfyStatus();
+        refreshHardware();
+        loadFileLists();
+        setTimeout(pollAllRunningTasks, 2000);
+    }
+
+    async function checkAuth() {
+        // 检查是否有缓存的用户
+        if (auth.currentUser) {
+            currentUser = auth.currentUser;
+            await refreshProfile();
+            startHeartbeat();
+            showMainApp();
+        } else {
+            document.getElementById('loginPage').style.display = 'flex';
+            document.getElementById('mainPage').classList.remove('active');
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        initEvents();
+        checkAuth();
+    });
+
+    // 暴露全局函数
+    window.triggerFileUpload = triggerFileUpload;
+    window.handleFileSelect = handleFileSelect;
+    window.clearFile = clearFile;
+    window.applyJsonParams = applyJsonParams;
+    window.pollSingleTask = pollSingleTask;
+    window.pollAllRunningTasks = pollAllRunningTasks;
+    window.switchPage = switchPage;
+    window.openRechargeModal = openRechargeModal;
+    window.closeRechargeModal = closeRechargeModal;
+    window.submitGenerate = submitGenerate;
+    window.renderTasks = renderTasks;
+    window.refreshComfyStatus = refreshComfyStatus;
+    window.refreshHardware = refreshHardware;
+    window.comfyStart = comfyStart;
+    window.comfyStop = comfyStop;
+    window.refreshWorkflowList = refreshWorkflowList;
+    window.loadWorkflowConfig = loadWorkflowConfig;
+    window.logout = logout;
+    window.loadFileLists = loadFileLists;
+    window.deleteInputFile = deleteInputFile;
+    window.deleteOutputFile = deleteOutputFile;
+    window.openPreview = openPreview;
+    window.closePreview = closePreview;
+    window.adminRecharge = adminRecharge;
+    window.adminUpdateRate = adminUpdateRate;
+</script>
+</body>
+</html>
