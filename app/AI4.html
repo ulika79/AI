@@ -1,0 +1,2005 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>张大业 AI 生成器 · 微信16500234000</title>
+    <style>
+        /* ===== 主题变量 ===== */
+        :root {
+            --bg: #f0f4f9;
+            --surface: #ffffff;
+            --surface-2: #f8fafc;
+            --border: #dce3ed;
+            --text: #0b1a33;
+            --text-2: #4a5b73;
+            --text-3: #7a8aa3;
+            --primary: #2a6df4;
+            --primary-hover: #1a56d6;
+            --primary-light: #e8f0fe;
+            --success: #0f9d58;
+            --error: #d93025;
+            --warning: #f9ab00;
+            --radius: 12px;
+            --shadow: 0 2px 12px rgba(0, 20, 50, 0.08);
+            --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', PingFangSC-Regular, 'Microsoft YaHei', sans-serif;
+            --mono: ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace;
+        }
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg: #0a111f;
+                --surface: #121c2e;
+                --surface-2: #1a263a;
+                --border: #2a3a52;
+                --text: #e6edf5;
+                --text-2: #9ab0cc;
+                --text-3: #6a7f99;
+                --primary: #5b8df7;
+                --primary-hover: #7aa3f9;
+                --primary-light: #1a2a44;
+                --shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+            }
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: var(--font);
+            font-size: 14px;
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        button {
+            font-family: inherit;
+            font-size: 13px;
+            cursor: pointer;
+            border: none;
+            border-radius: 8px;
+            padding: 8px 18px;
+            transition: background 0.2s, transform 0.1s;
+            background: var(--surface-2);
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+        button:hover {
+            background: var(--border);
+        }
+        button:active {
+            transform: scale(0.97);
+        }
+        button.primary {
+            background: var(--primary);
+            color: #fff;
+            border-color: var(--primary);
+        }
+        button.primary:hover {
+            background: var(--primary-hover);
+        }
+        button.primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        button.danger {
+            background: var(--error);
+            color: #fff;
+            border-color: var(--error);
+        }
+        button.danger:hover {
+            background: #b71c1c;
+        }
+        button.success {
+            background: var(--success);
+            color: #fff;
+            border-color: var(--success);
+        }
+        button.success:hover {
+            background: #0b7e48;
+        }
+        input,
+        select,
+        textarea {
+            font-family: inherit;
+            font-size: 13px;
+            background: var(--surface);
+            color: var(--text);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 8px 12px;
+            outline: none;
+            transition: border 0.2s, box-shadow 0.2s;
+            width: 100%;
+        }
+        input:focus,
+        select:focus,
+        textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(42, 109, 244, 0.15);
+        }
+        textarea {
+            resize: vertical;
+            min-height: 60px;
+            font-family: var(--mono);
+            font-size: 12px;
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--text-3);
+        }
+
+        .app {
+            max-width: 1440px;
+            margin: 0 auto;
+        }
+
+        /* ===== 头部 ===== */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px 20px;
+            padding: 16px 24px;
+            background: var(--surface);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 24px;
+        }
+        .header h1 {
+            font-size: 22px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .header h1 span {
+            color: var(--primary);
+        }
+        .header .badge {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-3);
+            background: var(--surface-2);
+            padding: 2px 12px;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+        }
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        /* ===== BASE URL 隐藏 ===== */
+        .base-url-group {
+            display: none !important;
+        }
+        .base-url-group label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-2);
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .base-url-group input {
+            width: 280px;
+            min-width: 160px;
+            font-family: var(--mono);
+            font-size: 12px;
+            padding: 6px 12px;
+        }
+        .status-dot {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 6px;
+            flex-shrink: 0;
+        }
+        .status-dot.idle {
+            background: var(--text-3);
+        }
+        .status-dot.running {
+            background: var(--warning);
+            animation: pulse 1s infinite;
+        }
+        .status-dot.done {
+            background: var(--success);
+        }
+        .status-dot.error {
+            background: var(--error);
+        }
+        @keyframes pulse {
+            0%,
+            100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.4;
+            }
+        }
+
+        /* ===== 网格 ===== */
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+        @media (max-width: 960px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ===== 卡片 ===== */
+        .card {
+            background: var(--surface);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 20px 24px;
+            margin-bottom: 20px;
+        }
+        .card:last-child {
+            margin-bottom: 0;
+        }
+        .card-title {
+            font-size: 15px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 14px;
+            color: var(--text);
+        }
+        .card-title .sub {
+            font-size: 12px;
+            font-weight: 400;
+            color: var(--text-3);
+            margin-left: auto;
+        }
+        .card-title .count {
+            font-size: 12px;
+            font-weight: 400;
+            color: var(--text-2);
+            background: var(--surface-2);
+            padding: 0 10px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+
+        .row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .row+.row {
+            margin-top: 10px;
+        }
+        .row label {
+            font-weight: 500;
+            color: var(--text-2);
+            font-size: 13px;
+            white-space: nowrap;
+            min-width: 60px;
+        }
+        .row .flex-1 {
+            flex: 1;
+            min-width: 120px;
+        }
+        .row .flex-2 {
+            flex: 2;
+            min-width: 160px;
+        }
+        .row .flex-3 {
+            flex: 3;
+            min-width: 200px;
+        }
+
+        /* ===== 参数表 ===== */
+        .param-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+        .param-table th {
+            text-align: left;
+            font-weight: 600;
+            color: var(--text-2);
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            padding: 6px 8px 8px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        .param-table td {
+            padding: 6px 8px 6px 0;
+            vertical-align: middle;
+            border-bottom: 1px solid var(--border);
+        }
+        .param-table tr:last-child td {
+            border-bottom: none;
+        }
+        .param-table .key-input {
+            font-family: var(--mono);
+            font-size: 12px;
+            width: 140px;
+            min-width: 90px;
+        }
+        .param-table .val-input {
+            font-family: var(--mono);
+            font-size: 12px;
+            min-width: 100px;
+            flex: 1;
+        }
+        .param-table .file-btn {
+            font-size: 11px;
+            padding: 4px 12px;
+            white-space: nowrap;
+        }
+        .param-table .del-btn {
+            font-size: 16px;
+            line-height: 1;
+            padding: 0 6px;
+            background: transparent;
+            border: none;
+            color: var(--text-3);
+        }
+        .param-table .del-btn:hover {
+            color: var(--error);
+            background: transparent;
+        }
+        .param-table .type-select {
+            width: 80px;
+            min-width: 60px;
+            font-size: 12px;
+            padding: 4px 8px;
+        }
+        .param-table .asset-select-small {
+            width: 120px;
+            min-width: 80px;
+            font-size: 12px;
+            padding: 4px 8px;
+        }
+
+        /* ===== 上传与选择 ===== */
+        .upload-zone {
+            border: 2px dashed var(--border);
+            border-radius: var(--radius);
+            padding: 24px;
+            text-align: center;
+            transition: border 0.2s, background 0.2s;
+            cursor: pointer;
+            background: var(--surface-2);
+        }
+        .upload-zone:hover {
+            border-color: var(--primary);
+            background: var(--primary-light);
+        }
+        .upload-zone.dragover {
+            border-color: var(--primary);
+            background: var(--primary-light);
+        }
+        .upload-zone .icon {
+            font-size: 32px;
+            display: block;
+            margin-bottom: 6px;
+        }
+        .upload-zone .hint {
+            font-size: 13px;
+            color: var(--text-2);
+        }
+        .upload-zone .hint strong {
+            color: var(--text);
+        }
+        .upload-zone .sub-hint {
+            font-size: 12px;
+            color: var(--text-3);
+            margin-top: 4px;
+        }
+
+        .upload-result {
+            margin-top: 12px;
+            padding: 10px 14px;
+            background: var(--surface);
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            display: none;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .upload-result.show {
+            display: flex;
+        }
+        .upload-result .name {
+            font-family: var(--mono);
+            font-size: 12px;
+            color: var(--text);
+            flex: 1;
+            word-break: break-all;
+        }
+        .upload-result .copy-btn {
+            font-size: 12px;
+            padding: 2px 14px;
+        }
+
+        .asset-selector {
+            margin-top: 12px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px;
+        }
+        .asset-selector select {
+            flex: 1;
+            min-width: 150px;
+        }
+        .asset-selector button {
+            padding: 4px 16px;
+            font-size: 12px;
+        }
+
+        .asset-preview {
+            margin-top: 12px;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            background: var(--surface-2);
+            padding: 12px;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        .asset-preview img,
+        .asset-preview video,
+        .asset-preview audio {
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: 6px;
+        }
+        .asset-preview video,
+        .asset-preview audio {
+            width: 100%;
+            max-height: 200px;
+        }
+        .asset-preview .placeholder {
+            color: var(--text-3);
+            font-size: 13px;
+        }
+
+        .asset-actions {
+            margin-top: 8px;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .asset-actions button {
+            font-size: 12px;
+            padding: 4px 14px;
+        }
+
+        /* ===== 状态 ===== */
+        .status-box {
+            background: var(--surface-2);
+            border-radius: 8px;
+            padding: 12px 16px;
+            border: 1px solid var(--border);
+            font-family: var(--mono);
+            font-size: 12px;
+            min-height: 48px;
+            max-height: 120px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-break: break-all;
+            color: var(--text-2);
+            line-height: 1.7;
+        }
+        .status-box .highlight {
+            color: var(--text);
+            font-weight: 500;
+        }
+        .status-box .ok {
+            color: var(--success);
+        }
+        .status-box .err {
+            color: var(--error);
+        }
+        .status-box .warn {
+            color: var(--warning);
+        }
+
+        /* ===== 结果 ===== */
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 16px;
+            margin-top: 12px;
+        }
+        .result-item {
+            background: var(--surface-2);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            overflow: hidden;
+            transition: transform 0.15s;
+        }
+        .result-item:hover {
+            transform: translateY(-2px);
+        }
+        .result-item .media-wrap {
+            position: relative;
+            background: #000;
+            aspect-ratio: 1 / 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        .result-item .media-wrap img,
+        .result-item .media-wrap video,
+        .result-item .media-wrap audio {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .result-item .media-wrap audio {
+            height: 60px;
+            object-fit: none;
+            padding: 8px;
+        }
+        .result-item .media-wrap .type-tag {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            background: rgba(0, 0, 0, 0.7);
+            color: #fff;
+            padding: 2px 10px;
+            border-radius: 12px;
+        }
+        .result-item .info {
+            padding: 10px 14px;
+            font-size: 12px;
+            color: var(--text-2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .result-item .info .filename {
+            font-family: var(--mono);
+            font-size: 11px;
+            word-break: break-all;
+            flex: 1;
+            min-width: 60px;
+        }
+        .result-item .info .dl-link {
+            font-size: 18px;
+            line-height: 1;
+            color: var(--primary);
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+        .result-item .info .dl-link:hover {
+            background: var(--primary-light);
+            text-decoration: none;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 30px 10px;
+            color: var(--text-3);
+        }
+        .empty-state .icon {
+            font-size: 40px;
+            display: block;
+            margin-bottom: 8px;
+        }
+        .empty-state p {
+            font-size: 13px;
+        }
+
+        .mt-8 {
+            margin-top: 8px;
+        }
+        .mt-12 {
+            margin-top: 12px;
+        }
+        .mt-16 {
+            margin-top: 16px;
+        }
+        .flex {
+            display: flex;
+        }
+        .flex-center {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .flex-wrap {
+            flex-wrap: wrap;
+        }
+        .text-mono {
+            font-family: var(--mono);
+            font-size: 12px;
+        }
+        .text-small {
+            font-size: 12px;
+            color: var(--text-3);
+        }
+        .truncate {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 12px;
+            }
+            .header {
+                padding: 12px 16px;
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .header h1 {
+                font-size: 18px;
+            }
+            .base-url-group input {
+                width: 100%;
+            }
+            .card {
+                padding: 16px;
+            }
+            .param-table .key-input {
+                width: 80px;
+                min-width: 60px;
+            }
+            .param-table .type-select {
+                width: 60px;
+                min-width: 50px;
+                font-size: 11px;
+            }
+            .param-table .asset-select-small {
+                width: 80px;
+                min-width: 60px;
+            }
+            .row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .row label {
+                min-width: 0;
+            }
+            .results-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        @media (max-width: 400px) {
+            .results-grid {
+                grid-template-columns: 1fr;
+            }
+            .param-table td {
+                padding: 4px 4px 4px 0;
+            }
+            .param-table .key-input {
+                width: 60px;
+                min-width: 50px;
+                font-size: 11px;
+            }
+            .param-table .asset-select-small {
+                width: 60px;
+                min-width: 50px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app" id="app">
+
+        <!-- ===== HEADER ===== -->
+        <header class="header">
+            <h1>⚡ 张大业 <span>AI</span> 生成器 <span class="badge">微信 · 16500234000</span></h1>
+            <div class="header-actions">
+                <!-- BASE URL 已隐藏（display:none），保留输入框供 JS 读取 -->
+                <div class="base-url-group">
+                    <label>BASE URL</label>
+                    <input type="text" id="baseUrl" value="https://uu974005-7844b8541ec5.westd.seetacloud.com:8443" />
+                </div>
+                <button class="primary" id="loadWorkflowsBtn">📋 加载列表</button>
+                <span id="statusDot" class="status-dot idle"></span>
+                <span id="statusText" class="text-small" style="font-weight:500;">就绪</span>
+            </div>
+        </header>
+
+        <!-- ===== MAIN GRID ===== -->
+        <div class="grid">
+
+            <!-- 左栏 -->
+            <div class="left-col">
+
+                <!-- 工作流配置 -->
+                <div class="card">
+                    <div class="card-title">
+                        📄 工作流 <span class="sub">选择后自动加载参数</span>
+                    </div>
+                    <div class="row">
+                        <label>ID</label>
+                        <input type="text" id="workflowId" class="flex-3"
+                        placeholder="例如: A01-文生图-Qwen2512高清放大" />
+                        <select id="workflowSelect" class="flex-1" style="width:auto;min-width:100px;">
+                            <option value="">— 选择已保存 —</option>
+                        </select>
+                    </div>
+                    <div class="row mt-8">
+                        <button id="loadConfigBtn" class="primary" style="padding:4px 16px;font-size:12px;">📥 加载参数</button>
+                        <span class="text-small" id="configStatus" style="color:var(--text-3);">未加载</span>
+                    </div>
+                </div>
+
+                <!-- 参数配置 -->
+                <div class="card">
+                    <div class="card-title">
+                        ⚙️ 参数 <span class="sub">input_values</span>
+                        <span class="count" id="paramCount">0</span>
+                    </div>
+                    <div style="overflow-x:auto;">
+                        <table class="param-table" id="paramTable">
+                            <thead>
+                                <tr>
+                                    <th style="width:25%;">Key (节点:字段)</th>
+                                    <th style="width:15%;">类型</th>
+                                    <th style="width:50%;">Value</th>
+                                    <th style="width:10%;text-align:right;">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="paramBody">
+                                <!-- 动态渲染 -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="row mt-8">
+                        <button id="addParamBtn" class="text-small" style="padding:4px 14px;">➕ 添加参数</button>
+                        <button id="clearParamsBtn" class="text-small danger" style="padding:4px 14px;">🗑️ 清空</button>
+                    </div>
+                </div>
+
+                <!-- ===== 文件上传与选择（增强） ===== -->
+                <div class="card">
+                    <div class="card-title">
+                        📎 文件管理 <span class="sub">上传 · 选择 · 预览</span>
+                    </div>
+                    <div class="upload-zone" id="uploadZone">
+                        <span class="icon">📁</span>
+                        <div class="hint">点击或拖拽文件到此处上传到 <strong>ComfyUI input</strong></div>
+                        <div class="sub-hint">支持图片 · 视频 · 音频 · 任意文件（上限 10GB）</div>
+                        <input type="file" id="fileInput" style="display:none;" />
+                    </div>
+                    <div class="upload-result" id="uploadResult">
+                        <span style="font-size:14px;">✅</span>
+                        <span class="name" id="uploadedName">file.png</span>
+                        <button class="copy-btn" id="copyNameBtn">📋 复制</button>
+                        <button class="copy-btn" id="copyFullPathBtn">📋 完整路径</button>
+                        <span class="text-small" style="color:var(--text-3);margin-left:auto;" id="uploadStatus">已就绪</span>
+                    </div>
+
+                    <div class="asset-selector">
+                        <select id="assetSelect">
+                            <option value="">— 选择已上传文件 —</option>
+                        </select>
+                        <button id="refreshAssetsBtn" class="primary" style="padding:4px 16px;">🔄 刷新</button>
+                    </div>
+
+                    <div class="asset-preview" id="assetPreview">
+                        <span class="placeholder">选择文件后显示预览</span>
+                    </div>
+
+                    <div class="asset-actions">
+                        <button id="copyAssetNameBtn" class="text-small" style="padding:4px 14px;">📋 复制文件名</button>
+                        <button id="copyAssetUrlBtn" class="text-small" style="padding:4px 14px;">📋 复制预览URL</button>
+                    </div>
+                </div>
+
+                <!-- 执行 -->
+                <div class="card">
+                    <div class="card-title">🚀 执行 <span class="sub">提交生成任务</span></div>
+                    <div class="row">
+                        <button class="primary" id="generateBtn" style="flex:1;padding:10px 20px;font-weight:600;">▶ 生成</button>
+                        <button class="danger" id="stopBtn" style="padding:10px 20px;" disabled>⏹ 停止</button>
+                        <button id="clearResultBtn" class="text-small" style="padding:10px 16px;">🗑️ 清空结果</button>
+                    </div>
+                    <div class="row mt-8">
+                        <label style="min-width:0;">轮询间隔</label>
+                        <select id="pollInterval" style="width:80px;padding:4px 8px;">
+                            <option value="1000">1s</option>
+                            <option value="1500">1.5s</option>
+                            <option value="2000">2s</option>
+                            <option value="3000">3s</option>
+                            <option value="5000" selected>5s</option>
+                        </select>
+                        <label style="min-width:0;">最大轮询</label>
+                        <select id="maxPolls" style="width:80px;padding:4px 8px;">
+                            <option value="30">30次</option>
+                            <option value="60">60次</option>
+                            <option value="120">120次</option>
+                            <option value="300">300次</option>
+                            <option value="1000" selected>1000次</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- 状态 -->
+                <div class="card">
+                    <div class="card-title">📡 状态 <span class="sub" id="promptIdDisplay">—</span></div>
+                    <div class="status-box" id="logBox"><span class="text-small" style="color:var(--text-3);">等待操作…</span></div>
+                    <div class="row mt-8">
+                        <span class="text-small" id="progressText" style="color:var(--text-3);">就绪</span>
+                        <span class="text-small" style="color:var(--text-3);margin-left:auto;" id="elapsedTime">⏱ 0s</span>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- 右栏：结果 -->
+            <div class="right-col">
+                <div class="card" style="height:100%;display:flex;flex-direction:column;">
+                    <div class="card-title">
+                        🖼️ 生成结果
+                        <span class="sub" id="resultCount">0 个文件</span>
+                        <button id="downloadAllBtn" class="text-small" style="padding:2px 14px;margin-left:auto;">📦 全部下载</button>
+                    </div>
+                    <div id="resultsContainer" style="flex:1;overflow-y:auto;min-height:200px;">
+                        <div class="empty-state">
+                            <span class="icon">🖼️</span>
+                            <p>暂无结果，提交生成任务后自动显示</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- 隐藏文件输入（用于参数行） -->
+        <input type="file" id="hiddenFileInput" style="display:none;" />
+
+    </div>
+
+    <script>
+        (() => {
+            'use strict';
+
+            // ---------- DOM 引用 ----------
+            const $ = (s) => document.querySelector(s);
+            const $$ = (s) => document.querySelectorAll(s);
+
+            const baseUrlInput = $('#baseUrl');
+            const workflowIdInput = $('#workflowId');
+            const workflowSelect = $('#workflowSelect');
+            const loadConfigBtn = $('#loadConfigBtn');
+            const configStatus = $('#configStatus');
+            const paramBody = $('#paramBody');
+            const paramCount = $('#paramCount');
+            const addParamBtn = $('#addParamBtn');
+            const clearParamsBtn = $('#clearParamsBtn');
+            const generateBtn = $('#generateBtn');
+            const stopBtn = $('#stopBtn');
+            const clearResultBtn = $('#clearResultBtn');
+            const logBox = $('#logBox');
+            const promptIdDisplay = $('#promptIdDisplay');
+            const progressText = $('#progressText');
+            const elapsedTime = $('#elapsedTime');
+            const resultsContainer = $('#resultsContainer');
+            const resultCount = $('#resultCount');
+            const statusDot = $('#statusDot');
+            const statusText = $('#statusText');
+            const pollInterval = $('#pollInterval');
+            const maxPolls = $('#maxPolls');
+            const loadWorkflowsBtn = $('#loadWorkflowsBtn');
+
+            // 文件上传/选择
+            const uploadZone = $('#uploadZone');
+            const fileInput = $('#fileInput');
+            const uploadResult = $('#uploadResult');
+            const uploadedName = $('#uploadedName');
+            const copyNameBtn = $('#copyNameBtn');
+            const copyFullPathBtn = $('#copyFullPathBtn');
+            const uploadStatus = $('#uploadStatus');
+
+            const assetSelect = $('#assetSelect');
+            const refreshAssetsBtn = $('#refreshAssetsBtn');
+            const assetPreview = $('#assetPreview');
+            const copyAssetNameBtn = $('#copyAssetNameBtn');
+            const copyAssetUrlBtn = $('#copyAssetUrlBtn');
+
+            const hiddenFileInput = $('#hiddenFileInput');
+
+            // ---------- 状态 ----------
+            let params = []; // { key, type, value }
+            let currentPromptId = null;
+            let pollingTimer = null;
+            let stopPolling = false;
+            let isGenerating = false;
+            let startTime = null;
+            let elapsedTimer = null;
+            let pollCount = 0;
+            let results = [];
+            let pendingUploadRowIndex = -1;
+
+            // 资产列表缓存
+            let assetList = []; // { name, subfolder, type? }
+
+            const BASE_KEY = 'baseUrl';
+
+            // ---------- 工具 ----------
+            function getBaseUrl() {
+                let url = baseUrlInput.value.trim();
+                if (!url) return '';
+                if (url.endsWith('/')) url = url.slice(0, -1);
+                return url;
+            }
+
+            function getWorkflowId() {
+                return workflowIdInput.value.trim() || workflowSelect.value;
+            }
+
+            function setStatus(text, type = 'idle') {
+                statusText.textContent = text;
+                statusDot.className = 'status-dot ' + type;
+            }
+
+            function log(msg, className = '') {
+                const el = document.createElement('span');
+                el.textContent = msg + '\n';
+                if (className) el.className = className;
+                logBox.appendChild(el);
+                logBox.scrollTop = logBox.scrollHeight;
+            }
+
+            function clearLog() {
+                logBox.innerHTML = '';
+            }
+
+            function setPromptIdDisplay(id) {
+                promptIdDisplay.textContent = id ? 'prompt_id: ' + id.slice(0, 16) + '…' : '—';
+            }
+
+            function updateParamCount() {
+                paramCount.textContent = params.length;
+            }
+
+            function formatTime(ms) {
+                const s = Math.floor(ms / 1000);
+                const m = Math.floor(s / 60);
+                const sec = s % 60;
+                if (m > 0) return `${m}m${sec}s`;
+                return `${sec}s`;
+            }
+
+            function escapeHtml(str) {
+                if (!str) return '';
+                return str.replace(/&/g, '&amp;').replace(/"/g, '&quot;')
+                    .replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            }
+
+            // ---------- 参数渲染（核心修改） ----------
+            function renderParams() {
+                if (params.length === 0) {
+                    paramBody.innerHTML = `
+                        <tr><td colspan="4" style="text-align:center;color:var(--text-3);padding:16px 0;font-size:13px;">
+                            ⚡ 暂无参数，请选择工作流并点击「加载参数」或手动添加
+                        </td></tr>
+                    `;
+                    updateParamCount();
+                    return;
+                }
+
+                let html = '';
+                params.forEach((p, idx) => {
+                    const val = p.value || '';
+                    html += `
+                        <tr data-index="${idx}">
+                            <td>
+                                <input class="key-input" type="text" value="${escapeHtml(p.key)}"
+                                    placeholder="例如 187:text" data-param="key" data-idx="${idx}" />
+                            </td>
+                            <td>
+                                <select class="type-select" data-param="type" data-idx="${idx}">
+                                    <option value="text" ${p.type==='text'?'selected':''}>文本</option>
+                                    <option value="number" ${p.type==='number'?'selected':''}>数字</option>
+                                    <option value="file" ${p.type==='file'?'selected':''}>文件</option>
+                                    <option value="json" ${p.type==='json'?'selected':''}>JSON</option>
+                                </select>
+                            </td>
+                            <td>
+                                <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
+                                    <input class="val-input" type="text" value="${escapeHtml(val)}"
+                                        placeholder="值或文件名"
+                                        data-param="value" data-idx="${idx}" style="flex:1;min-width:80px;" />
+                                    ${p.type === 'file' ? `
+                                        <select class="asset-select-small" data-asset-select="${idx}" style="width:120px;font-size:12px;padding:4px;">
+                                            <option value="">选择已上传</option>
+                                        </select>
+                                        <button class="file-btn" data-upload="${idx}">📎 上传</button>
+                                    ` : ''}
+                                </div>
+                            </td>
+                            <td style="text-align:right;">
+                                <button class="del-btn" data-del="${idx}" title="删除">✕</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+                paramBody.innerHTML = html;
+                updateParamCount();
+
+                // 填充每个文件类型参数的下拉列表
+                const selects = paramBody.querySelectorAll('[data-asset-select]');
+                selects.forEach(sel => {
+                    const idx = parseInt(sel.dataset.assetSelect);
+                    // 填充选项
+                    sel.innerHTML = '<option value="">选择已上传</option>';
+                    assetList.forEach(a => {
+                        const opt = document.createElement('option');
+                        opt.value = a.name;
+                        opt.textContent = a.name;
+                        sel.appendChild(opt);
+                    });
+                    // 如果当前参数的值在 assetList 中，自动选中
+                    const currentVal = params[idx]?.value || '';
+                    if (currentVal && assetList.some(a => a.name === currentVal)) {
+                        sel.value = currentVal;
+                    }
+                    // 绑定 change 事件：选中后自动填入 value 输入框
+                    sel.addEventListener('change', (e) => {
+                        const selected = e.target.value;
+                        const idx2 = parseInt(e.target.dataset.assetSelect);
+                        if (idx2 < params.length) {
+                            params[idx2].value = selected;
+                            // 更新同行的 value 输入框
+                            const row = paramBody.querySelector(`tr[data-index="${idx2}"]`);
+                            if (row) {
+                                const valInput = row.querySelector('[data-param="value"]');
+                                if (valInput) valInput.value = selected;
+                            }
+                        }
+                    });
+                });
+
+                // 事件绑定
+                paramBody.querySelectorAll('[data-param="key"]').forEach(el => {
+                    el.addEventListener('change', (e) => {
+                        const idx = parseInt(e.target.dataset.idx);
+                        params[idx].key = e.target.value;
+                    });
+                });
+                paramBody.querySelectorAll('[data-param="type"]').forEach(el => {
+                    el.addEventListener('change', (e) => {
+                        const idx = parseInt(e.target.dataset.idx);
+                        params[idx].type = e.target.value;
+                        renderParams();
+                        const row = paramBody.querySelector(`tr[data-index="${idx}"]`);
+                        if (row) {
+                            const input = row.querySelector('[data-param="value"]');
+                            if (input) setTimeout(() => input.focus(), 50);
+                        }
+                    });
+                });
+                paramBody.querySelectorAll('[data-param="value"]').forEach(el => {
+                    el.addEventListener('change', (e) => {
+                        const idx = parseInt(e.target.dataset.idx);
+                        params[idx].value = e.target.value;
+                        // 同步下拉框的选中状态（如果值匹配）
+                        const row = paramBody.querySelector(`tr[data-index="${idx}"]`);
+                        if (row) {
+                            const sel = row.querySelector('[data-asset-select]');
+                            if (sel) {
+                                sel.value = e.target.value; // 如果不在选项中，会变为空
+                            }
+                        }
+                    });
+                    el.addEventListener('input', (e) => {
+                        const idx = parseInt(e.target.dataset.idx);
+                        const row = paramBody.querySelector(`tr[data-index="${idx}"]`);
+                        if (row) {
+                            const sel = row.querySelector('[data-asset-select]');
+                            if (sel) {
+                                const val = e.target.value;
+                                if (assetList.some(a => a.name === val)) {
+                                    sel.value = val;
+                                } else {
+                                    sel.value = '';
+                                }
+                            }
+                        }
+                    });
+                });
+                paramBody.querySelectorAll('[data-del]').forEach(el => {
+                    el.addEventListener('click', (e) => {
+                        const idx = parseInt(e.target.dataset.del);
+                        params.splice(idx, 1);
+                        renderParams();
+                    });
+                });
+                paramBody.querySelectorAll('[data-upload]').forEach(el => {
+                    el.addEventListener('click', (e) => {
+                        const idx = parseInt(e.target.dataset.upload);
+                        pendingUploadRowIndex = idx;
+                        hiddenFileInput.click();
+                    });
+                });
+            }
+
+            // ---------- 工作流配置加载 ----------
+            async function loadWorkflowConfig(workflowId) {
+                if (!workflowId) {
+                    configStatus.textContent = '未指定工作流 ID';
+                    configStatus.style.color = 'var(--text-3)';
+                    return;
+                }
+                const baseUrl = getBaseUrl();
+                if (!baseUrl) {
+                    alert('请填写 BASE URL');
+                    return;
+                }
+
+                configStatus.textContent = '加载中…';
+                configStatus.style.color = 'var(--warning)';
+
+                try {
+                    const resp = await fetch(`${baseUrl}/api/workflow/config/${encodeURIComponent(workflowId)}`);
+                    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+                    const data = await resp.json();
+                    if (!data.success) throw new Error(data.error || '未知错误');
+
+                    const apiConfig = data.api_config || {};
+                    const enabledParams = apiConfig.enabledParams || {};
+                    const formValues = apiConfig.formValues || {};
+
+                    let paramKeys = Object.keys(enabledParams).filter(k => enabledParams[k] === true);
+                    if (paramKeys.length === 0) {
+                        const template = data.workflow_template || {};
+                        for (const [nodeId, node] of Object.entries(template)) {
+                            if (node.inputs) {
+                                for (const [field, value] of Object.entries(node.inputs)) {
+                                    const key = `${nodeId}:${field}`;
+                                    if (!enabledParams.hasOwnProperty(key) || enabledParams[key] !== false) {
+                                        if (!paramKeys.includes(key)) {
+                                            paramKeys.push(key);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    if (paramKeys.length === 0) {
+                        configStatus.textContent = '该工作流没有可配置参数';
+                        configStatus.style.color = 'var(--text-3)';
+                        params = [];
+                        renderParams();
+                        return;
+                    }
+
+                    const newParams = paramKeys.map(key => {
+                        let type = 'text';
+                        const lowerKey = key.toLowerCase();
+                        if (lowerKey.includes('seed') || lowerKey.includes('width') || lowerKey.includes('height') ||
+                            lowerKey.includes('frame') || lowerKey.includes('value') || lowerKey.includes('steps') ||
+                            lowerKey.includes('cfg')) {
+                            type = 'number';
+                        } else if (lowerKey.includes('image') || lowerKey.includes('video') || lowerKey.includes(
+                            'audio') ||
+                            lowerKey.includes('file') || lowerKey.includes('mask') || lowerKey.includes('input')) {
+                            type = 'file';
+                        } else if (lowerKey.includes('json') || lowerKey.includes('data')) {
+                            type = 'json';
+                        }
+                        let value = formValues[key] !== undefined ? String(formValues[key]) : '';
+                        return { key, type, value };
+                    });
+
+                    const seen = new Set();
+                    const uniqueParams = newParams.filter(p => {
+                        if (seen.has(p.key)) return false;
+                        seen.add(p.key);
+                        return true;
+                    });
+
+                    params = uniqueParams;
+                    renderParams();
+
+                    configStatus.textContent = `已加载 ${params.length} 个参数`;
+                    configStatus.style.color = 'var(--success)';
+                    log(`📥 从工作流 "${workflowId}" 加载了 ${params.length} 个参数`, 'ok');
+
+                } catch (err) {
+                    configStatus.textContent = '加载失败: ' + err.message;
+                    configStatus.style.color = 'var(--error)';
+                    log(`❌ 加载工作流配置失败: ${err.message}`, 'err');
+                    alert('加载工作流配置失败: ' + err.message);
+                }
+            }
+
+            // ---------- 参数操作 ----------
+            function addParam(key = '', type = 'text', value = '') {
+                params.push({ key, type, value });
+                renderParams();
+                const rows = paramBody.querySelectorAll('tr');
+                if (rows.length > 0) {
+                    rows[rows.length - 1].scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    const inp = rows[rows.length - 1].querySelector('[data-param="key"]');
+                    if (inp) setTimeout(() => inp.focus(), 100);
+                }
+            }
+
+            function clearParams() {
+                if (params.length === 0) return;
+                if (!confirm('确定清空所有参数吗？')) return;
+                params = [];
+                renderParams();
+                configStatus.textContent = '已清空';
+                configStatus.style.color = 'var(--text-3)';
+            }
+
+            // ---------- 工作流列表 ----------
+            async function loadWorkflows() {
+                const url = getBaseUrl();
+                if (!url) {
+                    alert('请先填写 BASE URL');
+                    return;
+                }
+                try {
+                    const resp = await fetch(`${url}/api/workflow/list`);
+                    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+                    const data = await resp.json();
+                    if (!data.success) throw new Error(data.error || '未知错误');
+                    const list = data.workflows || [];
+                    workflowSelect.innerHTML = '<option value="">— 选择已保存 —</option>';
+                    list.forEach(w => {
+                        const opt = document.createElement('option');
+                        opt.value = w.id;
+                        opt.textContent = `${w.name} (运行${w.run_count||0}次)`;
+                        workflowSelect.appendChild(opt);
+                    });
+                    log(`✅ 加载了 ${list.length} 个工作流`, 'ok');
+                    const current = getWorkflowId();
+                    if (current) {
+                        const opts = workflowSelect.options;
+                        for (let i = 0; i < opts.length; i++) {
+                            if (opts[i].value === current) {
+                                workflowSelect.value = current;
+                                break;
+                            }
+                        }
+                        loadWorkflowConfig(current);
+                    }
+                } catch (err) {
+                    log(`❌ 加载工作流失败: ${err.message}`, 'err');
+                    alert('加载工作流列表失败: ' + err.message);
+                }
+            }
+
+            // ---------- 文件上传 ----------
+            async function uploadFile(file) {
+                const url = getBaseUrl();
+                if (!url) throw new Error('请填写 BASE URL');
+                const formData = new FormData();
+                formData.append('file', file);
+                formData.append('overwrite', 'true');
+
+                const resp = await fetch(`${url}/api/comfy/upload/file`, {
+                    method: 'POST',
+                    body: formData,
+                });
+                if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+                const data = await resp.json();
+                if (!data.name) throw new Error('上传响应缺少 name 字段');
+                return data;
+            }
+
+            async function handleFileUpload(file, onSuccess) {
+                uploadStatus.textContent = '⏳ 上传中…';
+                try {
+                    const data = await uploadFile(file);
+                    uploadedName.textContent = data.name;
+                    uploadResult.classList.add('show');
+                    uploadStatus.textContent = '✅ 上传成功';
+                    log(`📎 上传成功: ${data.name}`, 'ok');
+                    await loadInputAssets();
+                    renderParams();
+                    const opt = Array.from(assetSelect.options).find(o => o.value === data.name);
+                    if (opt) {
+                        assetSelect.value = data.name;
+                        showAssetPreview(data.name);
+                    }
+                    if (onSuccess) onSuccess(data);
+                } catch (err) {
+                    uploadStatus.textContent = '❌ 失败';
+                    log(`❌ 上传失败: ${err.message}`, 'err');
+                    alert('上传失败: ' + err.message);
+                }
+            }
+
+            // ---------- 资产列表加载 ----------
+            async function loadInputAssets() {
+                const url = getBaseUrl();
+                if (!url) {
+                    assetSelect.innerHTML = '<option value="">— 请先设置 BASE URL —</option>';
+                    return;
+                }
+                try {
+                    const resp = await fetch(`${url}/api/input-assets`);
+                    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+                    const data = await resp.json();
+                    let list = [];
+                    if (data.success && Array.isArray(data.assets)) {
+                        list = data.assets;
+                    } else if (Array.isArray(data)) {
+                        list = data;
+                    } else {
+                        list = data.assets || data.files || [];
+                    }
+                    assetList = list.map(item => ({
+                        name: item.name || item.filename,
+                        subfolder: item.subfolder || '',
+                        type: item.type || 'unknown'
+                    }));
+
+                    const currentVal = assetSelect.value;
+                    assetSelect.innerHTML = '<option value="">— 选择已上传文件 —</option>';
+                    assetList.forEach(a => {
+                        const opt = document.createElement('option');
+                        opt.value = a.name;
+                        opt.textContent = a.name + (a.subfolder ? ` (${a.subfolder})` : '');
+                        assetSelect.appendChild(opt);
+                    });
+                    if (currentVal && assetList.some(a => a.name === currentVal)) {
+                        assetSelect.value = currentVal;
+                        showAssetPreview(currentVal);
+                    } else {
+                        assetPreview.innerHTML = '<span class="placeholder">选择文件后显示预览</span>';
+                    }
+                    renderParams();
+                    log(`📂 加载了 ${assetList.length} 个已上传文件`, 'ok');
+                } catch (err) {
+                    log(`❌ 加载资产列表失败: ${err.message}`, 'err');
+                    assetSelect.innerHTML = '<option value="">— 加载失败 —</option>';
+                }
+            }
+
+            // ---------- 预览 ----------
+            function getAssetUrl(name, subfolder = '') {
+                const base = getBaseUrl();
+                if (!base) return '';
+                const params = new URLSearchParams();
+                params.append('filename', name);
+                params.append('type', 'input');
+                if (subfolder) params.append('subfolder', subfolder);
+                return `${base}/api/comfy/view?${params.toString()}`;
+            }
+
+            function showAssetPreview(name) {
+                const item = assetList.find(a => a.name === name);
+                if (!item) {
+                    assetPreview.innerHTML = '<span class="placeholder">文件不存在</span>';
+                    return;
+                }
+                const url = getAssetUrl(item.name, item.subfolder);
+                if (!url) {
+                    assetPreview.innerHTML = '<span class="placeholder">BASE URL 未设置</span>';
+                    return;
+                }
+                const ext = name.split('.').pop().toLowerCase();
+                const isImage = ['png', 'jpg', 'jpeg', 'gif', 'webp', 'bmp', 'svg', 'tiff'].includes(ext);
+                const isVideo = ['mp4', 'webm', 'mov', 'avi', 'mkv', 'flv', 'wmv'].includes(ext);
+                const isAudio = ['mp3', 'wav', 'flac', 'aac', 'ogg', 'm4a', 'wma'].includes(ext);
+
+                let html = '';
+                if (isImage) {
+                    html =
+                        `<img src="${url}" alt="${name}" onerror="this.parentElement.innerHTML='<span class=\\'placeholder\\'>加载失败</span>'" />`;
+                } else if (isVideo) {
+                    html = `<video controls preload="metadata" onerror="this.parentElement.innerHTML='<span class=\\'placeholder\\'>加载失败</span>'">
+                            <source src="${url}" type="video/mp4" />您的浏览器不支持视频
+                        </video>`;
+                } else if (isAudio) {
+                    html = `<audio controls preload="metadata" onerror="this.parentElement.innerHTML='<span class=\\'placeholder\\'>加载失败</span>'">
+                            <source src="${url}" type="audio/mpeg" />您的浏览器不支持音频
+                        </audio>`;
+                } else {
+                    html = `<span class="placeholder">📄 ${name} (不支持预览)</span>`;
+                }
+                assetPreview.innerHTML = html;
+            }
+
+            // ---------- 复制 ----------
+            function copyToClipboard(text, successMsg) {
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(text).then(() => {
+                        alert(successMsg);
+                    }).catch(() => {
+                        fallbackCopy(text, successMsg);
+                    });
+                } else {
+                    fallbackCopy(text, successMsg);
+                }
+            }
+
+            function fallbackCopy(text, successMsg) {
+                const ta = document.createElement('textarea');
+                ta.value = text;
+                document.body.appendChild(ta);
+                ta.select();
+                try {
+                    document.execCommand('copy');
+                    alert(successMsg);
+                } catch (e) {
+                    alert('复制失败，请手动复制');
+                }
+                ta.remove();
+            }
+
+            // ============================================================
+            //  🔥 核心修改：结果数据规范化 + 渲染增强
+            // ============================================================
+
+            /**
+             * 将各种格式的 results 数据统一转换为标准数组
+             * 支持：
+             *   - 数组：[{filename, url, type, subfolder}, ...]
+             *   - 对象：{ images: [...], videos: [...], files: [...] }
+             *   - 包含 files/items/outputs 字段的对象
+             *   - 每个 item 可以是字符串（文件名）或对象
+             */
+            function normalizeResults(raw) {
+                if (!raw) return [];
+
+                // 已经是数组
+                if (Array.isArray(raw)) {
+                    return raw.map(item => normalizeItem(item));
+                }
+
+                // 对象：尝试提取常见字段
+                const candidates = ['files', 'items', 'outputs', 'images', 'videos', 'audio', 'results', 'data'];
+                for (const key of candidates) {
+                    if (raw[key] && Array.isArray(raw[key])) {
+                        return raw[key].map(item => normalizeItem(item));
+                    }
+                }
+
+                // 对象：尝试将对象的值合并为数组
+                const arr = [];
+                for (const key of Object.keys(raw)) {
+                    const val = raw[key];
+                    if (Array.isArray(val)) {
+                        arr.push(...val.map(item => normalizeItem(item)));
+                    } else if (val && typeof val === 'object') {
+                        arr.push(normalizeItem(val));
+                    } else if (typeof val === 'string') {
+                        arr.push(normalizeItem({ filename: val, type: 'file' }));
+                    }
+                }
+                return arr.length > 0 ? arr : [];
+            }
+
+            /** 标准化单个结果项 */
+            function normalizeItem(item) {
+                if (typeof item === 'string') {
+                    return { filename: item, type: guessType(item), url: '', subfolder: '' };
+                }
+                if (!item || typeof item !== 'object') {
+                    return { filename: 'unknown', type: 'file', url: '', subfolder: '' };
+                }
+
+                // 尝试提取字段
+                const filename = item.filename || item.name || item.file || item.file_name || '';
+                const url = item.url || item.preview_url || item.file_url || '';
+                const type = item.type || item.mime_type || guessType(filename);
+                const subfolder = item.subfolder || item.folder || '';
+
+                return { filename, url, type, subfolder };
+            }
+
+            /** 根据文件名猜测类型 */
+            function guessType(filename) {
+                if (!filename) return 'file';
+                const ext = filename.split('.').pop().toLowerCase();
+                if (['png', 'jpg', 'jpeg', 'gif', 'webp', 'bmp', 'svg', 'tiff', 'ico'].includes(ext)) return 'image';
+                if (['mp4', 'webm', 'mov', 'avi', 'mkv', 'flv', 'wmv', 'm4v'].includes(ext)) return 'video';
+                if (['mp3', 'wav', 'flac', 'aac', 'ogg', 'm4a', 'wma'].includes(ext)) return 'audio';
+                if (['json', 'txt', 'csv', 'xml', 'yaml', 'yml'].includes(ext)) return 'text';
+                return 'file';
+            }
+
+            /** 构造查看文件的 URL */
+            function buildViewUrl(baseUrl, filename, subfolder = '', type = 'output') {
+                if (!baseUrl) return '';
+                if (!filename) return '';
+                // 如果已经是完整 URL，直接返回
+                if (filename.startsWith('http://') || filename.startsWith('https://')) return filename;
+                // 如果 filename 包含 /api/ 路径，拼接 baseUrl
+                if (filename.startsWith('/api/')) return baseUrl + filename;
+                // 标准 ComfyUI view API
+                const params = new URLSearchParams();
+                params.append('filename', filename);
+                params.append('type', type || 'output');
+                if (subfolder) params.append('subfolder', subfolder);
+                return `${baseUrl}/api/comfy/view?${params.toString()}`;
+            }
+
+            // ---------- 重写 displayResults ----------
+            function displayResults(resultsData, baseUrl) {
+                // 规范化数据
+                const normalized = normalizeResults(resultsData);
+                results = normalized;
+
+                // 更新计数
+                resultCount.textContent = normalized.length + ' 个文件';
+
+                if (normalized.length === 0) {
+                    resultsContainer.innerHTML = `
+                        <div class="empty-state">
+                            <span class="icon">📭</span>
+                            <p>任务已完成，但没有生成任何文件</p>
+                            <p style="font-size:12px;color:var(--text-3);margin-top:4px;">可能工作流没有输出节点，或输出被清空</p>
+                        </div>
+                    `;
+                    log(`📭 任务完成但无结果文件`, 'warn');
+                    return;
+                }
+
+                log(`🖼️ 展示 ${normalized.length} 个结果文件`, 'ok');
+                renderResults(normalized, baseUrl);
+            }
+
+            // ---------- 重写 renderResults ----------
+            function renderResults(items, baseUrl) {
+                if (!items || items.length === 0) {
+                    resultsContainer.innerHTML = `
+                        <div class="empty-state">
+                            <span class="icon">📭</span>
+                            <p>暂无结果</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                let html = '<div class="results-grid">';
+                for (const item of items) {
+                    const filename = item.filename || 'file';
+                    const type = item.type || guessType(filename);
+                    const subfolder = item.subfolder || '';
+
+                    // 构造 URL
+                    let fullUrl = item.url || '';
+                    if (!fullUrl || fullUrl === '') {
+                        fullUrl = buildViewUrl(baseUrl, filename, subfolder, type === 'image' ? 'output' : 'output');
+                    } else if (!fullUrl.startsWith('http://') && !fullUrl.startsWith('https://')) {
+                        if (fullUrl.startsWith('/')) {
+                            fullUrl = baseUrl + fullUrl;
+                        } else {
+                            fullUrl = baseUrl + '/' + fullUrl;
+                        }
+                    }
+
+                    // 媒体渲染
+                    let mediaHtml = '';
+                    const tag = `<span class="type-tag">${type}</span>`;
+
+                    if (type === 'image') {
+                        mediaHtml =
+                            `<img src="${fullUrl}" alt="${filename}" loading="lazy" onerror="this.parentElement.innerHTML='<span style=\\'color:#fff;font-size:14px;\\'>⚠️ 加载失败</span>'" />`;
+                    } else if (type === 'video') {
+                        mediaHtml = `<video controls preload="metadata" onerror="this.parentElement.innerHTML='<span style=\\'color:#fff;font-size:14px;\\'>⚠️ 加载失败</span>'">
+                                <source src="${fullUrl}" type="video/mp4" />您的浏览器不支持视频播放</video>`;
+                    } else if (type === 'audio') {
+                        mediaHtml = `<audio controls preload="metadata" onerror="this.parentElement.innerHTML='<span style=\\'color:#fff;font-size:14px;\\'>⚠️ 加载失败</span>'">
+                                <source src="${fullUrl}" type="audio/mpeg" />您的浏览器不支持音频播放</audio>`;
+                    } else if (type === 'text') {
+                        mediaHtml =
+                            `<div style="color:#fff;font-size:14px;text-align:center;padding:20px;background:#1a1a2e;">📄 ${filename}</div>`;
+                    } else {
+                        mediaHtml =
+                            `<div style="color:#fff;font-size:14px;text-align:center;padding:20px;background:#1a1a2e;">📎 ${type}</div>`;
+                    }
+
+                    html += `
+                        <div class="result-item">
+                            <div class="media-wrap">${mediaHtml}${tag}</div>
+                            <div class="info">
+                                <span class="filename" title="${filename}">${filename}</span>
+                                <a href="${fullUrl}" target="_blank" class="dl-link" download="${filename}" title="下载">⬇️</a>
+                            </div>
+                        </div>
+                    `;
+                }
+                html += '</div>';
+                resultsContainer.innerHTML = html;
+
+                // 滚动到结果区域
+                resultsContainer.scrollTop = 0;
+            }
+
+            // ---------- 生成逻辑（修改轮询） ----------
+            async function runGenerate() {
+                if (isGenerating) return;
+
+                const baseUrl = getBaseUrl();
+                if (!baseUrl) {
+                    alert('请填写 BASE URL');
+                    return;
+                }
+                const workflowId = getWorkflowId();
+                if (!workflowId) {
+                    alert('请填写工作流 ID');
+                    return;
+                }
+
+                const inputValues = {};
+                let hasValue = false;
+                for (const p of params) {
+                    if (p.key.trim() && p.value !== undefined && p.value !== null && p.value !== '') {
+                        let val = p.value;
+                        if (p.type === 'number') val = parseFloat(val);
+                        if (p.type === 'json') {
+                            try { val = JSON.parse(val); } catch (e) { val = val; }
+                        }
+                        inputValues[p.key.trim()] = val;
+                        hasValue = true;
+                    }
+                }
+                if (!hasValue) {
+                    if (!confirm('没有填写任何参数，确定继续吗？')) return;
+                }
+
+                clearResults();
+                clearLog();
+                setPromptIdDisplay(null);
+                currentPromptId = null;
+                stopPolling = false;
+                pollCount = 0;
+                isGenerating = true;
+                generateBtn.disabled = true;
+                stopBtn.disabled = false;
+                setStatus('提交中…', 'running');
+                log(`🚀 提交生成任务: ${workflowId}`, 'highlight');
+
+                const payload = {
+                    workflow_id: workflowId,
+                    input_values: inputValues,
+                    client_id: 'web-generator-' + Date.now()
+                };
+
+                try {
+                    const resp = await fetch(`${baseUrl}/api/workflow/generate`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload),
+                    });
+                    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+                    const data = await resp.json();
+                    if (!data.success) throw new Error(data.error || '提交失败');
+                    currentPromptId = data.prompt_id;
+                    setPromptIdDisplay(currentPromptId);
+                    log(`✅ 已提交，prompt_id: ${currentPromptId}`, 'ok');
+                    setStatus('生成中…', 'running');
+                    startPolling(baseUrl, currentPromptId);
+                } catch (err) {
+                    log(`❌ 提交失败: ${err.message}`, 'err');
+                    setStatus('错误', 'error');
+                    isGenerating = false;
+                    generateBtn.disabled = false;
+                    stopBtn.disabled = true;
+                }
+            }
+
+            // ---------- 轮询（修改结果处理） ----------
+            function startPolling(baseUrl, promptId) {
+                stopPolling = false;
+                pollCount = 0;
+                startTime = Date.now();
+                if (elapsedTimer) clearInterval(elapsedTimer);
+                elapsedTimer = setInterval(() => {
+                    if (startTime) {
+                        elapsedTime.textContent = '⏱ ' + formatTime(Date.now() - startTime);
+                    }
+                }, 1000);
+
+                const maxPollsVal = parseInt(maxPolls.value) || 1000;
+                const intervalVal = parseInt(pollInterval.value) || 5000;
+                log(`🔄 开始轮询 (间隔 ${intervalVal}ms, 最大 ${maxPollsVal} 次)`, 'warn');
+
+                function doPoll() {
+                    if (stopPolling) {
+                        log('⏹ 轮询已停止', 'warn');
+                        finishPolling();
+                        return;
+                    }
+                    pollCount++;
+                    if (pollCount > maxPollsVal) {
+                        log(`⏱ 达到最大轮询次数 (${maxPollsVal})，停止轮询`, 'warn');
+                        setStatus('超时', 'error');
+                        finishPolling();
+                        return;
+                    }
+
+                    fetch(`${baseUrl}/api/workflow/result?prompt_id=${promptId}`)
+                        .then(r => r.json())
+                        .then(data => {
+                            if (stopPolling) return;
+
+                            // 检查是否有错误
+                            if (!data.success) {
+                                log(`⚠️ 查询异常: ${data.error || '未知错误'}`, 'err');
+                                pollingTimer = setTimeout(doPoll, intervalVal);
+                                return;
+                            }
+
+                            const pending = data.pending;
+                            const rawResults = data.results || data.files || data.outputs || data.history || [];
+
+                            // 使用规范化函数处理
+                            const normalized = normalizeResults(rawResults);
+                            const resultCount = normalized.length;
+
+                            const statusMsg =
+                                `轮询 #${pollCount} · pending=${pending} · 结果数=${resultCount}`;
+                            progressText.textContent = statusMsg;
+                            log(`📡 ${statusMsg}`, '');
+
+                            // 调试：打印原始数据
+                            if (pollCount === 1) {
+                                console.log('[DEBUG] 原始 results:', rawResults);
+                                console.log('[DEBUG] 规范化后:', normalized);
+                            }
+
+                            // 如果 pending 为 false，无论有没有结果都结束轮询
+                            if (!pending) {
+                                if (resultCount > 0) {
+                                    log(`✅ 任务完成！获得 ${resultCount} 个文件`, 'ok');
+                                    setStatus('完成', 'done');
+                                    displayResults(normalized, baseUrl);
+                                } else {
+                                    log(`⚠️ 任务已完成但无结果 (可能 history 已清空或没有输出节点)`, 'warn');
+                                    setStatus('无结果', 'error');
+                                    displayResults([], baseUrl);
+                                }
+                                finishPolling();
+                                return;
+                            }
+
+                            // 还在 pending 中，但如果有部分结果，也可以展示（可选）
+                            if (resultCount > 0) {
+                                // 可以提前展示部分结果，但为了避免闪烁，等完成后再展示
+                                // 这里仅记录日志
+                                log(`📊 已有 ${resultCount} 个中间结果，等待完成…`, 'warn');
+                            }
+
+                            // 继续轮询
+                            pollingTimer = setTimeout(doPoll, intervalVal);
+                        })
+                        .catch(err => {
+                            if (stopPolling) return;
+                            log(`❌ 轮询请求失败: ${err.message}`, 'err');
+                            pollingTimer = setTimeout(doPoll, intervalVal * 2);
+                        });
+                }
+                pollingTimer = setTimeout(doPoll, 500);
+            }
+
+            function finishPolling() {
+                if (pollingTimer) { clearTimeout(pollingTimer);
+                    pollingTimer = null; }
+                if (elapsedTimer) { clearInterval(elapsedTimer);
+                    elapsedTimer = null; }
+                isGenerating = false;
+                generateBtn.disabled = false;
+                stopBtn.disabled = true;
+                if (statusDot.className !== 'status-dot done' && statusDot.className !== 'status-dot error') {
+                    setStatus('就绪', 'idle');
+                }
+                progressText.textContent = '就绪';
+            }
+
+            function stopPollingManually() {
+                stopPolling = true;
+                if (pollingTimer) { clearTimeout(pollingTimer);
+                    pollingTimer = null; }
+                if (elapsedTimer) { clearInterval(elapsedTimer);
+                    elapsedTimer = null; }
+                isGenerating = false;
+                generateBtn.disabled = false;
+                stopBtn.disabled = true;
+                setStatus('已停止', 'idle');
+                log('⏹ 用户停止了轮询', 'warn');
+                progressText.textContent = '已停止';
+            }
+
+            // ---------- 结果展示辅助 ----------
+            function clearResults() {
+                results = [];
+                resultsContainer.innerHTML = `
+                    <div class="empty-state">
+                        <span class="icon">🖼️</span>
+                        <p>暂无结果，提交生成任务后自动显示</p>
+                    </div>
+                `;
+                resultCount.textContent = '0 个文件';
+            }
+
+            function downloadAll() {
+                const links = resultsContainer.querySelectorAll('.result-item .info .dl-link');
+                if (links.length === 0) { alert('没有可下载的文件'); return; }
+                for (const el of links) {
+                    const a = document.createElement('a');
+                    a.href = el.href;
+                    const parent = el.closest('.result-item');
+                    const fn = parent?.querySelector('.filename')?.textContent || 'file';
+                    a.download = fn;
+                    a.target = '_blank';
+                    a.click();
+                }
+                log(`📦 已触发 ${links.length} 个文件的下载`, 'ok');
+            }
+
+            // ---------- 事件绑定 ----------
+            generateBtn.addEventListener('click', runGenerate);
+            stopBtn.addEventListener('click', stopPollingManually);
+            clearResultBtn.addEventListener('click', clearResults);
+            addParamBtn.addEventListener('click', () => addParam());
+            clearParamsBtn.addEventListener('click', clearParams);
+            loadWorkflowsBtn.addEventListener('click', loadWorkflows);
+            loadConfigBtn.addEventListener('click', () => {
+                const id = getWorkflowId();
+                if (id) loadWorkflowConfig(id);
+                else alert('请填写或选择工作流 ID');
+            });
+
+            workflowSelect.addEventListener('change', (e) => {
+                if (e.target.value) {
+                    workflowIdInput.value = e.target.value;
+                    loadWorkflowConfig(e.target.value);
+                }
+            });
+            workflowIdInput.addEventListener('change', () => {
+                const val = workflowIdInput.value.trim();
+                const opts = workflowSelect.options;
+                for (let i = 0; i < opts.length; i++) {
+                    if (opts[i].value === val) {
+                        workflowSelect.value = val;
+                        break;
+                    }
+                }
+            });
+
+            // 文件上传
+            uploadZone.addEventListener('click', () => fileInput.click());
+            uploadZone.addEventListener('dragover', (e) => { e.preventDefault();
+                uploadZone.classList.add('dragover'); });
+            uploadZone.addEventListener('dragleave', () => { uploadZone.classList.remove('dragover'); });
+            uploadZone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadZone.classList.remove('dragover');
+                if (e.dataTransfer.files.length > 0) handleFileUpload(e.dataTransfer.files[0]);
+            });
+            fileInput.addEventListener('change', (e) => {
+                if (e.target.files.length > 0) handleFileUpload(e.target.files[0]);
+                e.target.value = '';
+            });
+
+            hiddenFileInput.addEventListener('change', (e) => {
+                if (e.target.files.length > 0 && pendingUploadRowIndex >= 0) {
+                    const idx = pendingUploadRowIndex;
+                    const file = e.target.files[0];
+                    handleFileUpload(file, (data) => {
+                        if (idx < params.length) {
+                            params[idx].value = data.name;
+                            renderParams();
+                            const row = paramBody.querySelector(`tr[data-index="${idx}"]`);
+                            if (row) {
+                                row.style.transition = 'background 0.3s';
+                                row.style.background = 'var(--primary-light)';
+                                setTimeout(() => row.style.background = '', 1000);
+                            }
+                            log(`📎 已为参数 #${idx+1} 填入文件: ${data.name}`, 'ok');
+                        }
+                        pendingUploadRowIndex = -1;
+                    });
+                } else {
+                    pendingUploadRowIndex = -1;
+                }
+                e.target.value = '';
+            });
+
+            copyNameBtn.addEventListener('click', () => {
+                const name = uploadedName.textContent;
+                if (name) copyToClipboard(name, '已复制文件名');
+            });
+            copyFullPathBtn.addEventListener('click', () => {
+                const name = uploadedName.textContent;
+                if (name) copyToClipboard(name, '已复制文件名（可直接使用）');
+            });
+
+            assetSelect.addEventListener('change', (e) => {
+                const val = e.target.value;
+                if (val) {
+                    showAssetPreview(val);
+                } else {
+                    assetPreview.innerHTML = '<span class="placeholder">选择文件后显示预览</span>';
+                }
+            });
+
+            refreshAssetsBtn.addEventListener('click', () => {
+                loadInputAssets();
+            });
+
+            copyAssetNameBtn.addEventListener('click', () => {
+                const name = assetSelect.value;
+                if (name) copyToClipboard(name, '已复制文件名');
+                else alert('请先选择一个文件');
+            });
+
+            copyAssetUrlBtn.addEventListener('click', () => {
+                const name = assetSelect.value;
+                if (!name) { alert('请先选择一个文件'); return; }
+                const item = assetList.find(a => a.name === name);
+                if (!item) { alert('文件信息缺失'); return; }
+                const url = getAssetUrl(name, item.subfolder);
+                if (url) copyToClipboard(url, '已复制预览URL');
+                else alert('无法生成URL');
+            });
+
+            document.getElementById('downloadAllBtn').addEventListener('click', downloadAll);
+
+            // ---------- 初始化 ----------
+            function init() {
+                renderParams();
+                try {
+                    const saved = localStorage.getItem(BASE_KEY);
+                    if (saved) baseUrlInput.value = saved;
+                } catch (e) {}
+                baseUrlInput.addEventListener('change', () => {
+                    try { localStorage.setItem(BASE_KEY, baseUrlInput.value.trim()); } catch (e) {}
+                });
+                log('🟢 就绪，请选择工作流并点击「加载参数」', '');
+                setStatus('就绪', 'idle');
+                setTimeout(() => {
+                    loadWorkflows();
+                    loadInputAssets();
+                }, 500);
+            }
+
+            init();
+        })();
+    </script>
+</body>
+</html>
